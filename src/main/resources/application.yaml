@@ -1,0 +1,110 @@
+#######################################################################################################################
+#
+# Standard Spring Boot properties. Full reference available at:
+# https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties
+#
+#######################################################################################################################
+
+---
+
+#######################################################################################################################
+#
+# Actuator properties
+#
+#######################################################################################################################
+
+management:
+  endpoint:
+    health:
+      show-components: always
+      show-details: when-authorized
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+  metrics:
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+
+---
+
+#######################################################################################################################
+#
+# Server properties
+#
+#######################################################################################################################
+
+server:
+  compression:
+    enabled: true
+    mime-types:
+      - application/hal+json
+      - application/javascript
+      - application/json
+      - application/xml
+      - text/css
+      - text/html
+      - text/javascript
+      - text/plain
+      - text/xml
+
+---
+
+#######################################################################################################################
+#
+# Spring Boot properties
+#
+#######################################################################################################################
+
+spring:
+  application:
+    name: passport-status-api
+  config:
+    import:
+      - optional:application-local.yml
+      - optional:application-local.yaml
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  datasource:
+    generate-unique-name: false
+  jackson:
+    default-property-inclusion: non-null
+    serialization:
+      indent-output: true
+  main:
+    allow-bean-definition-overriding: true
+  mongodb:
+    embedded:
+      version: 5.0.6
+
+---
+
+#######################################################################################################################
+#
+# Springdoc properties
+#
+#######################################################################################################################
+
+springdoc:
+  packages-to-scan:
+    - ca.gov.dtsstn.passport.api.web
+  swagger-ui:
+    disable-swagger-default-url: true
+  writer-with-default-pretty-printer: true
+
+---
+
+#######################################################################################################################
+#
+# Application-specific properties.
+#
+#######################################################################################################################
+
+application: {}
