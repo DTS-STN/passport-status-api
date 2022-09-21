@@ -33,7 +33,7 @@ public class SpringDocConfig {
 
 	@Bean ApplicationListener<ContextRefreshedEvent> springDocCustomizer() {
 		return args -> {
-			log.info("Configuring SpringDoc parameter objects...");
+			log.info("Configuring SpringDoc parameter objects…");
 			SpringDocUtils.getConfig().replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 		};
 	}
