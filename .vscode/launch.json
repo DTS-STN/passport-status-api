@@ -1,0 +1,15 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch Passport Status API",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "ca.gov.dtsstn.passport.api.Application",
+      "projectName": "passport-status-api",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "internalConsole"
+    }
+  ]
+}
