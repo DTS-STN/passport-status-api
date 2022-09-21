@@ -21,7 +21,9 @@
 		<!-- build version parameters -->
 
 		<revision>0.0.0</revision>
-		<changelist><!-- intentionally left blank --></changelist>
+
+		<!-- intentionally left blank -->
+		<changelist></changelist>
 
 		<!-- container image parameters -->
 
