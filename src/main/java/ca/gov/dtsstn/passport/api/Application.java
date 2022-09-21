@@ -30,9 +30,9 @@ public class Application {
 	@SuppressWarnings({ "java:S2479" })
 	@Bean ApplicationListener<ContextRefreshedEvent> startupListener(Environment environment) {
 		return event -> {
-			final String applicationName = environment.getProperty("spring.application.name", "application");
-			final String serverPort = environment.getProperty("server.port", "8080");
-			final String contextPath = environment.getProperty("server.servlet.context-path", "/");
+			final var applicationName = environment.getProperty("spring.application.name", "application");
+			final var serverPort = environment.getProperty("server.port", "8080");
+			final var contextPath = environment.getProperty("server.servlet.context-path", "/");
 
 			log.info("===============================================================================");
 			log.info("Successfully started {}…", applicationName);

@@ -41,7 +41,7 @@ public class PassportStatusController {
 	@GetMapping({ "/{id}" })
 	public PassportStatusModel get(@PathVariable String id) {
 		return passportStatusModelAssembler.toModel(passportStatusService.read(id)
-			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status " + id)));
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]")));
 	}
 
 	@GetMapping({ /* root */ })

@@ -16,8 +16,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "Error")
-public interface ErrorModel extends Serializable {
+@Schema(name = "ApiError")
+public interface ApiErrorModel extends Serializable {
 
 	@JsonProperty(access = Access.READ_ONLY)
 	@Schema(example = "[ \"'id' is required; it must not be null\" ]")
