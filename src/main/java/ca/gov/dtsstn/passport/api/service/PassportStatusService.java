@@ -57,7 +57,7 @@ public class PassportStatusService {
 		return passportStatusRepository.findAll(pageable).map(passportStatusMapper::fromDocument);
 	}
 
-	public Optional<PassportStatus> read(PassportStatus passportStatusProbe) {
+	public Optional<PassportStatus> search(PassportStatus passportStatusProbe) {
 		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
 		return passportStatusRepository.findOne(Example.of(passportStatusMapper.toDocument(passportStatusProbe))).map(passportStatusMapper::fromDocument);
 	}
