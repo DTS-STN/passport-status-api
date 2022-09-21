@@ -52,6 +52,11 @@
 			<version>${datafaker.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>annotate</artifactId>
+			<version>${immutables.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>

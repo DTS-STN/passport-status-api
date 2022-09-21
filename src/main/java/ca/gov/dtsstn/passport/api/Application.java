@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 
 /**
@@ -28,7 +28,7 @@ public class Application {
 	 * An {@link ApplicationListener} that prints some useful startup information.
 	 */
 	@SuppressWarnings({ "java:S2479" })
-	@Bean ApplicationListener<ApplicationStartedEvent> startupListener(Environment environment) {
+	@Bean ApplicationListener<ContextRefreshedEvent> startupListener(Environment environment) {
 		return event -> {
 			final String applicationName = environment.getProperty("spring.application.name", "application");
 			final String serverPort = environment.getProperty("server.port", "8080");

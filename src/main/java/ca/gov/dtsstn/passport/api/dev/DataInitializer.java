@@ -50,11 +50,10 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 
 	private PassportStatusDocument generatePassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
-			.esrf(faker.regexify("[A-Za-z]{8}"))
+			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
 			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate())
-			.email(faker.internet().emailAddress())
 			.build();
 	}
 

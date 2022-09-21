@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
+import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -22,12 +24,16 @@ public class PassportStatusController {
 
 	private final PassportStatusModelAssembler passportStatusModelAssembler;
 
+	private final PassportStatusModelMapper passportStatusModelMapper;
+
 	private final PassportStatusService passportStatusService;
 
-	public PassportStatusController(PassportStatusModelAssembler passportStatusModelAssembler, PassportStatusService passportStatusService) {
+	public PassportStatusController(PassportStatusModelAssembler passportStatusModelAssembler, PassportStatusModelMapper passportStatusModelMapper, PassportStatusService passportStatusService) {
 		Assert.notNull(passportStatusModelAssembler, "passportStatusModelAssembler is required; it must not be null");
+		Assert.notNull(passportStatusModelMapper, "passportStatusModelMapper is required; it must not be null");
 		Assert.notNull(passportStatusService, "passportStatusService is requred; it must not be null");
 		this.passportStatusModelAssembler = passportStatusModelAssembler;
+		this.passportStatusModelMapper = passportStatusModelMapper;
 		this.passportStatusService = passportStatusService;
 	}
 
@@ -39,6 +45,17 @@ public class PassportStatusController {
 	@GetMapping({ /* root */ })
 	public CollectionModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
 		return passportStatusModelAssembler.toPagedModel(passportStatusService.readAll(pageable));
+	}
+
+	@GetMapping({ "/_search" })
+	public PassportStatusModel search(@ParameterObject PassportStatusSearchModel passportStatusSearchModel) {
+		Assert.hasText(passportStatusSearchModel.getFileNumber(), "fileNumber is required");
+		Assert.hasText(passportStatusSearchModel.getFirstName(), "firstName is required");
+		Assert.hasText(passportStatusSearchModel.getLastName(), "lastName is required");
+		Assert.notNull(passportStatusSearchModel.getDateOfBirth(), "dateOfBirth is required");
+
+		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
+		return passportStatusModelAssembler.toModel(passportStatusService.read(passportStatusProbe).orElseThrow());
 	}
 
 }
