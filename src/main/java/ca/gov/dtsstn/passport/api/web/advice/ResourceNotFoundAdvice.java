@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import ca.gov.dtsstn.passport.api.web.exception.PassportStatusNotFoundException;
+import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorModel;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @ControllerAdvice
-public class PassportStatusNotFoundAdvice extends ResponseEntityExceptionHandler {
+public class ResourceNotFoundAdvice extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(PassportStatusNotFoundException.class)
-	protected ResponseEntity<Object> passportStatusNotFoundHandler(PassportStatusNotFoundException ex,
+	@ExceptionHandler(ResourceNotFoundException.class)
+	protected ResponseEntity<Object> passportStatusNotFoundHandler(ResourceNotFoundException ex,
 			WebRequest request) {
 		final var errorModel = ImmutableErrorModel.builder()
 		 		.errorCode("API-0404")
