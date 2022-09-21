@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,11 @@ public class PassportStatusService {
 	public Page<PassportStatus> readAll(Pageable pageable) {
 		Assert.notNull(pageable, "pageable is required; it must not be null");
 		return passportStatusRepository.findAll(pageable).map(passportStatusMapper::fromDocument);
+	}
+
+	public Optional<PassportStatus> read(PassportStatus passportStatusProbe) {
+		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
+		return passportStatusRepository.findOne(Example.of(passportStatusMapper.toDocument(passportStatusProbe))).map(passportStatusMapper::fromDocument);
 	}
 
 }

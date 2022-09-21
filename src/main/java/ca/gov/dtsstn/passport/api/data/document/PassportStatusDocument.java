@@ -48,7 +48,7 @@ public interface PassportStatusDocument extends Serializable {
 	Long getVersion();
 
 	@Nullable
-	String getEsrf();
+	String getFileNumber();
 
 	@Nullable
 	String getFirstName();
@@ -58,8 +58,5 @@ public interface PassportStatusDocument extends Serializable {
 
 	@Nullable
 	LocalDate getDateOfBirth();
-
-	@Nullable
-	String getEmail();
 
 }
