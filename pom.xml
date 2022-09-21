@@ -34,7 +34,6 @@
 		<java.version>17</java.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-		<spring-boot.build-image.imageName>${image.registry}/${image.name}:${image.tag}</spring-boot.build-image.imageName>
 
 		<!-- dependency/plugin versions -->
 
@@ -162,6 +161,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>${image.registry}/${image.name}:${image.tag}</name>
+						<tags>
+							<tag>${image.registry}/${image.name}:latest</tag>
+						</tags>
+					</image>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
