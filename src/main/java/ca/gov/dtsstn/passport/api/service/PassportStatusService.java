@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.exception.NonUniqueResultException;
 import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
 /**
@@ -59,7 +60,14 @@ public class PassportStatusService {
 
 	public Optional<PassportStatus> search(PassportStatus passportStatusProbe) {
 		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
-		return passportStatusRepository.findOne(Example.of(passportStatusMapper.toDocument(passportStatusProbe))).map(passportStatusMapper::fromDocument);
+
+		final var example = Example.of(passportStatusMapper.toDocument(passportStatusProbe));
+
+		if (passportStatusRepository.count(example) > 1) {
+			throw new NonUniqueResultException("Query returned non-unique result");
+		}
+
+		return passportStatusRepository.findOne(example).map(passportStatusMapper::fromDocument);
 	}
 
 }
