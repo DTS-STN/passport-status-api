@@ -2,7 +2,7 @@ package ca.gov.dtsstn.passport.api.web;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +45,7 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ /* root */ })
-	public CollectionModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
+	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
 		return passportStatusModelAssembler.toPagedModel(passportStatusService.readAll(pageable));
 	}
 
