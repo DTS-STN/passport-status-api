@@ -23,6 +23,7 @@ import io.swagger.v3.oas.models.info.Info;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Configuration
+@SuppressWarnings({ "java:S3305" })
 public class SpringDocConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
