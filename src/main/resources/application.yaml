@@ -118,4 +118,5 @@ springdoc:
 application:
   dev:
     data-initializer:
+      duplicate-statuses-number: 10
       generated-statuses-number: 10_000
