@@ -64,6 +64,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.build();
 	}
 
+	@SuppressWarnings({ "java:S1192" })
 	private PassportStatusDocument generateDuplicatePassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
 			.fileNumber("DUPE0000")

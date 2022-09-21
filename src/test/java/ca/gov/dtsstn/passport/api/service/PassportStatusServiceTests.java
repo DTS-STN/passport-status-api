@@ -13,13 +13,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
+import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
@@ -40,8 +43,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testCreate() {
-		when(passportStatusRepository.save(any()))
-			.thenAnswer(invocation -> invocation.getArgument(0));
+		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
 		final var passportStatus = passportStatusService.create(ImmutablePassportStatus.builder().build());
 
@@ -50,8 +52,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testRead() {
-		when(passportStatusRepository.findById(any()))
-			.thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
 
 		final var passportStatus = passportStatusService.read("id");
 
@@ -60,10 +61,8 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testUpdate() {
-		when(passportStatusRepository.findById(any()))
-			.thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
-		when(passportStatusRepository.save(any()))
-			.thenAnswer(invocation -> invocation.getArgument(0));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
 		final var passportStatus = passportStatusService.update(ImmutablePassportStatus.builder().id("id").build());
 
@@ -73,14 +72,11 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testUpdate_notFound() {
-		when(passportStatusRepository.findById(any()))
-			.thenReturn(Optional.empty());
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.empty());
 
 		final var passportStatus = ImmutablePassportStatus.builder().id("id").build();
 
-		assertThrows(NoSuchElementException.class, () -> {
-			passportStatusService.update(passportStatus);
-		});
+		assertThrows(NoSuchElementException.class, () -> passportStatusService.update(passportStatus));
 	}
 
 	@Test void testDelete() {
@@ -90,8 +86,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testReadAll() {
-		when(passportStatusRepository.findAll(any(Pageable.class)))
-			.thenReturn(Page.empty());
+		when(passportStatusRepository.findAll(any(Pageable.class))).thenReturn(Page.empty());
 
 		final var passportStatuses = passportStatusService.readAll(Pageable.unpaged());
 
@@ -100,12 +95,11 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testSearch() {
-		when(passportStatusRepository.findOne(any()))
-			.thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+		when(passportStatusRepository.findAll(ArgumentMatchers.<Example<PassportStatusDocument>> any(), any(Pageable.class))).thenReturn(Page.empty());
 
-		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build());
+		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build(), Pageable.unpaged());
 
-		assertThat(passportStatus).isNotEmpty();
-		verify(passportStatusRepository).findOne(any());
+		assertThat(passportStatus).isNotNull();
+		verify(passportStatusRepository).findAll(ArgumentMatchers.<Example<PassportStatusDocument>> any(), any(Pageable.class));
 	}
 }
