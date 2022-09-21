@@ -33,16 +33,20 @@ public class PassportStatusModelAssembler extends RepresentationModelAssemblerSu
 
 	@Override
 	protected PassportStatusModel instantiateModel(PassportStatus passportStatus) {
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		return passportStatusModelMapper.fromDomain(passportStatus);
 	}
 
 	@Override
 	public PassportStatusModel toModel(PassportStatus passportStatus) {
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
+		Assert.hasText(passportStatus.getId(), "passportStatus.id is required; it must not be blank or null");
 		return createModelWithId(passportStatus.getId(), passportStatus);
 	}
 
-	public PagedModel<PassportStatusModel> toPagedModel(Page<PassportStatus> passportStatuss) {
-		return pagedResourcesAssembler.toModel(passportStatuss, this);
+	public PagedModel<PassportStatusModel> toPagedModel(Page<PassportStatus> passportStatuses) {
+		Assert.notNull(passportStatuses, "passportStatuses is required; it must not be null");
+		return pagedResourcesAssembler.toModel(passportStatuses, this);
 	}
 
 }

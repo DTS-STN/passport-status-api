@@ -84,7 +84,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testDelete() {
-		passportStatusService.delete(any());
+		passportStatusService.delete("id");
 
 		verify(passportStatusRepository).deleteById(any());
 	}
