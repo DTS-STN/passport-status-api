@@ -13,6 +13,13 @@ import org.springframework.lang.Nullable;
 @Immutable
 public interface PassportStatus extends Serializable {
 
+	public enum Status {
+
+		// TODO :: GjB :: this are obviously made up
+		ACCEPTED, PROCESSING, REJECTED, COMPLETED;
+
+	}
+
 	@Nullable
 	String getId();
 
@@ -42,5 +49,8 @@ public interface PassportStatus extends Serializable {
 
 	@Nullable
 	LocalDate getDateOfBirth();
+
+	@Nullable
+	Status getStatus();
 
 }
