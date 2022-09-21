@@ -3,6 +3,18 @@
 # Standard Spring Boot properties. Full reference available at:
 # https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties
 #
+# This application supports configuration overrides using the following resolution order:
+#
+# 1. The usual Spring Boot configuration resolution:
+#    https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+# 2. Config file src/dev/resources/application-local.yaml
+#
+# To set configuration properties that are local to your development environment
+# (for example log levels or database connection strings), create the file
+# src/dev/resources/application-local.yaml. This file is not managed by Git, so
+# there is no chance of accidentally pushing your custom configuration to the
+# project repository.
+#
 #######################################################################################################################
 
 ---
@@ -16,6 +28,8 @@
 management:
   endpoint:
     health:
+      probes:
+        enabled: true
       show-components: always
       show-details: when-authorized
   endpoints:
@@ -63,17 +77,19 @@ server:
 
 spring:
   application:
-    name: passport-status-api
+    name: Passport Status API
   config:
     import:
       - optional:application-local.yml
       - optional:application-local.yaml
   data:
+    mongodb:
+      uri: mongodb://localhost/passport
+      username:
+      password:
     web:
       pageable:
         one-indexed-parameters: true
-  datasource:
-    generate-unique-name: false
   jackson:
     default-property-inclusion: non-null
     serialization:
