@@ -40,7 +40,9 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	public PassportStatusModel get(@PathVariable String id) {
-		return passportStatusModelAssembler.toModel(passportStatusService.read(id)
+		return passportStatusService.read(id)
+			.map(passportStatusModelMapper::fromDomain)
+			.map(passportStatusModelAssembler::toModel)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]")));
 	}
 
@@ -56,8 +58,10 @@ public class PassportStatusController {
 		Assert.hasText(passportStatusSearchModel.getLastName(), "lastName is required");
 		Assert.notNull(passportStatusSearchModel.getDateOfBirth(), "dateOfBirth is required");
 
-		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
-		return passportStatusModelAssembler.toModel(passportStatusService.search(passportStatusProbe).orElseThrow());
+		return passportStatusService.search(passportStatusModelMapper.toDomain(passportStatusSearchModel))
+			.map(passportStatusModelMapper::fromDomain)
+			.map(passportStatusModelAssembler::toModel)
+			.orElseThrow(() -> new ResourceNotFoundException("Query returned no results"));
 	}
 
 }
