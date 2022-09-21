@@ -5,8 +5,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import org.immutables.value.Value.Immutable;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
@@ -23,16 +28,24 @@ public interface PassportStatusDocument extends Serializable {
 	String getId();
 
 	@Nullable
+	@CreatedBy
 	String getCreatedBy();
 
 	@Nullable
+	@CreatedDate
 	Instant getCreatedDate();
 
 	@Nullable
+	@LastModifiedBy
 	String getLastModifiedBy();
 
 	@Nullable
+	@LastModifiedDate
 	Instant getLastModifiedDate();
+
+	@Version
+	@Nullable
+	Long getVersion();
 
 	@Nullable
 	String getEsrf();

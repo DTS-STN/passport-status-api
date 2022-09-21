@@ -11,7 +11,7 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({ "immutables", "serial" })
 @Style(passAnnotations = { Relation.class })
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements PassportStatus {}
