@@ -35,8 +35,4 @@ public interface ErrorModel extends Serializable {
 	@Schema(example = "2000-01-01T00:00:00Z")
 	@Nullable Instant getTimestamp();
 
-	@Schema(example = "List of validation errors")
-	@JsonProperty(access = Access.READ_ONLY)
-	@Nullable List<ValidationErrorModel> getValidationErrors();
-
 }
