@@ -6,11 +6,13 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Schema(name = "PassportStatus")
 @SuppressWarnings({ "immutables", "serial" })
 @Style(passAnnotations = { Relation.class })
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")

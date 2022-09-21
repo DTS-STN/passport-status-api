@@ -5,6 +5,7 @@ import org.springframework.core.NestedRuntimeException;
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
+@SuppressWarnings({ "serial" })
 public class ResourceNotFoundException extends NestedRuntimeException {
 
 	public ResourceNotFoundException(String message) {
