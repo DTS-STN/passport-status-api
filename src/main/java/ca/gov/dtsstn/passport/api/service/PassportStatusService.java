@@ -39,6 +39,7 @@ public class PassportStatusService {
 		return passportStatusRepository.findById(id).map(passportStatusMapper::fromDocument);
 	}
 
+	@SuppressWarnings({ "java:S4449" })
 	public PassportStatus update(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.notNull(passportStatus.getId(), "passportStatus.id must not be null when updating existing instance");
