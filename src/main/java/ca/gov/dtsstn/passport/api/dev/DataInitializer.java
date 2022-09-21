@@ -1,5 +1,6 @@
 package ca.gov.dtsstn.passport.api.dev;
 
+import java.time.LocalDate;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -40,20 +41,32 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	@Override
 	@Transactional
 	public void onApplicationEvent(ApplicationStartedEvent event) {
-		log.info("Generating {} fake passport statuses...", generatedStatusesNumber);
-
+		log.info("Generating {} fake random passport statuses...", generatedStatusesNumber);
 		final var stopWatch = StopWatch.createStarted();
 		passportStatusRepository.deleteAll();
-		Stream.generate(this::generatePassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
-		log.info("Fake data created in {}ms", stopWatch.getTime());
+		Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
+		log.info("Fake random data created in {}ms", stopWatch.getTime());
+
+		log.info("Generating 10 duplicate fake passport statuses...");
+		Stream.generate(this::generateDuplicatePassportStatus).limit(10).forEach(passportStatusRepository::save);
+		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 	}
 
-	private PassportStatusDocument generatePassportStatus() {
+	private PassportStatusDocument generateRandomPassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
 			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
 			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate())
+			.build();
+	}
+
+	private PassportStatusDocument generateDuplicatePassportStatus() {
+		return ImmutablePassportStatusDocument.builder()
+			.fileNumber("DUPE0000")
+			.firstName("DUPE0000")
+			.lastName("DUPE0000")
+			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.build();
 	}
 
