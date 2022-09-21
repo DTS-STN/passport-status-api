@@ -4,6 +4,7 @@ import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,16 +53,21 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ "/_search" })
-	public PassportStatusModel search(@ParameterObject PassportStatusSearchModel passportStatusSearchModel) {
+	public PassportStatusModel search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel) {
 		Assert.hasText(passportStatusSearchModel.getFileNumber(), "fileNumber is required");
 		Assert.hasText(passportStatusSearchModel.getFirstName(), "firstName is required");
 		Assert.hasText(passportStatusSearchModel.getLastName(), "lastName is required");
 		Assert.notNull(passportStatusSearchModel.getDateOfBirth(), "dateOfBirth is required");
 
-		return passportStatusService.search(passportStatusModelMapper.toDomain(passportStatusSearchModel))
+		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
+		final var page = passportStatusService.search(passportStatusProbe, Pageable.unpaged())
 			.map(passportStatusModelMapper::fromDomain)
-			.map(passportStatusModelAssembler::toModel)
-			.orElseThrow(() -> new ResourceNotFoundException("Query returned no results"));
+			.map(passportStatusModelAssembler::toModel);
+
+		if (page.isEmpty()) { throw new ResourceNotFoundException("Search query returned no results"); }
+		if (page.getNumberOfElements() > 1) { throw new ResourceNotFoundException("Search query returned non-unique results"); }
+
+		return page.getContent().get(0);
 	}
 
 }
