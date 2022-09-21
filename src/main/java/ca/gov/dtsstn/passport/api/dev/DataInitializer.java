@@ -7,9 +7,11 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
@@ -20,13 +22,16 @@ import net.datafaker.Faker;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
+@ConfigurationProperties("application.dev.data-initializer")
 public class DataInitializer implements ApplicationListener<ApplicationStartedEvent> {
 
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
-	final Faker faker = new Faker(new Random(0L));
+	private final Faker faker = new Faker(new Random(0L));
 
-	final PassportStatusRepository passportStatusRepository;
+	private final PassportStatusRepository passportStatusRepository;
+
+	private int generatedStatusesNumber = 1000;
 
 	public DataInitializer(PassportStatusRepository passportStatusRepository) {
 		this.passportStatusRepository = passportStatusRepository;
@@ -35,23 +40,27 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	@Override
 	@Transactional
 	public void onApplicationEvent(ApplicationStartedEvent event) {
-		log.info("Generating fake data...");
+		log.info("Generating {} fake passport statuses...", generatedStatusesNumber);
 
 		final var stopWatch = StopWatch.createStarted();
 		passportStatusRepository.deleteAll();
-		Stream.generate(this::generatepassportStatus).limit(1000).forEach(passportStatusRepository::save);
+		Stream.generate(this::generatePassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
 		log.info("Fake data created in {}ms", stopWatch.getTime());
 	}
 
-	private PassportStatusDocument generatepassportStatus() {
+	private PassportStatusDocument generatePassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
-			.id(faker.regexify("[a-f0-9]{24}"))
 			.esrf(faker.regexify("[A-Za-z]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
 			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate())
 			.email(faker.internet().emailAddress())
 			.build();
+	}
+
+	public void setGeneratedStatusesNumber(int generatedStatusesNumber) {
+		Assert.isTrue(generatedStatusesNumber >= 0, "application.dev.data-initializer.generated-statuses-number must be greater than or equal to zero");
+		this.generatedStatusesNumber = generatedStatusesNumber;
 	}
 
 }
