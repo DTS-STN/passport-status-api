@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
+import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
@@ -39,7 +40,8 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	public PassportStatusModel get(@PathVariable String id) {
-		return passportStatusModelAssembler.toModel(passportStatusService.read(id).orElseThrow());
+		return passportStatusModelAssembler.toModel(passportStatusService.read(id)
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status " + id)));
 	}
 
 	@GetMapping({ /* root */ })
