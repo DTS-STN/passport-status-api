@@ -107,4 +107,7 @@ springdoc:
 #
 #######################################################################################################################
 
-application: {}
+application:
+  dev:
+    data-initializer:
+      generated-statuses-number: 10_000
