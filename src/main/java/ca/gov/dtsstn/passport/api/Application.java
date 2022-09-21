@@ -27,6 +27,7 @@ public class Application {
 	/**
 	 * An {@link ApplicationListener} that prints some useful startup information.
 	 */
+	@SuppressWarnings({ "java:S2479" })
 	@Bean ApplicationListener<ApplicationStartedEvent> startupListener(Environment environment) {
 		return event -> {
 			final String applicationName = environment.getProperty("spring.application.name", "application");

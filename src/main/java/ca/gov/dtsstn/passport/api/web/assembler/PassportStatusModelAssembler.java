@@ -38,6 +38,7 @@ public class PassportStatusModelAssembler extends RepresentationModelAssemblerSu
 	}
 
 	@Override
+	@SuppressWarnings({ "java:S4449" })
 	public PassportStatusModel toModel(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.hasText(passportStatus.getId(), "passportStatus.id is required; it must not be blank or null");
