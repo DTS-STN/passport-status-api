@@ -24,6 +24,7 @@ public interface PassportStatusMapper {
 	@Mapping(target = "createdDate", ignore = true)
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
+	@Mapping(target = "version", ignore = true)
 	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 	PassportStatusDocument update(PassportStatus passportStatus, @MappingTarget PassportStatusDocument target);
 

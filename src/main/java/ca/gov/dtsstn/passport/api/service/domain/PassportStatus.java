@@ -29,6 +29,9 @@ public interface PassportStatus extends Serializable {
 	Instant getLastModifiedDate();
 
 	@Nullable
+	Long getVersion();
+
+	@Nullable
 	String getEsrf();
 
 	@Nullable
