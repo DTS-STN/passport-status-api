@@ -39,6 +39,7 @@
 		<!-- dependency/plugin versions -->
 
 		<datafaker.version>1.5.0</datafaker.version>
+		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<springdoc.version>1.6.11</springdoc.version>
@@ -148,6 +149,11 @@
 						<compilerArg>-Amapstruct.unmappedTargetPolicy=ERROR</compilerArg>
 					</compilerArgs>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>${dependency-check-maven.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
