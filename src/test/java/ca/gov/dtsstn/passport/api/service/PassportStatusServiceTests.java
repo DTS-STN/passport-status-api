@@ -99,4 +99,13 @@ class PassportStatusServiceTests {
 		verify(passportStatusRepository).findAll(any(Pageable.class));
 	}
 
+	@Test void testSearch() {
+		when(passportStatusRepository.findOne(any()))
+			.thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+
+		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build());
+
+		assertThat(passportStatus).isNotEmpty();
+		verify(passportStatusRepository).findOne(any());
+	}
 }

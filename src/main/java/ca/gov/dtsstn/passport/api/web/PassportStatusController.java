@@ -57,7 +57,7 @@ public class PassportStatusController {
 		Assert.notNull(passportStatusSearchModel.getDateOfBirth(), "dateOfBirth is required");
 
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
-		return passportStatusModelAssembler.toModel(passportStatusService.read(passportStatusProbe).orElseThrow());
+		return passportStatusModelAssembler.toModel(passportStatusService.search(passportStatusProbe).orElseThrow());
 	}
 
 }
