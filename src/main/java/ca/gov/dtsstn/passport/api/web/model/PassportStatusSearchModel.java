@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import org.immutables.value.Value.Immutable;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
 
@@ -23,6 +24,7 @@ public interface PassportStatusSearchModel extends Serializable {
 	String getLastName();
 
 	@Parameter(required = true)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	LocalDate getDateOfBirth();
 
 }
