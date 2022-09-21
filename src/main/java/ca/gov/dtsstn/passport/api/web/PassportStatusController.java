@@ -43,7 +43,7 @@ public class PassportStatusController {
 		return passportStatusService.read(id)
 			.map(passportStatusModelMapper::fromDomain)
 			.map(passportStatusModelAssembler::toModel)
-			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]")));
+			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
 	@GetMapping({ /* root */ })

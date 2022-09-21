@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
+import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
 import net.datafaker.Faker;
 
 /**
@@ -53,11 +54,13 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	}
 
 	private PassportStatusDocument generateRandomPassportStatus() {
+		final var statuses = PassportStatusDocument.Status.values();
 		return ImmutablePassportStatusDocument.builder()
 			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
 			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate())
+			.status(statuses[faker.random().nextInt(statuses.length)])
 			.build();
 	}
 
@@ -67,6 +70,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.firstName("DUPE0000")
 			.lastName("DUPE0000")
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
+			.status(Status.ACCEPTED)
 			.build();
 	}
 
