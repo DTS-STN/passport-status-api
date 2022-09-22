@@ -58,7 +58,7 @@ server:
     enabled: true
     mime-types:
       - application/hal+json
-      # defaults below…
+      # defaults below...
       - application/javascript
       - application/json
       - application/xml

@@ -37,8 +37,8 @@ public class Application {
 			final var contextPath = environment.getProperty("server.servlet.context-path", "/");
 
 			log.info("===============================================================================");
-			log.info("Successfully started {}…", applicationName);
-			log.info("	⏩ Local application URL: http://localhost:{}{} ⏪", serverPort, contextPath);
+			log.info("Successfully started {}", applicationName);
+			log.info("	→ Local application URL: http://localhost:{}{} ←", serverPort, contextPath);
 			log.info("===============================================================================");
 		};
 	}
