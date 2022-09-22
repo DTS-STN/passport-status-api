@@ -35,7 +35,7 @@ public interface BaseDomainMapper {
 			.map(str -> str.replaceAll("[oóòôö]", "[oóòôö]"))
 			.map(str -> str.replaceAll("[UÚÙÛÜ]", "[UÚÙÛÜ]"))
 			.map(str -> str.replaceAll("[uúùûü]", "[uúùûü]"))
-			.orElseThrow(() -> new IllegalArgumentException("regex is required; it should not be null"));
+			.orElse(null);
 	}
 
 }
