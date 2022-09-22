@@ -38,6 +38,8 @@ management:
         include:
           - health
           - info
+          - metrics
+          - prometheus
   metrics:
     web:
       server:
@@ -56,6 +58,7 @@ server:
     enabled: true
     mime-types:
       - application/hal+json
+      # defaults below…
       - application/javascript
       - application/json
       - application/xml
@@ -64,6 +67,7 @@ server:
       - text/javascript
       - text/plain
       - text/xml
+  shutdown: graceful
 
 #######################################################################################################################
 #
@@ -81,8 +85,8 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost/passport
-      username:
-      password:
+      username: # set externally if required (via application-local.yaml or environment)
+      password: # set externally if required (via application-local.yaml or environment)
     web:
       pageable:
         one-indexed-parameters: true
