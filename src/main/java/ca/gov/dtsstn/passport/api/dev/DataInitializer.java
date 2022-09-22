@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.dev;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -37,7 +38,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
-	private final Faker faker = new Faker(new Random(0L));
+	private final Faker faker = new Faker(Locale.CANADA_FRENCH, new Random(0L));
 
 	private final PassportStatusRepository passportStatusRepository;
 
