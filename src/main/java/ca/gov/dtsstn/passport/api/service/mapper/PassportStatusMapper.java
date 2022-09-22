@@ -15,9 +15,14 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper
-public interface PassportStatusMapper {
+public interface PassportStatusMapper extends BaseDomainMapper {
 
 	PassportStatusDocument toDocument(PassportStatus passportStatus);
+
+	@Mapping(target = "fileNumber", qualifiedBy = { Searchable.class })
+	@Mapping(target = "firstName", qualifiedBy = { Searchable.class })
+	@Mapping(target = "lastName", qualifiedBy = { Searchable.class })
+	PassportStatusDocument toSearchableDocument(PassportStatus passportStatus);
 
 	PassportStatus fromDocument(PassportStatusDocument passportStatus);
 
