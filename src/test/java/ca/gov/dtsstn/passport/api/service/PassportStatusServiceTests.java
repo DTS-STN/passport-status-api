@@ -13,10 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -95,11 +93,11 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testSearch() {
-		when(passportStatusRepository.findAll(ArgumentMatchers.<Example<PassportStatusDocument>> any(), any(Pageable.class))).thenReturn(Page.empty());
+		when(passportStatusRepository.findAllCaseInsensitive(any(PassportStatusDocument.class), any(Pageable.class))).thenReturn(Page.empty());
 
 		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build(), Pageable.unpaged());
 
 		assertThat(passportStatus).isNotNull();
-		verify(passportStatusRepository).findAll(ArgumentMatchers.<Example<PassportStatusDocument>> any(), any(Pageable.class));
+		verify(passportStatusRepository).findAllCaseInsensitive(any(PassportStatusDocument.class), any(Pageable.class));
 	}
 }
