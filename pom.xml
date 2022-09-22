@@ -183,6 +183,7 @@
 				<configuration>
 					<image>
 						<name>${image.registry}/${image.name}:${image.tag}</name>
+						<builder>paketobuildpacks/builder:full</builder>
 						<tags>
 							<tag>${image.registry}/${image.name}:latest</tag>
 						</tags>
