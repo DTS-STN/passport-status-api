@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
 /**
+ * MongoDB document representing an HTTP trace (request/response and other related data).
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable

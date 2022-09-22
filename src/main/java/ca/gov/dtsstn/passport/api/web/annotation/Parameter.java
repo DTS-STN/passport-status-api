@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * An immutables.org injectable annotation used to inject SpringDoc's annotation of the same name.
  *
  * @see io.swagger.v3.oas.annotations.Parameter
+ * @see https://immutables.github.io/immutable.html#annotation-injection
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

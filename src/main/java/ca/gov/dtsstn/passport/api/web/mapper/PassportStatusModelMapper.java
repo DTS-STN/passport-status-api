@@ -8,6 +8,8 @@ import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
 /**
+ * MapStruct mapper that maps {@link PassportStatusModel} instances to {@link PassportStatus} instances (and vice versa).
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper

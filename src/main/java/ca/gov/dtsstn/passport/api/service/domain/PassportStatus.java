@@ -8,6 +8,8 @@ import org.immutables.value.Value.Immutable;
 import org.springframework.lang.Nullable;
 
 /**
+ * Domain object that represents a passport application status.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
@@ -15,7 +17,7 @@ public interface PassportStatus extends Serializable {
 
 	public enum Status {
 
-		// TODO :: GjB :: this are obviously made up
+		// TODO :: GjB :: these are obviously made up
 		ACCEPTED, PROCESSING, REJECTED, COMPLETED;
 
 	}

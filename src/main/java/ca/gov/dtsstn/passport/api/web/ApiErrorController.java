@@ -13,6 +13,8 @@ import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableApiErrorModel;
 
 /**
+ * API global error handler.
+ *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice

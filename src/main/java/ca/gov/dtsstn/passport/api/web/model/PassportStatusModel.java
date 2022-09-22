@@ -9,6 +9,8 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
+ * REST model representing a passport status.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable

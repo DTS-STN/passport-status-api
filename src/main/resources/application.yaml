@@ -120,3 +120,5 @@ application:
     data-initializer:
       duplicate-statuses-number: 10
       generated-statuses-number: 10_000
+  http-trace-repository:
+    page-size: 100

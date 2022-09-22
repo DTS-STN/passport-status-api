@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.assembler;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -13,6 +14,8 @@ import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 
 /**
+ * A Spring {@link RepresentationModelAssembler} to add HATEOAS metadata to a {@link PassportStatusModel}.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component

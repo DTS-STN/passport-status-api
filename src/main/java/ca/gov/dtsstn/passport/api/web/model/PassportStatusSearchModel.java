@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
 
 /**
+ * REST model representing a passport status search.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable

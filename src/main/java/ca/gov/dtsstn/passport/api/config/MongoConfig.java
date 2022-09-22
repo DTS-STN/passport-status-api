@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -19,9 +20,13 @@ public class MongoConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(MongoConfig.class);
 
+	@Autowired DateToLocalDateConverter dateToLocalDateConverter;
+
+	@Autowired LocalDateToDateConverter localDateToDateConverter;
+
 	@Bean MongoCustomConversions mongoCustomConversions() {
 		log.info("Creating 'mongoCustomConversions' bean");
-		return new MongoCustomConversions(List.of(new DateToLocalDateConverter(), new LocalDateToDateConverter()));
+		return new MongoCustomConversions(List.of(dateToLocalDateConverter, localDateToDateConverter));
 	}
 
 }

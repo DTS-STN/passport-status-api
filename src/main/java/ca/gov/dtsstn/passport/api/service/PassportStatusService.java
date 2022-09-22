@@ -14,6 +14,8 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
 /**
+ * Service class to handle {@link PassportStatus} interactions.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Service
