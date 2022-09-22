@@ -56,18 +56,18 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	@Override
 	@Transactional
 	public void onApplicationEvent(ApplicationStartedEvent event) {
-		log.info("Deleting all http traces…");
+		log.info("Deleting all http traces");
 		httpTraceRepository.deleteAll();
 
-		log.info("Deleting all passport statuses…");
+		log.info("Deleting all passport statuses");
 		passportStatusRepository.deleteAll();
 
-		log.info("Generating {} fake random passport statuses…", generatedStatusesNumber);
+		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
 		final var stopWatch = StopWatch.createStarted();
 		Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
 		log.info("Fake random data created in {}ms", stopWatch.getTime());
 
-		log.info("Generating {} duplicate fake passport statuses…", duplicateStatusesNumber);
+		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).forEach(passportStatusRepository::save);
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 	}

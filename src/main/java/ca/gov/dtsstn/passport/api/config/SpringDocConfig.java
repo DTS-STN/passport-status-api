@@ -36,7 +36,7 @@ public class SpringDocConfig {
 		log.info("Creating 'springDocCustomizer' bean");
 
 		return args -> {
-			log.info("Configuring SpringDoc parameter objects…");
+			log.info("Configuring SpringDoc parameter objects");
 			SpringDocUtils.getConfig().replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 		};
 	}
