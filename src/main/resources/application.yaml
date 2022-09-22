@@ -83,10 +83,6 @@ spring:
       - optional:application-local.yml
       - optional:application-local.yaml
   data:
-    mongodb:
-      uri: mongodb://localhost/passport
-      username: # set externally if required (via application-local.yaml or environment)
-      password: # set externally if required (via application-local.yaml or environment)
     web:
       pageable:
         one-indexed-parameters: true
