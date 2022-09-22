@@ -10,6 +10,8 @@ import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
 /**
+ * MapStruct mapper that maps {@link PassportStatus} instances to {@link PassportStatusDocument} instances (and vice versa).
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper

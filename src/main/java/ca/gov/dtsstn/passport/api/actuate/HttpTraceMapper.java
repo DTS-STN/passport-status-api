@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.actuate.mapper;
+package ca.gov.dtsstn.passport.api.actuate;
 
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -8,6 +8,8 @@ import org.springframework.boot.actuate.trace.http.HttpTrace;
 import ca.gov.dtsstn.passport.api.data.document.HttpTraceDocument;
 
 /**
+ * MapStruct mapper that maps {@link HttpTrace} instances to {@link HttpTraceDocument} instances (and vice versa).
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper

@@ -16,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
 /**
+ * MongoDB document representing a passport status.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable

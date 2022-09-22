@@ -33,14 +33,16 @@ public class SpringDocConfig {
 	@Autowired GitProperties gitProperties;
 
 	@Bean ApplicationListener<ContextRefreshedEvent> springDocCustomizer() {
+		log.info("Creating 'springDocCustomizer' bean");
+
 		return args -> {
 			log.info("Configuring SpringDoc parameter objects…");
 			SpringDocUtils.getConfig().replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 		};
 	}
 
-	@Bean OpenApiCustomiser openApiCustomiser() {
-		log.info("Creating 'openApiCustomiser' bean");
+	@Bean OpenApiCustomiser openApiCustomizer() {
+		log.info("Creating 'openApiCustomizer' bean");
 
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 		final var apiErrorModelSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ApiErrorModel.class)).schema;

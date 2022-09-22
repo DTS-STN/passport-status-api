@@ -28,7 +28,9 @@ public class Application {
 	 * An {@link ApplicationListener} that prints some useful startup information.
 	 */
 	@SuppressWarnings({ "java:S2479" })
-	@Bean ApplicationListener<ContextRefreshedEvent> startupListener(Environment environment) {
+	@Bean ApplicationListener<ContextRefreshedEvent> applicationStartupListener(Environment environment) {
+		log.info("Creating 'applicationStartupListener' bean");
+
 		return event -> {
 			final var applicationName = environment.getProperty("spring.application.name", "application");
 			final var serverPort = environment.getProperty("server.port", "8080");

@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
+ * REST model representing an API error.
+ *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @Immutable

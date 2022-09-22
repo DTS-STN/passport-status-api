@@ -22,6 +22,13 @@ import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
 import net.datafaker.Faker;
 
 /**
+ * This class is intended to be used for development purposes only!
+ * <p>
+ * DataInitializer is a Spring {@link ApplicationStartedEvent} listener that
+ * initializes a development database to a baseline configuration (using datafaker).
+ * <p>
+ * XXX :: GjB :: this component should only fire when intended; current it is confired to always fire, which WILL DESTROY DATA!!
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
