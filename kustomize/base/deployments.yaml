@@ -18,6 +18,7 @@ spec:
       containers:
         - name: passport-status-api
           image: mtscontainers.azurecr.io/passport-status-api:latest
+          imagePullPolicy: Always
           resources:
             requests:
               memory: 512Mi
