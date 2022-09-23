@@ -80,10 +80,6 @@ public class PassportStatusController {
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
 	public PassportStatusModel search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel) {
-		Assert.hasText(passportStatusSearchModel.getFileNumber(), "fileNumber is required");
-		Assert.hasText(passportStatusSearchModel.getFirstName(), "firstName is required");
-		Assert.hasText(passportStatusSearchModel.getLastName(), "lastName is required");
-		Assert.notNull(passportStatusSearchModel.getDateOfBirth(), "dateOfBirth is required");
 
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
 		final var page = passportStatusService.search(passportStatusProbe, Pageable.unpaged())
