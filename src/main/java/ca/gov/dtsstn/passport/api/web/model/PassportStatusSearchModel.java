@@ -16,16 +16,16 @@ import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
 @Immutable
 public interface PassportStatusSearchModel extends Serializable {
 
-	@Parameter(required = true)
+	@Parameter(required = true, description = "Passport status file number")
 	String getFileNumber();
 
-	@Parameter(required = true)
+	@Parameter(required = true, description = "Passport applicant first name")
 	String getFirstName();
 
-	@Parameter(required = true)
+	@Parameter(required = true, description = "Passport applicant last name")
 	String getLastName();
 
-	@Parameter(required = true)
+	@Parameter(required = true, description = "Passport applicant date of birth")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	LocalDate getDateOfBirth();
 
