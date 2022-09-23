@@ -25,7 +25,7 @@ public interface PassportStatusSearchModel extends Serializable {
 	@Parameter(required = true, description = "Passport applicant last name")
 	String getLastName();
 
-	@Parameter(required = true, description = "Passport applicant date of birth")
+	@Parameter(required = true, description = "Passport applicant date of birth (ISO Date Format yyyy-MM-dd)")
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	LocalDate getDateOfBirth();
 
