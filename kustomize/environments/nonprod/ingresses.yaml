@@ -12,7 +12,7 @@ metadata:
     appgw.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
   rules:
-    - host: passport-status-api.dev-rhp.dts-stn.com
+    - host: passport-status-main-api.dev-rhp.dts-stn.com
       http:
         paths:
           - path: /
@@ -24,5 +24,35 @@ spec:
                   name: http
   tls:
     - hosts:
-        - passport-status-api.dev-rhp.dts-stn.com
+        - passport-status-main-api.dev-rhp.dts-stn.com
       secretName: tls-passport-status-api
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: passport-status-api-private
+  labels:
+    app.kubernetes.io/name: passport-status-api-private
+    app.kubernetes.io/part-of: passport-status
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: passport-status-main-api.dev-rhp-private.dts-stn.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: passport-status-api
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - passport-status-main-api.dev-rhp-private.dts-stn.com
+      secretName: tls-passport-status-api-internal
