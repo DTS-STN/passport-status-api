@@ -10,4 +10,4 @@ spec:
     spec:
       containers:
         - name: passport-status-api
-          image: mtscontainers.azurecr.io/passport-status-api:0.0.0-20220923151014.0b0ca896
+          image: dtsdevcontainers.azurecr.io/passport-status-api:latest
