@@ -13,6 +13,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.web.model.ApiErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.ApiValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -46,13 +47,15 @@ public class SpringDocConfig {
 
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 		final var apiErrorModelSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ApiErrorModel.class)).schema;
+		final var apiValidationErrorModelSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ApiValidationErrorModel.class)).schema;
 
 		return openApi -> openApi
 			.info(new Info()
 				.title(applicationName)
 				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
 				.version(getApplicationVersion()))
-			.schema(apiErrorModelSchema.getName(), apiErrorModelSchema);
+			.schema(apiErrorModelSchema.getName(), apiErrorModelSchema)
+			.schema(apiValidationErrorModelSchema.getName(), apiValidationErrorModelSchema);
 	}
 
 	private String getApplicationVersion() {
