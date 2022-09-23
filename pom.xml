@@ -30,6 +30,7 @@
 		<image.registry>dtsdevcontainers.azurecr.io</image.registry>
 		<image.name>passport-status-api</image.name>
 		<image.tag>${project.version}-${maven.build.timestamp}.${git.commit.id.abbrev}</image.tag>
+		<spring-boot.build-image.imageName>${image.registry}/${image.name}:${image.tag}</spring-boot.build-image.imageName>
 
 		<!-- build configuration parameters -->
 
@@ -182,7 +183,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>${image.registry}/${image.name}:${image.tag}</name>
 						<builder>paketobuildpacks/builder:full</builder>
 						<tags>
 							<tag>${image.registry}/${image.name}:latest</tag>
