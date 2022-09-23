@@ -107,6 +107,7 @@ springdoc:
     - ca.gov.dtsstn.passport.api.web
   swagger-ui:
     disable-swagger-default-url: true
+    showCommonExtensions: true
   writer-with-default-pretty-printer: true
 
 #######################################################################################################################
@@ -122,3 +123,11 @@ application:
       generated-statuses-number: 10_000
   http-trace-repository:
     page-size: 100
+  security:
+    cors:
+      allowed-headers: '*'
+      allowed-methods: '*'
+      allowed-origins: http://localhost
+      exposed-headers: '*'
+    user:
+        name: admin
