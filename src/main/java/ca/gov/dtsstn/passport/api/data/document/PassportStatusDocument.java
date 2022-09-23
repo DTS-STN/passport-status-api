@@ -2,7 +2,6 @@ package ca.gov.dtsstn.passport.api.data.document;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDate;
 
 import org.immutables.value.Value.Immutable;
 import org.springframework.data.annotation.CreatedBy;
@@ -66,7 +65,7 @@ public interface PassportStatusDocument extends Serializable {
 	String getLastName();
 
 	@Nullable
-	LocalDate getDateOfBirth();
+	String getDateOfBirth();
 
 	@Nullable
 	Status getStatus();
