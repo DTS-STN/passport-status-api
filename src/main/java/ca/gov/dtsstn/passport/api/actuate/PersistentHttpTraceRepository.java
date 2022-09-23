@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.actuate.mapper.HttpTraceMapper;
 import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
 
 /**

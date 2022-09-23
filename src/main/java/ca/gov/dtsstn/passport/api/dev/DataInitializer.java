@@ -1,6 +1,5 @@
 package ca.gov.dtsstn.passport.api.dev;
 
-import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -78,7 +77,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
-			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate())
+			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate().toString())
 			.status(statuses[faker.random().nextInt(statuses.length)])
 			.build();
 	}
@@ -89,7 +88,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.fileNumber("DUPE0000")
 			.firstName("DUPE0000")
 			.lastName("DUPE0000")
-			.dateOfBirth(LocalDate.of(2000, 01, 01))
+			.dateOfBirth("2000-01-01")
 			.status(Status.ACCEPTED)
 			.build();
 	}

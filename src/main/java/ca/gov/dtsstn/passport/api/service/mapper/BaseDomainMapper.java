@@ -7,23 +7,32 @@ import java.lang.annotation.Target;
 import java.util.Optional;
 
 import org.mapstruct.Qualifier;
+import org.springframework.lang.Nullable;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 public interface BaseDomainMapper {
 
+	/**
+	 * MapStruct qualifier to be used to indicate that a field is searchable when querying.
+	 *
+	 * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
+	 */
 	@Qualifier
 	@Target({ ElementType.METHOD })
 	@Retention(RetentionPolicy.CLASS)
 	@interface Searchable {}
 
 	/**
-	 * Replaces all diacritic candidate characters in a regular expression
-	 * with regular expression character classes to allow for bilingual searching.
+	 * Replaces all diacritic candidate characters in a regular expression with
+	 * regular expression character classes to allow for bilingual searching in MongoDB.
+	 * <p>
+	 * ex: "fontaine" → "f[oóòôö]nt[aáàâä][iíìîï]n[eéèêë]"
 	 */
+	@Nullable
 	@Searchable
-	default String withDiacritics(String regex) {
+	default String withDiacritics(@Nullable String regex) {
 		return Optional.ofNullable(regex)
 			.map(str -> str.replaceAll("[AÁÀÂÄ]", "[AÁÀÂÄ]"))
 			.map(str -> str.replaceAll("[aáàâä]", "[aáàâä]"))
