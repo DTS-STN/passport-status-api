@@ -40,37 +40,12 @@ public class ApiErrorController extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			HttpHeaders headers,
-			HttpStatus status,
-			WebRequest request) {
-		final List<String> details = ex.getAllErrors().stream()
-			.map(ObjectError::getDefaultMessage)
-			.collect(Collectors.toUnmodifiableList());
-
-		final List<ApiValidationErrorModel> validationErrors = ex.getFieldErrors().stream()
-			.map(error -> ImmutableApiValidationErrorModel.builder()
-					.code(removeCurlyBraces(error.getCode()))
-					.field(error.getField())
-					.message(error.getDefaultMessage())
-					.build())
-				.collect(Collectors.toUnmodifiableList());
-
-		final ApiErrorModel errorModel = ImmutableApiErrorModel.builder()
-			.errorCode("API-0400")
-			.message("Validation error")
-			.details(details)
-			.validationErrors(validationErrors)
-			.build();
-
-		return handleExceptionInternal(ex, errorModel, headers, HttpStatus.BAD_REQUEST, request);
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		return handleBindException(ex, headers, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleBindException(BindException ex,
-			HttpHeaders headers,
-			HttpStatus status,
-			WebRequest request) {
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		final List<String> details = ex.getAllErrors().stream()
 			.map(ObjectError::getDefaultMessage)
 			.collect(Collectors.toUnmodifiableList());
