@@ -19,7 +19,6 @@ import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.ApiErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -80,7 +79,6 @@ public class PassportStatusController {
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
 	public PassportStatusModel search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel) {
-
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
 		final var page = passportStatusService.search(passportStatusProbe, Pageable.unpaged())
 			.map(passportStatusModelMapper::fromDomain)

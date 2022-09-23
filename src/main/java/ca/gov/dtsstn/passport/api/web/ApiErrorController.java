@@ -1,6 +1,5 @@
 package ca.gov.dtsstn.passport.api.web;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.core.convert.ConversionFailedException;
@@ -16,8 +15,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
-import ca.gov.dtsstn.passport.api.web.model.ApiErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ApiValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableApiErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableApiValidationErrorModel;
 
@@ -46,11 +43,11 @@ public class ApiErrorController extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final List<String> details = ex.getAllErrors().stream()
+		final var details = ex.getAllErrors().stream()
 			.map(ObjectError::getDefaultMessage)
 			.collect(Collectors.toUnmodifiableList());
 
-		final List<ApiValidationErrorModel> validationErrors = ex.getFieldErrors().stream()
+		final var validationErrors = ex.getFieldErrors().stream()
 			.map(error -> ImmutableApiValidationErrorModel.builder()
 					.code(removeCurlyBraces(error.getCode()))
 					.field(error.getField())
@@ -58,7 +55,7 @@ public class ApiErrorController extends ResponseEntityExceptionHandler {
 					.build())
 				.collect(Collectors.toUnmodifiableList());
 
-		final ApiErrorModel errorModel = ImmutableApiErrorModel.builder()
+		final var errorModel = ImmutableApiErrorModel.builder()
 			.errorCode("API-0400")
 			.message("Validation error")
 			.details(details)
@@ -79,8 +76,8 @@ public class ApiErrorController extends ResponseEntityExceptionHandler {
 	}
 
 	protected String removeCurlyBraces(String string) {
-		final int startIndex = string.indexOf('{');
-		final int endIndex = string.lastIndexOf('}');
+		final var startIndex = string.indexOf('{');
+		final var endIndex = string.lastIndexOf('}');
 
 		if (startIndex == -1 || endIndex == -1 || endIndex+1 != string.length()) { return string; }
 
