@@ -11,12 +11,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ca.gov.dtsstn.passport.api.config.WebMvcConfig;
+import ca.gov.dtsstn.passport.api.config.WebSecurityConfig;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @ActiveProfiles("test")
-@WebMvcTest({ WebMvcConfig.class })
+@WebMvcTest({ WebMvcConfig.class, WebSecurityConfig.class })
 class WebMvcIT {
 
 	@Autowired MockMvc mvc;
