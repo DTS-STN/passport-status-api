@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passport-status-api
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: passport-status-api
+  template:
+    spec:
+      containers:
+        - name: passport-status-api
+          image: mtscontainers.azurecr.io/passport-status-api:0.0.0-20220923151014.0b0ca896
