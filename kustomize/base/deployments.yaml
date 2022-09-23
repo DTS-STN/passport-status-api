@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passport-status-api
+  labels:
+    app.kubernetes.io/name: passport-status-api
+    app.kubernetes.io/part-of: passport-status
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: passport-status-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: passport-status-api
+    spec:
+      containers:
+        - name: passport-status-api
+          image: mtscontainers.azurecr.io/passport-status-api:latest
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 250m
+          ports:
+            - containerPort: 8080
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/livenessState
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readinessState
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
