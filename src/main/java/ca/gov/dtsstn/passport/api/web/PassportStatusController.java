@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.web;
 
-import static org.mockito.Mockito.description;
-
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
@@ -76,6 +74,7 @@ public class PassportStatusController {
 	@Operation(summary = "Search passport status by fileNumber, firstName, lastName and dateOfBirth")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "Successful operation"),
+		@ApiResponse(responseCode = "400", description = "Invalid input value", content = @Content(schema = @Schema(implementation = ApiErrorModel.class))),
 		@ApiResponse(responseCode = "404", description = "Passport status not found", content = @Content(schema = @Schema(implementation = ApiErrorModel.class)))
 	})
 	@GetMapping({ "/_search" })
