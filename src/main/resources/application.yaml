@@ -105,10 +105,12 @@ spring:
 springdoc:
   packages-to-scan:
     - ca.gov.dtsstn.passport.api.web
+  pre-loading-enabled: true
+  show-actuator: true # FIXME :: GjB :: this doesn't work, for some reason 💩
   swagger-ui:
     disable-swagger-default-url: true
-    showCommonExtensions: true
   writer-with-default-pretty-printer: true
+  writer-with-order-by-keys: true
 
 #######################################################################################################################
 #
