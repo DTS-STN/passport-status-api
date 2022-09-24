@@ -21,9 +21,7 @@
 		<!-- build version parameters -->
 
 		<revision>0.0.0</revision>
-
-		<!-- intentionally left blank -->
-		<changelist></changelist>
+		<changelist><!-- intentionally left blank --></changelist>
 
 		<!-- container image parameters -->
 
@@ -35,6 +33,7 @@
 		<java.version>11</java.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 
 		<!-- dependency/plugin versions -->
 
@@ -200,7 +199,7 @@
 						<tags>
 							<tag>${image.registry}/${image.name}:${project.version}</tag>
 							<tag>${image.registry}/${image.name}:${project.version}-${git.commit.id.abbrev}</tag>
-							<tag>${image.registry}/${image.name}:${project.version}-${maven.build.timestamp}.${git.commit.id.abbrev}</tag>
+							<tag>${image.registry}/${image.name}:${project.version}-${build.timestamp}.${git.commit.id.abbrev}</tag>
 						</tags>
 					</image>
 				</configuration>
