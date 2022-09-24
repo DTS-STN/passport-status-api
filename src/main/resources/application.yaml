@@ -36,6 +36,7 @@ management:
     web:
       exposure:
         include:
+          - beans
           - env
           - health
           - info
