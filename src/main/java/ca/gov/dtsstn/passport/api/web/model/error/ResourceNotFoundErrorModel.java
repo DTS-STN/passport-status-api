@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.error;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -18,11 +18,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface ResourceNotFoundErrorModel extends Serializable {
 
 	@Nullable
+	@Schema(example = "The resource with ID=[54543ab1-01b3-4edb-aad6-9b6c6b9e6985] was not found or the user does not have access")
+	String getDetails();
+
+	@Nullable
 	@Schema(example = "API-0404")
 	String getErrorCode();
 
 	@Nullable
-	@Schema(example = "The resource with ID=[54543ab1-01b3-4edb-aad6-9b6c6b9e6985] was not found or the user does not have access.")
+	@Schema(example = "Not found")
 	String getMessage();
 
 	@Nullable
