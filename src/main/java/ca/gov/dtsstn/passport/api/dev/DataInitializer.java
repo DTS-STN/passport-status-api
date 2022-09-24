@@ -71,9 +71,10 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 	}
 
-	private PassportStatusDocument generateRandomPassportStatus() {
+	protected PassportStatusDocument generateRandomPassportStatus() {
 		final var statuses = PassportStatusDocument.Status.values();
 		return ImmutablePassportStatusDocument.builder()
+			.id(faker.random().hex(24))
 			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
 			.lastName(faker.name().lastName())
@@ -85,6 +86,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	@SuppressWarnings({ "java:S1192" })
 	private PassportStatusDocument generateDuplicatePassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
+			.id(faker.random().hex(24))
 			.fileNumber("DUPE0000")
 			.firstName("DUPE0000")
 			.lastName("DUPE0000")
