@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
@@ -37,6 +39,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "passport-statuses", description = "Passport Status API")
 public class PassportStatusController {
 
+	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
+
 	private final PassportStatusModelAssembler passportStatusModelAssembler;
 
 	private final PassportStatusModelMapper passportStatusModelMapper;
@@ -58,7 +62,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
 	public PassportStatusModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
 		return passportStatusService.read(id)
-			.map(passportStatusModelMapper::fromDomain).map(passportStatusModelAssembler::toModel)
+			.map(passportStatusModelAssembler::toModel)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
@@ -79,8 +83,13 @@ public class PassportStatusController {
 	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @RequestParam(defaultValue = "true") boolean unique) {
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
 		final var page = passportStatusService.search(passportStatusProbe, pageable);
-		if (unique && page.getNumberOfElements() > 1) { throw new NonUniqueResourceException("Search query returned non-unique results"); }
-		return passportStatusModelAssembler.toPagedModel(page.map(passportStatusModelMapper::fromDomain));
+
+		if (unique && page.getNumberOfElements() > 1) {
+			log.warn("Search query returned non-unique results: {}", passportStatusSearchModel);
+			throw new NonUniqueResourceException("Search query returned non-unique results");
+		}
+
+		return passportStatusModelAssembler.toPagedModel(page);
 	}
 
 }
