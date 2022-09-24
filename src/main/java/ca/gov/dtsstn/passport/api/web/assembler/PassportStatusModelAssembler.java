@@ -50,15 +50,22 @@ public class PassportStatusModelAssembler extends RepresentationModelAssemblerSu
 		Assert.hasText(passportStatus.getId(), "passportStatus.id is required; it must not be blank or null");
 
 		final var searchQueryTemplate = "?dateOfBirth={dateOfBirth}&fileNumber={fileNumber}&firstName={firstName}&lastName={lastName}";
-		final var searchMethod = methodOn(PassportStatusController.class).search(null);
+		final var searchMethod = methodOn(PassportStatusController.class).search(null, null, true);
 		final var searchLink = linkTo(searchMethod).slash(searchQueryTemplate).withRel("search").expand(passportStatus.getDateOfBirth(), passportStatus.getFileNumber(), passportStatus.getFirstName(), passportStatus.getLastName());
 
 		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink);
 	}
 
+	@SuppressWarnings({ "unchecked" })
+	public PagedModel<PassportStatusModel> toEmptyPagedModel(Page<PassportStatus> passportStatuses) {
+		return (PagedModel<PassportStatusModel>) pagedResourcesAssembler.toEmptyModel(passportStatuses, PassportStatusModel.class);
+	}
+
 	public PagedModel<PassportStatusModel> toPagedModel(Page<PassportStatus> passportStatuses) {
 		Assert.notNull(passportStatuses, "passportStatuses is required; it must not be null");
-		return pagedResourcesAssembler.toModel(passportStatuses, this);
+		return passportStatuses.isEmpty()
+			? toEmptyPagedModel(passportStatuses)
+			: pagedResourcesAssembler.toModel(passportStatuses, this);
 	}
 
 }

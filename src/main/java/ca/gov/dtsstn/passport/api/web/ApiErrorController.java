@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableApiErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableApiValidationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableResourceNotFoundErrorModel;
 
 /**
  * API global error handler.
@@ -25,21 +27,6 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableApiValidationErrorModel;
  */
 @RestControllerAdvice
 public class ApiErrorController extends ResponseEntityExceptionHandler {
-
-	@ExceptionHandler({ ConversionFailedException.class })
-	public ResponseEntity<Object> conversionFailedHandler(ConversionFailedException ex, WebRequest request) {
-		final var errorModel = ImmutableApiErrorModel.builder()
-			.errorCode("API-0400")
-			.message("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName())
-			.build();
-
-		return handleExceptionInternal(ex, errorModel, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
-
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		return handleBindException(ex, headers, HttpStatus.BAD_REQUEST, request);
-	}
 
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -65,9 +52,34 @@ public class ApiErrorController extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, errorModel, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler({ ResourceNotFoundException.class })
-	public ResponseEntity<Object> resourceNotFoundHandler(Exception ex, WebRequest request) {
+	@ExceptionHandler({ ConversionFailedException.class })
+	public ResponseEntity<Object> handleConversionFailedException(ConversionFailedException ex, WebRequest request) {
 		final var errorModel = ImmutableApiErrorModel.builder()
+			.errorCode("API-0400")
+			.message("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName())
+			.build();
+
+		return handleExceptionInternal(ex, errorModel, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		return handleBindException(ex, headers, HttpStatus.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler({ NonUniqueResourceException.class })
+	public ResponseEntity<Object> handleNonUniqueResourceException(NonUniqueResourceException ex, WebRequest request) {
+		final var errorModel = ImmutableResourceNotFoundErrorModel.builder()
+			.errorCode("API-0422")
+			.message(ex.getMessage())
+			.build();
+
+		return handleExceptionInternal(ex, errorModel, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+	}
+
+	@ExceptionHandler({ ResourceNotFoundException.class })
+	public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+		final var errorModel = ImmutableResourceNotFoundErrorModel.builder()
 			.errorCode("API-0404")
 			.message(ex.getMessage())
 			.build();
