@@ -1,5 +1,8 @@
 package ca.gov.dtsstn.passport.api.web.assembler;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
@@ -45,7 +48,12 @@ public class PassportStatusModelAssembler extends RepresentationModelAssemblerSu
 	public PassportStatusModel toModel(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.hasText(passportStatus.getId(), "passportStatus.id is required; it must not be blank or null");
-		return createModelWithId(passportStatus.getId(), passportStatus);
+
+		final var searchQueryTemplate = "?dateOfBirth={dateOfBirth}&fileNumber={fileNumber}&firstName={firstName}&lastName={lastName}";
+		final var searchMethod = methodOn(PassportStatusController.class).search(null);
+		final var searchLink = linkTo(searchMethod).slash(searchQueryTemplate).withRel("search").expand(passportStatus.getDateOfBirth(), passportStatus.getFileNumber(), passportStatus.getFirstName(), passportStatus.getLastName());
+
+		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink);
 	}
 
 	public PagedModel<PassportStatusModel> toPagedModel(Page<PassportStatus> passportStatuses) {
