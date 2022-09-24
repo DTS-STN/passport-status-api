@@ -39,15 +39,10 @@ management:
           - beans
           - env
           - health
+          - httptrace
           - info
           - metrics
           - prometheus
-  metrics:
-    web:
-      server:
-        request:
-          autotime:
-            enabled: true
 
 #######################################################################################################################
 #
@@ -127,7 +122,7 @@ application:
       duplicate-statuses-number: 10
       generated-statuses-number: 10_000
   http-trace-repository:
-    page-size: 100
+    capacity: 100
   security:
     cors:
       allowed-headers: '*'
