@@ -16,6 +16,7 @@
 	<version>${revision}${changelist}</version>
 	<packaging>jar</packaging>
 
+
 	<developers>
 		<developer>
 			<name>Greg Baker</name>
@@ -32,9 +33,7 @@
 		<!-- build version parameters -->
 
 		<revision>0.0.0</revision>
-		<changelist>
-			<!-- intentionally left blank -->
-		</changelist>
+		<changelist><!-- intentionally left blank --></changelist>
 
 		<!-- container image parameters -->
 
