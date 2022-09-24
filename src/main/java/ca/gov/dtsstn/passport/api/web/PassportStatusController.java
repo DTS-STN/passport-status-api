@@ -20,10 +20,12 @@ import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
-import ca.gov.dtsstn.passport.api.web.model.ApiErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
-import ca.gov.dtsstn.passport.api.web.model.ResourceNotFoundErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ResourceNotFoundErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,6 +39,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping({ "/api/v1/passport-statuses" })
 @Tag(name = "passport-statuses", description = "Passport Status API")
+@ApiResponse(responseCode = "500", description = "Internal server error.", content = { @Content(schema = @Schema(implementation = InternalServerErrorModel.class)) })
 public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
@@ -78,8 +81,8 @@ public class PassportStatusController {
 	@ResponseStatus(code = HttpStatus.OK)
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
-	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = ApiErrorModel.class))} )
-	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = ApiErrorModel.class)) })
+	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
+	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
 	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @RequestParam(defaultValue = "true") boolean unique) {
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
 		final var page = passportStatusService.search(passportStatusProbe, pageable);
