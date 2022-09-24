@@ -9,22 +9,24 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
+import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.ApiErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
+import ca.gov.dtsstn.passport.api.web.model.ResourceNotFoundErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
@@ -32,7 +34,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @RestController
 @RequestMapping({ "/api/v1/passport-statuses" })
-@Tag(name = "passport-status", description = "Passport Status API")
+@Tag(name = "passport-statuses", description = "Passport Status API")
 public class PassportStatusController {
 
 	private final PassportStatusModelAssembler passportStatusModelAssembler;
@@ -50,44 +52,35 @@ public class PassportStatusController {
 		this.passportStatusService = passportStatusService;
 	}
 
-	@Operation(summary = "Find passport status by ID")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Successful operation"),
-		@ApiResponse(responseCode = "404", description = "Passport status not found", content = @Content(schema = @Schema(implementation = ApiErrorModel.class)))
-	})
 	@GetMapping({ "/{id}" })
-	public PassportStatusModel get(@Parameter(description = "ID of passport status that needs to be fetched", required = true) @PathVariable String id) {
+	@Operation(summary = "Retrieves a passport status by its internal database ID.")
+	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
+	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
+	public PassportStatusModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
 		return passportStatusService.read(id)
-			.map(passportStatusModelMapper::fromDomain)
-			.map(passportStatusModelAssembler::toModel)
+			.map(passportStatusModelMapper::fromDomain).map(passportStatusModelAssembler::toModel)
 			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
-	@Operation(summary = "Find all passport statuses paged")
-	@ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successful operation"))
 	@GetMapping({ /* root */ })
+	@Operation(summary = "Retrieve a paged list of all passport statuses.")
+	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
-		return passportStatusModelAssembler.toPagedModel(passportStatusService.readAll(pageable));
+		final var page = passportStatusService.readAll(pageable);
+		return passportStatusModelAssembler.toPagedModel(page);
 	}
 
-	@Operation(summary = "Search passport status by fileNumber, firstName, lastName and dateOfBirth")
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "Successful operation"),
-		@ApiResponse(responseCode = "400", description = "Invalid input value", content = @Content(schema = @Schema(implementation = ApiErrorModel.class))),
-		@ApiResponse(responseCode = "404", description = "Passport status not found", content = @Content(schema = @Schema(implementation = ApiErrorModel.class)))
-	})
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
-	public PassportStatusModel search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel) {
+	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
+	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
+	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = ApiErrorModel.class))} )
+	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = ApiErrorModel.class)) })
+	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @RequestParam(defaultValue = "true") boolean unique) {
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
-		final var page = passportStatusService.search(passportStatusProbe, Pageable.unpaged())
-			.map(passportStatusModelMapper::fromDomain)
-			.map(passportStatusModelAssembler::toModel);
-
-		if (page.isEmpty()) { throw new ResourceNotFoundException("Search query returned no results"); }
-		if (page.getNumberOfElements() > 1) { throw new ResourceNotFoundException("Search query returned non-unique results"); }
-
-		return page.getContent().get(0);
+		final var page = passportStatusService.search(passportStatusProbe, pageable);
+		if (unique && page.getNumberOfElements() > 1) { throw new NonUniqueResourceException("Search query returned non-unique results"); }
+		return passportStatusModelAssembler.toPagedModel(page.map(passportStatusModelMapper::fromDomain));
 	}
 
 }
