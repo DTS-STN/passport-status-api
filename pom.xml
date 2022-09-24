@@ -16,12 +16,25 @@
 	<version>${revision}${changelist}</version>
 	<packaging>jar</packaging>
 
+	<developers>
+		<developer>
+			<name>Greg Baker</name>
+			<email>gregory.j.baker@hrsdc-rhdcc.gc.ca</email>
+		</developer>
+		<developer>
+			<name>Sébastien Comeau</name>
+			<email>sebastien.comeau@hrsdc-rhdcc.gc.ca</email>
+		</developer>
+	</developers>
+
 
 	<properties>
 		<!-- build version parameters -->
 
 		<revision>0.0.0</revision>
-		<changelist><!-- intentionally left blank --></changelist>
+		<changelist>
+			<!-- intentionally left blank -->
+		</changelist>
 
 		<!-- container image parameters -->
 
