@@ -17,6 +17,18 @@
 	<packaging>jar</packaging>
 
 
+	<developers>
+		<developer>
+			<name>Greg Baker</name>
+			<email>gregory.j.baker@hrsdc-rhdcc.gc.ca</email>
+		</developer>
+		<developer>
+			<name>Sébastien Comeau</name>
+			<email>sebastien.comeau@hrsdc-rhdcc.gc.ca</email>
+		</developer>
+	</developers>
+
+
 	<properties>
 		<!-- build version parameters -->
 
