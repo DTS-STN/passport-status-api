@@ -18,18 +18,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface ResourceNotFoundErrorModel extends Serializable {
 
 	@Default
-	@Schema(example = "400")
+	@Schema(example = "404")
 	default int getStatusCode() {
-		return 400;
+		return 404;
 	}
 
 	@Schema(example = "The resource with ID=[54543ab1-01b3-4edb-aad6-9b6c6b9e6985] was not found or the user does not have access")
 	String getDetails();
 
 	@Default
-	@Schema(example = "API-0400")
+	@Schema(example = "API-0404")
 	default String getErrorCode() {
-		return "API-0400";
+		return "API-0404";
 	}
 
 	@Default
