@@ -3,13 +3,14 @@ package ca.gov.dtsstn.passport.api.web.model.error;
 import java.io.Serializable;
 import java.time.Instant;
 
+import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 import org.springframework.lang.Nullable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST model representing an API error.
+ * REST model representing an HTTP 500 Internal Server Error response
  *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
@@ -17,19 +18,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "InternalServerError")
 public interface InternalServerErrorModel extends Serializable {
 
+	@Default
+	@Schema(example = "500")
+	default int getStatusCode() {
+		return 500;
+	}
+
 	@Nullable
 	@Schema(example = "An unexpected error has occurred.")
 	String getDetails();
 
-	@Nullable
+	@Default
 	@Schema(example = "API-0500")
-	String getErrorCode();
+	default String getErrorCode() {
+		return "API-0500";
+	}
 
-	@Nullable
-	@Schema(example = "We are currently experiencing technical difficulties.")
-	String getMessage();
+	@Default
+	@Schema(example = "Internal server error")
+	default String getMessage() {
+		return "Internal server error";
+	}
 
+	@Default
 	@Schema(example = "2000-01-01T00:00:00Z")
-	@Nullable Instant getTimestamp();
+	default Instant getTimestamp() {
+		return Instant.now();
+	}
 
 }

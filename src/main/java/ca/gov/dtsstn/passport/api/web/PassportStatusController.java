@@ -59,16 +59,14 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
 	public PassportStatusModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(assembler::toModel)
-			.orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
+		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
 	@GetMapping({ /* root */ })
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
-		final var page = service.readAll(pageable);
-		return assembler.toPagedModel(page);
+		return assembler.toPagedModel(service.readAll(pageable));
 	}
 
 	@GetMapping({ "/_search" })
