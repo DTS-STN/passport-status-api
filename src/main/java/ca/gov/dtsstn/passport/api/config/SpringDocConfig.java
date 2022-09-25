@@ -21,7 +21,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 @Configuration
 public class SpringDocConfig {
 
-
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
 
 	public static final String API_KEY_SECURITY = "api-key";
@@ -34,9 +33,6 @@ public class SpringDocConfig {
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 
 		return openApi -> {
-			log.info("Configuring SpringDoc parameter objects");
-			AdditionalModelsConverter.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
-
 			openApi.getInfo()
 				.title(applicationName)
 				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
@@ -44,10 +40,14 @@ public class SpringDocConfig {
 			openApi.getComponents()
 				.addSecuritySchemes(API_KEY_SECURITY, new SecurityScheme().type(Type.APIKEY).in(In.HEADER).name("Authorization"))
 				.addSecuritySchemes(BASIC_SECURITY, new SecurityScheme().type(Type.HTTP).scheme("basic")); // NOSONAR
+
+			// Note: this is required for SpringDoc to corrently document PassportStatusSearchModel as a parameter object
+			log.info("Configuring SpringDoc parameter objects");
+			AdditionalModelsConverter.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 		};
 	}
 
-	private String getApplicationVersion(GitProperties gitProperties) {
+	protected String getApplicationVersion(GitProperties gitProperties) {
 		return String.format("v%s+%s", gitProperties.get("build.version"), gitProperties.getShortCommitId());
 	}
 
