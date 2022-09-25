@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @RestController
 @RequestMapping({ "/api/v1/passport-statuses" })
-@Tag(name = "passport-statuses", description = "Passport Status API")
+@Tag(name = "Passport Statuses", description = "Passport Status API")
 @ApiResponse(responseCode = "500", description = "Internal server error.", content = { @Content(schema = @Schema(implementation = InternalServerErrorModel.class)) })
 public class PassportStatusController {
 
