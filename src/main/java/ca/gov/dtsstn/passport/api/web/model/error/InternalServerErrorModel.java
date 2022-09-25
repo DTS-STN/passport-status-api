@@ -5,7 +5,6 @@ import java.time.Instant;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
-import org.springframework.lang.Nullable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -24,7 +23,9 @@ public interface InternalServerErrorModel extends Serializable {
 		return 500;
 	}
 
-	@Nullable
+	@Schema(example = "00000000-0000-0000-000000000000")
+	String getCorrelationId();
+
 	@Schema(example = "An unexpected error has occurred.")
 	String getDetails();
 

@@ -1,8 +1,11 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,8 @@ import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
 @RestControllerAdvice
 public class ErrorController {
 
+	private static final Logger log = LoggerFactory.getLogger(ErrorController.class);
+
 	@ExceptionHandler({ BindException.class })
 	protected ResponseEntity<BadRequestErrorModel> handleBindException(BindException ex) {
 		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toUnmodifiableList());
@@ -63,8 +68,14 @@ public class ErrorController {
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<InternalServerErrorModel> handleGenericException(Exception ex) {
-		final var error = ImmutableInternalServerErrorModel.builder().details(ex.getMessage()).build();
+		final var correlationId = generateCorrelationId();
+		log.error("[correlationId: {}] Request processing failed; nested exception is {}: {}", correlationId, ex.getClass().getName(), ex.getMessage(), ex);
+		final var error = ImmutableInternalServerErrorModel.builder().details(ex.getMessage()).correlationId(correlationId).build();
 		return ResponseEntity.internalServerError().body(error);
+	}
+
+	protected String generateCorrelationId() {
+		return UUID.randomUUID().toString();
 	}
 
 	protected ValidationErrorModel toValidationError(FieldError fieldError) {
