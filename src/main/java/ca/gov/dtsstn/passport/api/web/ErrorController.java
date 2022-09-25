@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -68,24 +67,10 @@ public class ErrorController {
 		return ResponseEntity.internalServerError().body(error);
 	}
 
-	@Nullable
-	protected String removeCurlyBraces(@Nullable String string) {
-		if (string == null) { return null; }
-
-		final var startIndex = string.indexOf('{');
-		final var endIndex = string.lastIndexOf('}');
-
-		if (startIndex == -1 || endIndex == -1 || endIndex+1 != string.length()) {
-			return string;
-		}
-
-		return string.substring(startIndex+1, endIndex);
-	}
-
 	protected ValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
 		return ImmutableValidationErrorModel.builder()
-			.code(removeCurlyBraces(fieldError.getCode()))
+			.code(fieldError.getCode())
 			.field(fieldError.getField())
 			.message(fieldError.getDefaultMessage())
 			.build();
