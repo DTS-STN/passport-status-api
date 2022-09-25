@@ -12,7 +12,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
-import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -32,12 +30,10 @@ class PassportStatusServiceTests {
 
 	PassportStatusService passportStatusService;
 
-	PassportStatusMapper passportStatusMapper = Mappers.getMapper(PassportStatusMapper.class);
-
 	@Mock PassportStatusRepository passportStatusRepository;
 
 	@BeforeEach void beforeEach() {
-		this.passportStatusService = new PassportStatusService(passportStatusMapper, passportStatusRepository);
+		this.passportStatusService = new PassportStatusService(passportStatusRepository);
 	}
 
 	@Test void testCreate() {

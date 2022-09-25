@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.service;
 
 import java.util.Optional;
 
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,12 @@ import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 @Service
 public class PassportStatusService {
 
-	private final PassportStatusMapper passportStatusMapper;
+	private final PassportStatusMapper passportStatusMapper = Mappers.getMapper(PassportStatusMapper.class);
 
 	private final PassportStatusRepository passportStatusRepository;
 
-	public PassportStatusService(PassportStatusMapper passportStatusMapper, PassportStatusRepository passportStatusRepository) {
-		Assert.notNull(passportStatusMapper, "passportStatusMapper is required; it must not be null");
+	public PassportStatusService(PassportStatusRepository passportStatusRepository) {
 		Assert.notNull(passportStatusRepository, "passportStatusRepository is required; it must not be null");
-		this.passportStatusMapper = passportStatusMapper;
 		this.passportStatusRepository = passportStatusRepository;
 	}
 

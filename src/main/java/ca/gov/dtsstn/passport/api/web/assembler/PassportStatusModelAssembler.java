@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -23,13 +24,10 @@ import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 @Component
 public class PassportStatusModelAssembler extends AbstractModelAssembler<PassportStatus, PassportStatusModel> {
 
-	private final PassportStatusModelMapper mapper;
+	private final PassportStatusModelMapper mapper = Mappers.getMapper(PassportStatusModelMapper.class);
 
-	public PassportStatusModelAssembler(PagedResourcesAssembler<PassportStatus> pagedAssembler, PassportStatusModelMapper mapper) {
+	public PassportStatusModelAssembler(PagedResourcesAssembler<PassportStatus> pagedAssembler) {
 		super(PassportStatusController.class, PassportStatusModel.class, pagedAssembler);
-
-		Assert.notNull(mapper, "mapper is required; it must not be null");
-		this.mapper = mapper;
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,6 @@ import org.springframework.hateoas.PagedModel;
 
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler.PassportStatusModelMapper;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -27,12 +25,10 @@ class PassportStatusModelAssemblerTests {
 
 	PassportStatusModelAssembler passportStatusModelAssembler;
 
-	PassportStatusModelMapper passportStatusModelMapper = Mappers.getMapper(PassportStatusModelMapper.class);
-
 	@Mock PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler;
 
 	@BeforeEach void beforeEach() {
-		this.passportStatusModelAssembler = new PassportStatusModelAssembler(pagedResourcesAssembler, passportStatusModelMapper);
+		this.passportStatusModelAssembler = new PassportStatusModelAssembler(pagedResourcesAssembler);
 	}
 
 	@Test void testInstantiateModel() {

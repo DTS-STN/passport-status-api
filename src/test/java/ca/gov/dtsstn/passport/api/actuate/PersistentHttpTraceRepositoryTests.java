@@ -11,7 +11,6 @@ import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
@@ -22,7 +21,6 @@ import org.springframework.boot.actuate.trace.http.HttpTrace.Session;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import ca.gov.dtsstn.passport.api.actuate.PersistentHttpTraceRepository.HttpTraceMapper;
 import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
 
 /**
@@ -36,7 +34,7 @@ class PersistentHttpTraceRepositoryTests {
 	@Mock HttpTraceRepository httpTraceRepository;
 
 	@BeforeEach void beforeEach() {
-		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(Mappers.getMapper(HttpTraceMapper.class), httpTraceRepository);
+		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(httpTraceRepository);
 	}
 
 	@Test void testAdd() {

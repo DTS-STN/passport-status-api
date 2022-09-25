@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,14 +27,12 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 
 	private final HttpTraceRepository httpTraceRepository;
 
-	private final HttpTraceMapper httpTraceMapper;
+	private final HttpTraceMapper httpTraceMapper = Mappers.getMapper(HttpTraceMapper.class);
 
 	private final InMemoryHttpTraceRepository delegate = new InMemoryHttpTraceRepository();
 
-	public PersistentHttpTraceRepository(HttpTraceMapper httpTraceMapper, HttpTraceRepository httpTraceRepository) {
-		Assert.notNull(httpTraceMapper, "httpTraceMapper is required; it must not be null");
+	public PersistentHttpTraceRepository(HttpTraceRepository httpTraceRepository) {
 		Assert.notNull(httpTraceRepository, "httpTraceRepository is required; it must not be null");
-		this.httpTraceMapper = httpTraceMapper;
 		this.httpTraceRepository = httpTraceRepository;
 	}
 
