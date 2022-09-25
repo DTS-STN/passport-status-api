@@ -83,6 +83,7 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+        max-page-size: 500
   jackson:
     default-property-inclusion: non-null
     serialization:
