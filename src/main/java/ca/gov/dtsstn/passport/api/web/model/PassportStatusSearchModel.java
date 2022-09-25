@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import org.immutables.value.Value.Immutable;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import ca.gov.dtsstn.passport.api.web.annotation.Schema;
+import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
 
 /**
  * REST model representing a passport status search.
@@ -20,20 +20,20 @@ import ca.gov.dtsstn.passport.api.web.annotation.Schema;
 public interface PassportStatusSearchModel extends Serializable {
 
 	@NotBlank(message = "fileNumber must not be null or blank")
-	@Schema(description = "The electronic service request file number.", example = "ABCD1234", required = true)
+	@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
 	String getFileNumber();
 
 	@NotBlank(message = "firstName must not be null or blank")
-	@Schema(description = "The first name of the passport applicant.", example = "John", required = true)
+	@Parameter(description = "The first name of the passport applicant.", example = "John", required = true)
 	String getFirstName();
 
 	@NotBlank(message = "lastName must not be null or blank")
-	@Schema(description = "The last name of the passport applicant.", example = "Doe", required = true)
+	@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
 	String getLastName();
 
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	@NotNull(message = "dateOfBirth must not be null or blank")
-	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
+	@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
 	LocalDate getDateOfBirth();
 
 }

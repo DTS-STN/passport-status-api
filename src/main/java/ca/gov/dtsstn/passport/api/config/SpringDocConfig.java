@@ -2,7 +2,7 @@ package ca.gov.dtsstn.passport.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.core.converters.AdditionalModelsConverter;
+import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,17 +33,20 @@ public class SpringDocConfig {
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 
 		return openApi -> {
+			log.info("Configuring OpenAPI info");
 			openApi.getInfo()
 				.title(applicationName)
 				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
 				.version(getApplicationVersion(gitProperties));
+
+			log.info("Configuring OpenAPI security schemes");
 			openApi.getComponents()
 				.addSecuritySchemes(API_KEY_SECURITY, new SecurityScheme().type(Type.APIKEY).in(In.HEADER).name("Authorization"))
 				.addSecuritySchemes(BASIC_SECURITY, new SecurityScheme().type(Type.HTTP).scheme("basic")); // NOSONAR
 
 			// Note: this is required for SpringDoc to corrently document PassportStatusSearchModel as a parameter object
 			log.info("Configuring SpringDoc parameter objects");
-			AdditionalModelsConverter.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
+			SpringDocUtils.getConfig().replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 		};
 	}
 
