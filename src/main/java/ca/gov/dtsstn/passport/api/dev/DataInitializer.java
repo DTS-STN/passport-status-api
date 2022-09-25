@@ -83,13 +83,12 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.build();
 	}
 
-	@SuppressWarnings({ "java:S1192" })
 	private PassportStatusDocument generateDuplicatePassportStatus() {
 		return ImmutablePassportStatusDocument.builder()
 			.id(faker.random().hex(24))
-			.fileNumber("DUPE0000")
-			.firstName("DUPE0000")
-			.lastName("DUPE0000")
+			.fileNumber("DUPE0000") // NOSONAR
+			.firstName("DUPE0000")   // NOSONAR
+			.lastName("DUPE0000")     // NOSONAR
 			.dateOfBirth("2000-01-01")
 			.status(Status.ACCEPTED)
 			.build();

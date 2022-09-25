@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.context.ApplicationListener;
@@ -27,15 +26,12 @@ import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepositoryImpl;
  */
 @Configuration
 @EnableMongoAuditing
-@SuppressWarnings({ "java:S3305" })
 @EnableMongoRepositories(basePackageClasses = { ExtendedMongoRepository.class }, repositoryBaseClass = ExtendedMongoRepositoryImpl.class)
 public class DataSourceConfig {
 
 	private final Logger log = LoggerFactory.getLogger(DataSourceConfig.class);
 
-	@Autowired Environment environment;
-
-	@Bean AuditorAware<String> auditor() {
+	@Bean AuditorAware<String> auditor(Environment environment) {
 		log.info("Creating 'auditor' bean");
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 		return () -> Optional.of(applicationName);

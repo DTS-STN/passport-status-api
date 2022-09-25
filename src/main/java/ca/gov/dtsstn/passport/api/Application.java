@@ -27,7 +27,6 @@ public class Application {
 	/**
 	 * An {@link ApplicationListener} that prints some useful startup information.
 	 */
-	@SuppressWarnings({ "java:S2479" })
 	@Bean ApplicationListener<ContextRefreshedEvent> applicationStartupListener(Environment environment) {
 		log.info("Creating 'applicationStartupListener' bean");
 
@@ -38,7 +37,7 @@ public class Application {
 
 			log.info("===============================================================================");
 			log.info("Successfully started {}", applicationName);
-			log.info("	→ Local application URL: http://localhost:{}{} ←", serverPort, contextPath);
+			log.info("	Local application URL: http://localhost:{}{}", serverPort, contextPath); // NOSONAR
 			log.info("===============================================================================");
 		};
 	}

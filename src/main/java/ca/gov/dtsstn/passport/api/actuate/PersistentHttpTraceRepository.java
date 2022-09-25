@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.actuate;
 
+import java.util.Optional;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
@@ -33,10 +35,11 @@ public class PersistentHttpTraceRepository extends InMemoryHttpTraceRepository {
 	}
 
 	@Override
-	@SuppressWarnings({ "java:S4449" })
 	public void add(HttpTrace httpTrace) {
 		super.add(httpTrace);
-		httpTraceRepository.save(httpTraceMapper.toDocument(httpTrace));
+		Optional.ofNullable(httpTrace)
+			.map(httpTraceMapper::toDocument)
+			.ifPresent(httpTraceRepository::save);
 	}
 
 	@Override

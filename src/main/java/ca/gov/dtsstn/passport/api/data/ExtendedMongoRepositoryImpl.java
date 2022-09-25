@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Transactional(readOnly = true)
-@SuppressWarnings({ "java:S119" })
-public class ExtendedMongoRepositoryImpl<T, ID> extends SimpleMongoRepository<T, ID> implements ExtendedMongoRepository<T, ID> {
+public class ExtendedMongoRepositoryImpl<T, ID> extends SimpleMongoRepository<T, ID> implements ExtendedMongoRepository<T, ID> { // NOSONAR
 
 	public ExtendedMongoRepositoryImpl(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
 		super(metadata, mongoOperations);

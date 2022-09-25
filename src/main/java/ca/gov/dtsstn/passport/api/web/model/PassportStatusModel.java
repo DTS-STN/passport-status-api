@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "PassportStatus")
-@SuppressWarnings({ "immutables", "serial" })
+@SuppressWarnings({ "serial" })
 @Style(passAnnotations = { Relation.class })
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
@@ -74,5 +74,14 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Nullable
 	@Schema(description = "The status of the passport application.")
 	public abstract Status getStatus();
+
+	@Override
+	public abstract int hashCode();
+
+	@Override
+	public abstract boolean equals(Object obj);
+
+	@Override
+	public abstract String toString();
 
 }
