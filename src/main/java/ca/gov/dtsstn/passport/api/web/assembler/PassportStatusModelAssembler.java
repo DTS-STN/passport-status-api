@@ -3,6 +3,8 @@ package ca.gov.dtsstn.passport.api.web.assembler;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -10,8 +12,8 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
-import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
 /**
  * A Spring {@link RepresentationModelAssembler} to add HATEOAS metadata to a {@link PassportStatusModel}.
@@ -21,19 +23,23 @@ import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 @Component
 public class PassportStatusModelAssembler extends AbstractModelAssembler<PassportStatus, PassportStatusModel> {
 
-	private final PassportStatusModelMapper passportStatusModelMapper;
+	private final PassportStatusModelMapper mapper;
 
-	public PassportStatusModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler, PassportStatusModelMapper passportStatusModelMapper) {
-		super(PassportStatusController.class, PassportStatusModel.class, pagedResourcesAssembler);
+	public PassportStatusModelAssembler(PagedResourcesAssembler<PassportStatus> pagedAssembler, PassportStatusModelMapper mapper) {
+		super(PassportStatusController.class, PassportStatusModel.class, pagedAssembler);
 
-		Assert.notNull(passportStatusModelMapper, "passportStatusModelMapper is required; it must not be null");
-		this.passportStatusModelMapper = passportStatusModelMapper;
+		Assert.notNull(mapper, "mapper is required; it must not be null");
+		this.mapper = mapper;
 	}
 
 	@Override
 	protected PassportStatusModel instantiateModel(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
-		return passportStatusModelMapper.fromDomain(passportStatus);
+		return mapper.fromDomain(passportStatus);
+	}
+
+	public PassportStatus toDomain(PassportStatusSearchModel passportStatusSearchModel) {
+		return mapper.toDomain(passportStatusSearchModel);
 	}
 
 	@Override
@@ -47,6 +53,28 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 		final var searchLink = linkTo(searchMethod).slash(searchQueryTemplate).withRel("search").expand(passportStatus.getDateOfBirth(), passportStatus.getFileNumber(), passportStatus.getFirstName(), passportStatus.getLastName());
 
 		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink);
+	}
+
+	public PassportStatusModelMapper getMapper() {
+		return mapper;
+	}
+
+	@Mapper
+	public interface PassportStatusModelMapper {
+
+		PassportStatus toDomain(PassportStatusModel passportStatus);
+
+		@Mapping(target = "id", ignore = true)
+		@Mapping(target = "createdBy", ignore = true)
+		@Mapping(target = "createdDate", ignore = true)
+		@Mapping(target = "lastModifiedBy", ignore = true)
+		@Mapping(target = "lastModifiedDate", ignore = true)
+		@Mapping(target = "status", ignore = true)
+		@Mapping(target = "version", ignore = true)
+		PassportStatus toDomain(PassportStatusSearchModel passportStatusSearch);
+
+		PassportStatusModel fromDomain(PassportStatus passportStatus);
+
 	}
 
 }

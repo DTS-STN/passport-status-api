@@ -17,7 +17,7 @@ import org.springframework.hateoas.PagedModel;
 
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
+import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler.PassportStatusModelMapper;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
