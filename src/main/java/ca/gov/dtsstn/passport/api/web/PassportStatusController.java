@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
@@ -30,6 +31,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
@@ -55,6 +57,8 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ "/{id}" })
+	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
+	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
@@ -63,6 +67,8 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ /* root */ })
+	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
+	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {

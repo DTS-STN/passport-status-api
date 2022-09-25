@@ -2,18 +2,18 @@ package ca.gov.dtsstn.passport.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.core.SpringDocUtils;
+import org.springdoc.core.converters.AdditionalModelsConverter;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.info.GitProperties;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
-import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityScheme.In;
+import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -21,27 +21,30 @@ import io.swagger.v3.oas.models.info.Info;
 @Configuration
 public class SpringDocConfig {
 
+
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
 
-	@Bean ApplicationListener<ContextRefreshedEvent> springDocCustomizer() {
-		log.info("Creating 'springDocCustomizer' bean");
+	public static final String API_KEY_SECURITY = "api-key";
 
-		return args -> {
-			log.info("Configuring SpringDoc parameter objects");
-			SpringDocUtils.getConfig().replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
-		};
-	}
+	public static final String BASIC_SECURITY = "basic";
 
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
 
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 
-		return openApi -> openApi
-			.info(new Info()
+		return openApi -> {
+			log.info("Configuring SpringDoc parameter objects");
+			AdditionalModelsConverter.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
+
+			openApi.getInfo()
 				.title(applicationName)
 				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
-				.version(getApplicationVersion(gitProperties)));
+				.version(getApplicationVersion(gitProperties));
+			openApi.getComponents()
+				.addSecuritySchemes(API_KEY_SECURITY, new SecurityScheme().type(Type.APIKEY).in(In.HEADER).name("Authorization"))
+				.addSecuritySchemes(BASIC_SECURITY, new SecurityScheme().type(Type.HTTP).scheme("basic")); // NOSONAR
+		};
 	}
 
 	private String getApplicationVersion(GitProperties gitProperties) {
