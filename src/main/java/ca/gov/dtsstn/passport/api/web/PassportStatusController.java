@@ -83,7 +83,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @RequestParam(defaultValue = "true") boolean unique) {
+	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
 		final var passportStatusProbe = passportStatusModelMapper.toDomain(passportStatusSearchModel);
 		final var page = passportStatusService.search(passportStatusProbe, pageable);
 

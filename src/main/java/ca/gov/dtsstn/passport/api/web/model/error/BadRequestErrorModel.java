@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface BadRequestErrorModel extends Serializable {
 
 	@Nullable
-	@Schema(example = "[ \"'id' is required; it must not be null\" ]")
+	@Schema(example = "[ \"firstName must not be null or blank\" ]")
 	List<String> getDetails();
 
 	@Nullable
@@ -42,15 +42,15 @@ public interface BadRequestErrorModel extends Serializable {
 	public interface ValidationErrorModel extends Serializable {
 
 		@Nullable
-		@Schema(example = "[ \"property.NotBlank\" ]")
+		@Schema(example = "NotBlank")
 		String getCode();
 
 		@Nullable
-		@Schema(example = "[ \"Id\" ]")
+		@Schema(example = "firstName")
 		String getField();
 
 		@Nullable
-		@Schema(example = "[ \"'id' is required; it must not be null\" ]")
+		@Schema(example = "firstName must not be null or blank")
 		String getMessage();
 
 	}
