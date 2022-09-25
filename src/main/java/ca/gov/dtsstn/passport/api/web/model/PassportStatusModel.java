@@ -44,7 +44,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	public abstract Instant getCreatedDate();
 
 	@Nullable
-	@Schema(description = "The last modifior of the resource.", example = "Passport Status API")
+	@Schema(description = "The last modifier of the resource.", example = "Passport Status API")
 	public abstract String getLastModifiedBy();
 
 	@Nullable
