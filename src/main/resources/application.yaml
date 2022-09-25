@@ -43,6 +43,14 @@ management:
           - info
           - metrics
           - prometheus
+  trace:
+    http:
+      include:
+        - principal
+        - remote-address
+        - request-headers
+        - response-headers
+        - time-taken
 
 #######################################################################################################################
 #
