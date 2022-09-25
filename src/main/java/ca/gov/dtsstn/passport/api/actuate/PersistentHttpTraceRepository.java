@@ -1,5 +1,6 @@
 package ca.gov.dtsstn.passport.api.actuate;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.mapstruct.Mapper;
@@ -21,11 +22,13 @@ import ca.gov.dtsstn.passport.api.data.document.HttpTraceDocument;
  */
 @Repository
 @ConfigurationProperties("application.http-trace-repository")
-public class PersistentHttpTraceRepository extends InMemoryHttpTraceRepository {
+public class PersistentHttpTraceRepository implements org.springframework.boot.actuate.trace.http.HttpTraceRepository {
 
 	private final HttpTraceRepository httpTraceRepository;
 
 	private final HttpTraceMapper httpTraceMapper;
+
+	private final InMemoryHttpTraceRepository delegate = new InMemoryHttpTraceRepository();
 
 	public PersistentHttpTraceRepository(HttpTraceMapper httpTraceMapper, HttpTraceRepository httpTraceRepository) {
 		Assert.notNull(httpTraceMapper, "httpTraceMapper is required; it must not be null");
@@ -36,16 +39,20 @@ public class PersistentHttpTraceRepository extends InMemoryHttpTraceRepository {
 
 	@Override
 	public void add(HttpTrace httpTrace) {
-		super.add(httpTrace);
+		delegate.add(httpTrace);
 		Optional.ofNullable(httpTrace)
 			.map(httpTraceMapper::toDocument)
 			.ifPresent(httpTraceRepository::save);
 	}
 
 	@Override
+	public List<HttpTrace> findAll() {
+		return delegate.findAll();
+	}
+
 	public void setCapacity(int capacity) {
 		Assert.isTrue(capacity >= 0, "application.http-trace-repository.capacity must be greater than or equal to zero");
-		super.setCapacity(capacity);
+		delegate.setCapacity(capacity);
 	}
 
 	@Mapper
