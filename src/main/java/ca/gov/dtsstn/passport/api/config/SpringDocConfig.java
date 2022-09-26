@@ -2,12 +2,15 @@ package ca.gov.dtsstn.passport.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
@@ -23,6 +26,11 @@ public class SpringDocConfig {
 	public static final String API_KEY_SECURITY = "api-key";
 
 	public static final String BASIC_SECURITY = "basic";
+
+	static {
+		SpringDocUtils.getConfig()
+			.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
+	}
 
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
