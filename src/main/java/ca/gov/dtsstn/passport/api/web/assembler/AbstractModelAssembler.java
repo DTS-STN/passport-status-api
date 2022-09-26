@@ -1,9 +1,14 @@
 package ca.gov.dtsstn.passport.api.web.assembler;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.util.Streamable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.EmbeddedWrappers;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.util.Assert;
 
@@ -11,6 +16,8 @@ import org.springframework.util.Assert;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>> extends RepresentationModelAssemblerSupport<T, D> {
+
+	protected final EmbeddedWrappers embeddedWrappers = new EmbeddedWrappers(false);
 
 	protected final PagedResourcesAssembler<T> pagedResourcesAssembler;
 
@@ -22,14 +29,16 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public PagedModel<D> toEmptyPagedModel(Page<T> page) {
-		Assert.notNull(page, "page is required; it must not be null");
-		return (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType());
-	}
-
 	public PagedModel<D> toModel(Page<T> page) {
 		Assert.notNull(page, "page is required; it must not be null");
-		return page.isEmpty() ? toEmptyPagedModel(page) : pagedResourcesAssembler.toModel(page, this);
+		return page.isEmpty() ? (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType()) : pagedResourcesAssembler.toModel(page, this);
+	}
+
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
+		Assert.notNull(entities, "entities is required; it must not be null");
+		return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
 	}
 
 }
