@@ -1,11 +1,7 @@
 package ca.gov.dtsstn.passport.api.web.assembler;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.util.Streamable;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.EmbeddedWrappers;
@@ -34,11 +30,12 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 		return page.isEmpty() ? (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType()) : pagedResourcesAssembler.toModel(page, this);
 	}
 
-	@Override
-	@SuppressWarnings({ "unchecked" })
-	public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
-		Assert.notNull(entities, "entities is required; it must not be null");
-		return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
-	}
+	// XXX :: GjB :: commenting this out because it fails compilation.. although for some reason it works in VSCode 🤷
+	// @Override
+	// @SuppressWarnings({ "unchecked" })
+	// public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
+	// 	Assert.notNull(entities, "entities is required; it must not be null");
+	// 	return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
+	// }
 
 }
