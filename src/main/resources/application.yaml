@@ -113,7 +113,6 @@ spring:
 
 springdoc:
   pre-loading-enabled: true
-  show-actuator: true
   swagger-ui:
     disable-swagger-default-url: true
   writer-with-default-pretty-printer: true
