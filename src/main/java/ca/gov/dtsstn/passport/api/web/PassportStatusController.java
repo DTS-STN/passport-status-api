@@ -82,8 +82,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
 	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
-		final var passportStatusProbe = assembler.toDomain(passportStatusSearchModel);
-		final var page = service.search(passportStatusProbe, pageable);
+		final var page = service.search(assembler.toDomain(passportStatusSearchModel), pageable);
 
 		if (unique && page.getNumberOfElements() > 1) {
 			log.warn("Search query returned non-unique results: {}", passportStatusSearchModel);
