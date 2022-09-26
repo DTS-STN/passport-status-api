@@ -21,16 +21,13 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 		this.pagedResourcesAssembler = pagedResourcesAssembler;
 	}
 
-	@Override
-	protected abstract D instantiateModel(T entity);
-
 	@SuppressWarnings({ "unchecked" })
 	public PagedModel<D> toEmptyPagedModel(Page<T> page) {
 		Assert.notNull(page, "page is required; it must not be null");
 		return (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType());
 	}
 
-	public PagedModel<D> toPagedModel(Page<T> page) {
+	public PagedModel<D> toModel(Page<T> page) {
 		Assert.notNull(page, "page is required; it must not be null");
 		return page.isEmpty() ? toEmptyPagedModel(page) : pagedResourcesAssembler.toModel(page, this);
 	}

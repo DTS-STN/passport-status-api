@@ -72,7 +72,7 @@ public class PassportStatusController {
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
-		return assembler.toPagedModel(service.readAll(pageable));
+		return assembler.toModel(service.readAll(pageable));
 	}
 
 	@GetMapping({ "/_search" })
@@ -90,7 +90,7 @@ public class PassportStatusController {
 			throw new NonUniqueResourceException("Search query returned non-unique results");
 		}
 
-		return assembler.toPagedModel(page);
+		return assembler.toModel(page);
 	}
 
 }
