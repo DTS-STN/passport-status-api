@@ -7,6 +7,16 @@ metadata:
     app.kubernetes.io/part-of: passport-status
 data:
   application-local.yaml: |-
+    management:
+      metrics:
+        export:
+          dynatrace:
+            enabled: true
+            v2:
+              default-dimensions:
+                stack: nonprod
+                region: canadacentral
+
     spring:
       security:
         user:

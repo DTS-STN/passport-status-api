@@ -51,6 +51,13 @@ management:
         - request-headers
         - response-headers
         - time-taken
+  metrics:
+    export:
+      dynatrace:
+        enabled: false
+        v2:
+          metric-key-prefix: passport-status-api
+          enrich-with-dynatrace-metadata: true
 
 #######################################################################################################################
 #
