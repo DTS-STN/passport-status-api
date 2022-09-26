@@ -17,4 +17,4 @@ data:
         cors.allowed-origins:
           - http://localhost:3000
           - http://localhost:8080
-          - https://passport-status-main.dev-rhp.dts-stn.com/
+          - https://passport-status-main.dev-rhp.dts-stn.com
