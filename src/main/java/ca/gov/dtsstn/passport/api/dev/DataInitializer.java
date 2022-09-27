@@ -90,7 +90,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 			.firstName("DUPE0000")   // NOSONAR
 			.lastName("DUPE0000")     // NOSONAR
 			.dateOfBirth("2000-01-01")
-			.status(Status.ACCEPTED)
+			.status(Status.APPROVED)
 			.build();
 	}
 

@@ -26,8 +26,9 @@ public interface PassportStatusDocument extends Serializable {
 
 	public enum Status {
 
-		// TODO :: GjB :: this are obviously made up
-		ACCEPTED, PROCESSING, REJECTED, COMPLETED;
+		APPROVED,
+		IN_EXAMINATION,
+		REJECTED;
 
 	}
 
