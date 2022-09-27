@@ -49,6 +49,7 @@
 
 		<datafaker.version>1.5.0</datafaker.version>
 		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
+		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<spring-cloud.version>2021.0.4</spring-cloud.version>
@@ -238,9 +239,28 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.basepom.maven</groupId>
+				<artifactId>duplicate-finder-maven-plugin</artifactId>
+				<version>${duplicate-finder-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
 				<version>${dependency-check-maven.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

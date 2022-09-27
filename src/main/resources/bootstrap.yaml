@@ -7,4 +7,6 @@
 spring:
   cloud:
     kubernetes:
+      # Disable Spring Cloud Kubernetes by default so
+      # the application can run outside of kubernetes
       enabled: false
