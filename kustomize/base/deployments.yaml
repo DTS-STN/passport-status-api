@@ -22,17 +22,15 @@ spec:
           image: dtsdevcontainers.azurecr.io/passport-status-api:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
-              name: http
+            - name: http
+              containerPort: 8080
           livenessProbe:
             httpGet:
-              path: /actuator/health/livenessState
+              path: /actuator/health/liveness
               port: http
             initialDelaySeconds: 30
-            periodSeconds: 30
           readinessProbe:
             httpGet:
-              path: /actuator/health/readinessState
+              path: /actuator/health/readiness
               port: http
             initialDelaySeconds: 30
-            periodSeconds: 30

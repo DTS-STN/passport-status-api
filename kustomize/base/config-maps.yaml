@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: passport-status-api
+  namespace: passport-status
+  labels:
+    app.kubernetes.io/name: passport-status-api
+    app.kubernetes.io/part-of: passport-status
+data:
+  application-local.yaml: |-
+    # Overwrite using a Kustomize overlay per-environment.
