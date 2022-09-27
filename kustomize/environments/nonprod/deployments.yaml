@@ -10,12 +10,6 @@ spec:
     spec:
       containers:
         - name: passport-status-api
-          image: dtsdevcontainers.azurecr.io/passport-status-api:latest
-          volumeMounts:
-            - name: application-local-yaml
-              mountPath: /workspace/BOOT-INF/classes/application-local.yaml
-              subPath: application-local.yaml
-      volumes:
-        - name: application-local-yaml
-          configMap:
-            name: passport-status-api
+          env:
+            - name: SPRING_CLOUD_KUBERNETES_ENABLED
+              value: 'true'

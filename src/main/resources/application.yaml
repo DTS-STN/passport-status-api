@@ -57,7 +57,6 @@ management:
         enabled: false
         v2:
           metric-key-prefix: passport-status-api
-          enrich-with-dynatrace-metadata: true
 
 #######################################################################################################################
 #
@@ -89,7 +88,12 @@ server:
 
 spring:
   application:
-    name: Passport Status API
+    name: passport-status-api
+  cloud:
+    kubernetes:
+      config:
+        name: passport-status-api
+        namespace: passport-status
   config:
     import:
       - optional:application-local.yml
