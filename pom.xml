@@ -52,20 +52,21 @@
 		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
-		<spring-cloud.version>2021.0.4</spring-cloud.version>
+		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
+		<spring-cloud-dependencies.version>2021.0.4</spring-cloud-dependencies.version>
 		<springdoc.version>1.6.11</springdoc.version>
 	</properties>
 
 
 	<dependencyManagement>
 		<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>${spring-cloud.version}</version>
-			<scope>import</scope>
-			<type>pom</type>
-		</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -211,16 +212,12 @@
 						<path>
 							<groupId>org.springframework.boot</groupId>
 							<artifactId>spring-boot-configuration-processor</artifactId>
-							<version>2.7.4</version>
+							<version>${spring-boot-configuration-processor.version}</version>
 						</path>
 					</annotationProcessorPaths>
 					<compilerArgs>
 						<compilerArg>-Amapstruct.unmappedTargetPolicy=ERROR</compilerArg>
 					</compilerArgs>
-					<excludes>
-						<exclude>**/application-local.yml</exclude>
-						<exclude>**/application-local.yaml</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
