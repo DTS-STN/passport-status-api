@@ -51,8 +51,22 @@
 		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
+		<spring-cloud.version>2021.0.4</spring-cloud.version>
 		<springdoc.version>1.6.11</springdoc.version>
 	</properties>
+
+
+	<dependencyManagement>
+		<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>${spring-cloud.version}</version>
+			<scope>import</scope>
+			<type>pom</type>
+		</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 
 	<dependencies>
@@ -63,10 +77,6 @@
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-dynatrace</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.datafaker</groupId>
@@ -126,6 +136,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-kubernetes-client-config</artifactId>
+		</dependency>
 
 		<!-- optional/provided dependencies -->
 
@@ -172,6 +186,35 @@
 
 
 	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/application*.yml</include>
+					<include>**/application*.yaml</include>
+					<include>**/application*.properties</include>
+					<include>**/bootstrap.yml</include>
+					<include>**/bootstrap.yaml</include>
+					<include>**/bootstrap.properties</include>
+				</includes>
+				<excludes>
+					<exclude>**/application-local.yml</exclude>
+					<exclude>**/application-local.yaml</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<excludes>
+					<exclude>**/application*.yml</exclude>
+					<exclude>**/application*.yaml</exclude>
+					<exclude>**/application*.properties</exclude>
+					<exclude>**/bootstrap.yml</exclude>
+					<exclude>**/bootstrap.yaml</exclude>
+					<exclude>**/bootstrap.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -202,6 +245,10 @@
 					<compilerArgs>
 						<compilerArg>-Amapstruct.unmappedTargetPolicy=ERROR</compilerArg>
 					</compilerArgs>
+					<excludes>
+						<exclude>**/application-local.yml</exclude>
+						<exclude>**/application-local.yaml</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
