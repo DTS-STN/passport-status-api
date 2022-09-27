@@ -42,7 +42,7 @@ management:
           - httptrace
           - info
           - metrics
-          - prometheus
+          - refresh
   trace:
     http:
       include:
