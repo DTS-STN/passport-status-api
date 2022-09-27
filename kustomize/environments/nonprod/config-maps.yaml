@@ -16,7 +16,7 @@ data:
       metrics:
         export:
           dynatrace:
-            enabled: false
+            enabled: true
             v2:
               default-dimensions:
                 stack: nonprod
