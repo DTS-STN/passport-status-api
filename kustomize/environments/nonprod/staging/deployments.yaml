@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: passport-status-api
-  namespace: passport-status
 spec:
   selector:
     matchLabels:
@@ -11,6 +10,4 @@ spec:
     spec:
       containers:
         - name: passport-status-api
-          env:
-            - name: SPRING_CLOUD_KUBERNETES_ENABLED
-              value: 'true'
+          imagePullPolicy: IfNotPresent

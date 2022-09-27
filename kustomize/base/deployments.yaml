@@ -2,10 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: passport-status-api
-  namespace: passport-status
-  labels:
-    app.kubernetes.io/name: passport-status-api
-    app.kubernetes.io/part-of: passport-status
 spec:
   replicas: 1
   selector:
@@ -16,11 +12,14 @@ spec:
       labels:
         app.kubernetes.io/name: passport-status-api
     spec:
-      serviceAccount: passport-status-api
+      serviceAccountName: passport-status-api
       containers:
         - name: passport-status-api
-          image: dtsdevcontainers.azurecr.io/passport-status-api:latest
+          image: dtsdevcontainers.azurecr.io/passport-status-api
           imagePullPolicy: Always
+          env:
+            - name: SPRING_CLOUD_KUBERNETES_ENABLED
+              value: 'true'
           ports:
             - name: http
               containerPort: 8080

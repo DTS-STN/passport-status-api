@@ -1,11 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: passport-status-api
-  namespace: passport-status
-  annotations:
-    app.kubernetes.io/name: passport-status-api
-    app.kubernetes.io/part-of: passport-status
+  name: external-passport-status-api
 spec:
   rules:
     - host: passport-status-api.localtest.me

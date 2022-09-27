@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: external-passport-status-api
+spec:
+  rules:
+    - host: passport-status-api.staging.dev-rhp.dts-stn.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: passport-status-api
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - passport-status-api.staging.dev-rhp.dts-stn.com
+      secretName: external-passport-status-api-staging
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: internal-passport-status-api
+spec:
+  rules:
+    - host: passport-status-api.staging.dev-rhp-private.dts-stn.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: passport-status-api
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - passport-status-api.staging.dev-rhp-private.dts-stn.com
+      secretName: internal-passport-status-api-staging

@@ -2,6 +2,3 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: passport-status
-  labels:
-    app.kubernetes.io/name: passport-status
-    app.kubernetes.io/part-of: passport-status
