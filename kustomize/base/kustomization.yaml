@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - deployments.yaml
   - namespaces.yaml
+  - service-accounts.yaml
   - services.yaml

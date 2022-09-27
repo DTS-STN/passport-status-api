@@ -16,14 +16,11 @@ spec:
       labels:
         app.kubernetes.io/name: passport-status-api
     spec:
+      serviceAccount: passport-status-api
       containers:
         - name: passport-status-api
           image: dtsdevcontainers.azurecr.io/passport-status-api:latest
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: 512Mi
-              cpu: 250m
           ports:
             - containerPort: 8080
               name: http
@@ -39,3 +36,38 @@ spec:
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passport-status-api-config-watcher
+  namespace: passport-status
+  labels:
+    app.kubernetes.io/name: passport-status-api-config-watcher
+    app.kubernetes.io/part-of: passport-status
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: passport-status-api-config-watcher
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: passport-status-api-config-watcher
+    spec:
+      serviceAccount: passport-status-api
+      containers:
+        - name: passport-status-api-config-watcher
+          image: springcloud/spring-cloud-kubernetes-configuration-watcher:2.1.4
+          ports:
+            - containerPort: 8888
+              name: http
+          livenessProbe:
+            httpGet:
+              port: http
+              path: /actuator/health/liveness
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /actuator/health/readiness

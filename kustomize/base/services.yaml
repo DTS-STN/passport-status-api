@@ -9,7 +9,23 @@ metadata:
 spec:
   ports:
     - name: http
-      protocol: TCP
       port: 8080
   selector:
     app.kubernetes.io/name: passport-status-api
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: passport-status-api-config-watcher
+  namespace: passport-status
+  labels:
+    app.kubernetes.io/name: passport-status-api-config-watcher
+    app.kubernetes.io/part-of: passport-status
+spec:
+  ports:
+    - name: http
+      port: 8888
+  selector:
+    app.kubernetes.io/name: passport-status-api-config-watcher
