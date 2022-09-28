@@ -2,7 +2,6 @@ package ca.gov.dtsstn.passport.api.web;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +40,8 @@ public class ErrorController {
 
 	@ExceptionHandler({ BindException.class })
 	protected ResponseEntity<BadRequestErrorModel> handleBindException(BindException ex) {
-		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toUnmodifiableList());
-		final var validationErrors = ex.getFieldErrors().stream().map(this::toValidationError).collect(Collectors.toUnmodifiableList());
+		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList();
+		final var validationErrors = ex.getFieldErrors().stream().map(this::toValidationError).toList();
 		final var errorModel = ImmutableBadRequestErrorModel.builder().details(details).validationErrors(validationErrors).build();
 		return ResponseEntity.badRequest().body(errorModel);
 	}
@@ -56,13 +55,13 @@ public class ErrorController {
 
 	@ExceptionHandler({ NonUniqueResourceException.class })
 	public ResponseEntity<UnprocessableEntityErrorModel> handleNonUniqueResourceException(NonUniqueResourceException ex) {
-		final var error = ImmutableUnprocessableEntityErrorModel.builder().details(ex.getMessage()).build();
+		final var error = ImmutableUnprocessableEntityErrorModel.builder().details(ex.getMessage()).build(); // NOSONAR
 		return ResponseEntity.unprocessableEntity().body(error);
 	}
 
 	@ExceptionHandler({ ResourceNotFoundException.class })
 	public ResponseEntity<ResourceNotFoundErrorModel> handleResourceNotFoundException(ResourceNotFoundException ex) {
-		final var error = ImmutableResourceNotFoundErrorModel.builder().details(ex.getMessage()).build();
+		final var error = ImmutableResourceNotFoundErrorModel.builder().details(ex.getMessage()).build(); // NOSONAR
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
@@ -81,9 +80,9 @@ public class ErrorController {
 	protected ValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
 		return ImmutableValidationErrorModel.builder()
-			.code(fieldError.getCode())
+			.code(fieldError.getCode()) // NOSONAR
 			.field(fieldError.getField())
-			.message(fieldError.getDefaultMessage())
+			.message(fieldError.getDefaultMessage()) // NOSONAR
 			.build();
 	}
 

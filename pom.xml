@@ -39,7 +39,7 @@
 
 		<!-- build configuration parameters -->
 
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 		<spring-boot.build-image.builder>paketobuildpacks/builder:full</spring-boot.build-image.builder>
 		<spring-boot.build-image.imageName>${image.registry}/${image.name}</spring-boot.build-image.imageName>

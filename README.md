@@ -15,7 +15,7 @@ end users.
 
 The Passport Status API requires the following toolchain to build and run:
 
-- Java 11 (for now... Java 17 coming soon)
+- Java 17
 - Maven 3.x
 - (optional) Docker, podman, Cloud Native Buildpacks, or compatible container runtime
 
