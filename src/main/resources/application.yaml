@@ -145,7 +145,6 @@ application:
   endpoint:
     changelog:
       changelog-path: changelog.json
-      default-size: 100
   http-trace-repository:
     capacity: 100
   security:

@@ -33,8 +33,6 @@ public class ChangelogEndpoint {
 
 	protected final ObjectMapper objectMapper;
 
-	protected int defaultSize = 100;
-
 	protected String changelogPath = "changelog.json";
 
 	public ChangelogEndpoint(ObjectMapper objectMapper) {
@@ -45,7 +43,7 @@ public class ChangelogEndpoint {
 	@ReadOperation
 	public ResponseEntity<?> getChangelog(@Nullable Integer size, @Nullable Boolean simple) throws IOException {
 		final var gitLogs = List.of(objectMapper.readValue(new ClassPathResource(changelogPath).getInputStream(), GitLog[].class));
-		final var maxSize = (size != null) ? size : defaultSize;
+		final var maxSize = (size != null) ? size : Integer.MAX_VALUE;
 		return Boolean.TRUE.equals(simple) ? handleSimpleResponse(gitLogs, maxSize) : handleFullResponse(gitLogs, maxSize);
 	}
 
@@ -62,11 +60,6 @@ public class ChangelogEndpoint {
 	public void setChangelogPath(String changelogPath) {
 		Assert.hasText(changelogPath, "changelogPath is required; it must not be blank or null");
 		this.changelogPath = changelogPath;
-	}
-
-	public void setDefaultSize(int defaultSize) {
-		Assert.isTrue(defaultSize >= 0, "defaultSize must be greater than zero");
-		this.defaultSize = defaultSize;
 	}
 
 	@SuppressWarnings({ "serial" })
