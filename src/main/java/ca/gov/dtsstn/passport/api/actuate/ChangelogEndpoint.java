@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.util.MimeTypeUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -57,7 +56,7 @@ public class ChangelogEndpoint {
 
 	protected ResponseEntity<String> handleSimpleResponse(Collection<GitLog> gitLogs, int maxSize) {
 		final var body = gitLogs.stream().limit(maxSize).map(GitLog::toString).collect(Collectors.joining("\n"));
-		return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MimeTypeUtils.TEXT_PLAIN_VALUE).body(body);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8").body(body);
 	}
 
 	public void setChangelogPath(String changelogPath) {
