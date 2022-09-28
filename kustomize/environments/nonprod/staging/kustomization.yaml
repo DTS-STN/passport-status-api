@@ -7,7 +7,7 @@ bases:
   - ../../../base
 images:
   - name: dtsdevcontainers.azurecr.io/passport-status-api
-    newTag: 0.0.0-09b2ee40
+    newTag: 0.0.0-10f9558e
 patchesStrategicMerge:
   - config-maps.yaml
   - deployments.yaml
