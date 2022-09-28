@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import ca.gov.dtsstn.passport.api.actuate.ChangelogEndpoint;
+
 /**
  * @author Greg Baker <gregory.j.baker@hrsdc-rhdcc.gc.ca>
  */
@@ -63,6 +65,7 @@ public class WebSecurityConfig {
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.requestMatchers(toLinks()).permitAll()
+				.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
 				.requestMatchers(to(HealthEndpoint.class)).permitAll()
 				.requestMatchers(to(InfoEndpoint.class)).permitAll();
 

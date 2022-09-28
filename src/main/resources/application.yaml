@@ -37,6 +37,7 @@ management:
       exposure:
         include:
           - beans
+          - changelog
           - env
           - health
           - httptrace
@@ -141,6 +142,10 @@ application:
     data-initializer:
       duplicate-statuses-number: 10
       generated-statuses-number: 10_000
+  endpoint:
+    changelog:
+      changelog-path: changelog.json
+      default-size: 100
   http-trace-repository:
     capacity: 100
   security:
