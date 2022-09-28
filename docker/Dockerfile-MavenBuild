@@ -1,0 +1,22 @@
+# Dockerfile to create a Maven image that can be used in TeamCity
+# > docker build --file Dockerfile-Maven . --tag dtsdevcontainers.azurecr.io/maven:3.8-eclipse-temurin-17-docker
+FROM maven:3.8-eclipse-temurin-17
+
+# Install libssl1.1
+# (required for embedded mongodb)
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+RUN apt-get update && apt-get install -y ./libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb && rm libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+
+# Install docker...
+# (see https://docs.docker.com/engine/install/ubuntu/)
+RUN apt-get update && apt-get install -y ca-certificates curl gnupg lsb-release
+RUN curl -sL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
+RUN echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y docker-ce-cli # docker-ce containerd.io docker-compose-plugin
+
+# Install Azure CLI...
+# (see https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux)
+RUN apt-get update && apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
+RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+RUN echo "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/azure-cli.list > /dev/null
+RUN apt-get update && apt-get install -y azure-cli
