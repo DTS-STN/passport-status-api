@@ -50,6 +50,7 @@
 		<datafaker.version>1.5.0</datafaker.version>
 		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
+		<gitlog-maven-plugin.version>1.13.17</gitlog-maven-plugin.version>
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
@@ -193,6 +194,25 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>com.github.danielflower.mavenplugins</groupId>
+				<artifactId>gitlog-maven-plugin</artifactId>
+				<version>${gitlog-maven-plugin.version}</version>
+				<configuration>
+					<generatePlainTextChangeLog>false</generatePlainTextChangeLog>
+					<generateSimpleHTMLChangeLog>false</generateSimpleHTMLChangeLog>
+					<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<?m2e execute onConfiguration, onIncremental ?>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
