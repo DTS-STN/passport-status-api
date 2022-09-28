@@ -4,12 +4,10 @@ commonLabels:
   app.kubernetes.io/name: passport-status-api
   app.kubernetes.io/part-of: passport-status
   app.kubernetes.io/component: passport-status-api
-namespace: passport-status
 resources:
   - config-maps.yaml
   - deployments.yaml
   - ingresses.yaml
-  - namespaces.yaml
   - rolebindings.yaml
   - roles.yaml
   - service-accounts.yaml

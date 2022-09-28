@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: passport-status
 commonLabels:
   app.kubernetes.io/environment: staging
 nameSuffix: -staging
@@ -8,6 +9,8 @@ bases:
 images:
   - name: dtsdevcontainers.azurecr.io/passport-status-api
     newTag: 0.0.0-10f9558e
+resources:
+  - namespaces.yaml
 patchesStrategicMerge:
   - config-maps.yaml
   - deployments.yaml
