@@ -13,7 +13,7 @@
 
 	<groupId>ca.gov.dts-stn.passport</groupId>
 	<artifactId>passport-status-api</artifactId>
-	<version>${revision}${changelist}</version>
+	<version>${revision}</version>
 	<packaging>jar</packaging>
 
 
@@ -31,7 +31,6 @@
 
 	<properties>
 		<revision>0.0.0</revision>
-		<changelist><!-- intentionally left blank --></changelist>
 
 		<!-- container image parameters -->
 
