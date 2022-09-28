@@ -30,8 +30,6 @@
 
 
 	<properties>
-		<!-- build version parameters -->
-
 		<revision>0.0.0</revision>
 		<changelist><!-- intentionally left blank --></changelist>
 
@@ -44,6 +42,8 @@
 
 		<java.version>11</java.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
+		<spring-boot.build-image.builder>paketobuildpacks/builder:full</spring-boot.build-image.builder>
+		<spring-boot.build-image.imageName>${image.registry}/${image.name}</spring-boot.build-image.imageName>
 
 		<!-- dependency/plugin versions -->
 
@@ -279,16 +279,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<image>
-						<builder>paketobuildpacks/builder:full</builder>
-						<name>${image.registry}/${image.name}</name>
-						<tags>
-							<tag>${image.registry}/${image.name}:${project.version}</tag>
-							<tag>${image.registry}/${image.name}:${project.version}-${git.commit.id.abbrev}</tag>
-						</tags>
-					</image>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
