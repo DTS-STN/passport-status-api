@@ -90,11 +90,6 @@ server:
 spring:
   application:
     name: passport-status-api
-  cloud:
-    kubernetes:
-      config:
-        name: passport-status-api
-        namespace: passport-status
   config:
     import:
       - optional:application-local.yml

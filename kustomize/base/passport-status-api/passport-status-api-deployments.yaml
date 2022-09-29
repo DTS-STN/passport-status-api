@@ -37,3 +37,11 @@ spec:
             preStop:
               exec:
                 command: [ "sh", "-c", "sleep 10" ]
+          volumeMounts:
+            - name: config
+              mountPath: /workspace/BOOT-INF/classes/application-local.yaml
+              subPath: application.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: passport-status-api

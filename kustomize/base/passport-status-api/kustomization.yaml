@@ -4,8 +4,6 @@ commonLabels:
   app.kubernetes.io/name: passport-status-api
   app.kubernetes.io/component: api
   app.kubernetes.io/part-of: passport-status
-  app.kubernetes.io/instance: passport-status-api
-  app.kubernetes.io/version: latest
   app.kubernetes.io/managed-by: kustomize
 resources:
   - passport-status-api-cms.yaml

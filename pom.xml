@@ -54,22 +54,8 @@
 		<immutables.version>2.9.1</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
-		<spring-cloud-dependencies.version>2021.0.4</spring-cloud-dependencies.version>
 		<springdoc.version>1.6.11</springdoc.version>
 	</properties>
-
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 
 	<dependencies>
@@ -138,14 +124,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes-client-config</artifactId>
 		</dependency>
 
 		<!-- optional/provided dependencies -->
@@ -284,13 +262,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<image>
-						<env>
-							<GOOGLE_RUNTIME_VERSION>${java.version}</GOOGLE_RUNTIME_VERSION>
-						</env>
-					</image>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
