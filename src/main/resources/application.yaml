@@ -138,10 +138,10 @@ springdoc:
 #######################################################################################################################
 
 application:
-  dev:
-    data-initializer:
-      duplicate-statuses-number: 10
-      generated-statuses-number: 10_000
+  data-initializer:
+    enabled: false
+    duplicate-statuses-number: 10
+    generated-statuses-number: 10_000
   endpoint:
     changelog:
       changelog-path: changelog.json

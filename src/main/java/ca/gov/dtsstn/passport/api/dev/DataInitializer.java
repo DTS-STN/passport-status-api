@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationListener;
@@ -27,12 +28,20 @@ import net.datafaker.Faker;
  * DataInitializer is a Spring {@link ApplicationStartedEvent} listener that
  * initializes a development database to a baseline configuration (using datafaker).
  * <p>
- * XXX :: GjB :: this component should only fire when intended; current it is confired to always fire, which WILL DESTROY DATA!!
+ * Enable with the following configuration in your {@code application-local.yaml} file:
+ * <p>
+ *
+ * <pre>
+ * application:
+ *   data-initializer:
+ *    enabled: true
+ * </pre>
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-@ConfigurationProperties("application.dev.data-initializer")
+@ConfigurationProperties("application.data-initializer")
+@ConditionalOnProperty({ "application.data-initializer.enabled" })
 public class DataInitializer implements ApplicationListener<ApplicationStartedEvent> {
 
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
