@@ -24,9 +24,6 @@ data:
                 region: canadacentral
 
     spring:
-      profiles:
-        active:
-          - embedded-mongo
       security:
         user:
           password: '{bcrypt}$2a$10$KbMtcK7Jiru.c/nqTq72buSgvw1AKOSifQbHco2qgP/LiJHK.aT3e'

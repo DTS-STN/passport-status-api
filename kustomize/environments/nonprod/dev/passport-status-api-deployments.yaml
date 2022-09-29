@@ -13,3 +13,5 @@ spec:
           env:
             - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
               value: passport-status-api-dev
+            - name: SPRING_PROFILES_ACTIVE
+              value: embedded-mongo
