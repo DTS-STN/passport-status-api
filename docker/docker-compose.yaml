@@ -1,3 +1,5 @@
+# Basic docker-compose.yaml to spin up a Mongo database
+
 version: '3.8'
 services:
   mongo:

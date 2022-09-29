@@ -10,3 +10,7 @@ spec:
     spec:
       containers:
         - name: passport-status-api
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
+              value: passport-status-api-staging

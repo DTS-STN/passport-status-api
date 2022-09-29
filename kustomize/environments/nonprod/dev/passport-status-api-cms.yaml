@@ -3,13 +3,13 @@ kind: ConfigMap
 metadata:
   name: passport-status-api
 data:
-  application-local.yaml: |-
+  application.yaml: |-
     application:
       security:
         cors.allowed-origins:
           - http://localhost:3000
           - http://localhost:8080
-          - https://passport-status-api.staging.dev-rhp.dts-stn.com
+          - https://passport-status-main.dev-rhp.dts-stn.com
 
     management:
       metrics:

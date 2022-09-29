@@ -1,17 +1,20 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: passport-status
-commonLabels:
-  app.kubernetes.io/environment: staging
-nameSuffix: -staging
 bases:
-  - ../../../base
+  - ../../../base/mongodb/
+  - ../../../base/passport-status-api/
+commonLabels:
+  app.kubernetes.io/instance: passport-status-api-staging
+  app.kubernetes.io/version: 0.0.0-10f9558e
 images:
   - name: dtsdevcontainers.azurecr.io/passport-status-api
     newTag: 0.0.0-10f9558e
-resources:
-  - namespaces.yaml
+  - name: docker.io/mongo
+    newTag: 5.0.6
+namespace: passport-status
+nameSuffix: -staging
 patchesStrategicMerge:
-  - config-maps.yaml
-  - deployments.yaml
-  - ingresses.yaml
+  - mongodb-deployments.yaml
+  - passport-status-api-cms.yaml
+  - passport-status-api-deployments.yaml
+  - passport-status-api-ingresses.yaml

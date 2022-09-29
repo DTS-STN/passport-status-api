@@ -3,13 +3,13 @@ kind: ConfigMap
 metadata:
   name: passport-status-api
 data:
-  application-local.yaml: |-
+  application.yaml: |-
     application:
       security:
         cors.allowed-origins:
           - http://localhost:3000
           - http://localhost:8080
-          - https://passport-status-main.dev-rhp.dts-stn.com
+          - https://passport-status-api.staging.dev-rhp.dts-stn.com
 
     management:
       metrics:
@@ -22,6 +22,9 @@ data:
                 region: canadacentral
 
     spring:
+      data:
+        mongodb:
+          uri: mongodb://mongodb-staging.passport-status.svc.cluster.local/passport
       security:
         user:
           password: '{bcrypt}$2a$10$KbMtcK7Jiru.c/nqTq72buSgvw1AKOSifQbHco2qgP/LiJHK.aT3e'

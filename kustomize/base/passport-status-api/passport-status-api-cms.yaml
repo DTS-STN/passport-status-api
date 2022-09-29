@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: passport-status-api
 data:
-  application-local.yaml: |-
+  application.yaml: |-
     # Overwrite using a Kustomize overlay per-environment.
