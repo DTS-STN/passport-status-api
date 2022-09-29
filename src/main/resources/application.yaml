@@ -154,3 +154,8 @@ application:
         - http://localhost
       exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
         - '*'
+  swagger:
+    application-name: Passport Status API
+    contact-name: Digital technology solutions
+    contact-url: https://github.com/dts-stn/passport-status-api/
+    terms-of-service-url: https://www.canada.ca/en/transparency/terms.html

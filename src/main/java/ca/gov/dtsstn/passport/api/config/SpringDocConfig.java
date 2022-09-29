@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
@@ -35,12 +36,17 @@ public class SpringDocConfig {
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
 
-		final var applicationName = environment.getProperty("spring.application.name", "application");
+		final var applicationName = environment.getProperty("application.swagger.application-name", "application");
+		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
+		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
+		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
 
 		return openApi -> {
 			openApi.getInfo()
 				.title(applicationName)
+				.contact(new Contact().name(contactName).url(contactUrl))
 				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
+				.termsOfService(termsOfServiceUrl)
 				.version(getApplicationVersion(gitProperties));
 
 			openApi.getComponents()
