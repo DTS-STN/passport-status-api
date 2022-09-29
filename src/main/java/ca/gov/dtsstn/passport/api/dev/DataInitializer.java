@@ -17,9 +17,9 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
-import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
+import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
 import net.datafaker.Faker;
 
 /**
@@ -82,7 +82,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 
 	protected PassportStatusDocument generateRandomPassportStatus() {
 		final var statuses = PassportStatusDocument.Status.values();
-		return ImmutablePassportStatusDocument.builder()
+		return new PassportStatusDocumentBuilder()
 			.id(faker.random().hex(24))
 			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
 			.firstName(faker.name().firstName())
@@ -93,7 +93,7 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 	}
 
 	private PassportStatusDocument generateDuplicatePassportStatus() {
-		return ImmutablePassportStatusDocument.builder()
+		return new PassportStatusDocumentBuilder()
 			.id(faker.random().hex(24))
 			.fileNumber("DUPE0000") // NOSONAR
 			.firstName("DUPE0000")   // NOSONAR

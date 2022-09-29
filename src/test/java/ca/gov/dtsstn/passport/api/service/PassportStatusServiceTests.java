@@ -18,8 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
-import ca.gov.dtsstn.passport.api.data.document.ImmutablePassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
+import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 
 /**
@@ -46,7 +46,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testRead() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocumentBuilder().build()));
 
 		final var passportStatus = passportStatusService.read("id");
 
@@ -55,7 +55,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testUpdate() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(ImmutablePassportStatusDocument.builder().build()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocumentBuilder().build()));
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
 		final var passportStatus = passportStatusService.update(ImmutablePassportStatus.builder().id("id").build());

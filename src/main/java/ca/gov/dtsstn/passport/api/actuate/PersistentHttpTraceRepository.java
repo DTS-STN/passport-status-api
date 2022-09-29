@@ -65,14 +65,14 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 		@Mapping(target = "requestUri", source = "request.uri")
 		@Mapping(target = "requestHeaders", source = "request.headers")
 		@Mapping(target = "requestRemoteAddress", source = "request.remoteAddress")
-		@Mapping(target = "putRequestHeaders", ignore = true)
-		@Mapping(target = "putAllRequestHeaders", ignore = true)
 		@Mapping(target = "responseStatus", source = "response.status")
 		@Mapping(target = "responseHeaders", source = "response.headers")
 		@Mapping(target = "timeTakenMillis", source = "timeTaken")
-		// for some reason, MapStruct thinks these are target fields 🤷
-		@Mapping(target = "putResponseHeaders", ignore = true)
-		@Mapping(target = "putAllResponseHeaders", ignore = true)
+		@Mapping(target = "createdBy", ignore = true)
+		@Mapping(target = "createdDate", ignore = true)
+		@Mapping(target = "lastModifiedBy", ignore = true)
+		@Mapping(target = "lastModifiedDate", ignore = true)
+		@Mapping(target = "version", ignore = true)
 		HttpTraceDocument toDocument(@Nullable HttpTrace httpTrace);
 
 	}
