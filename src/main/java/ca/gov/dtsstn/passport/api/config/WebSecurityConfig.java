@@ -42,11 +42,9 @@ public class WebSecurityConfig {
 
 	@Bean CorsConfigurationSource corsConfigurationSource() {
 		log.info("Creating 'corsConfigurationSource' bean");
-
 		final var corsConfiguration = corsConfiguration();
 		final var corsConfigurationSource = new UrlBasedCorsConfigurationSource();
 		corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-
 		return corsConfigurationSource;
 	}
 

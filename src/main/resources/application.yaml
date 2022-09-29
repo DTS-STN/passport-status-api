@@ -142,6 +142,8 @@ application:
   endpoint:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
+  etag-header-filter:
+    write-weak-etag: true
   http-trace-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:
@@ -154,8 +156,11 @@ application:
         - http://localhost
       exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
         - '*'
-  shallow-etag-header-filter:
-    write-weak-etag: true
+  request-logging-filter:
+    include-headers: true
+    include-payload: true
+    include-query-string: true
+    max-payload-length: 10240
   swagger:
     application-name: Passport Status API
     contact-name: Digital technology solutions
