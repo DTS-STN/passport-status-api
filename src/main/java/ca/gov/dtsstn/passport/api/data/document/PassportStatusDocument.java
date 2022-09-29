@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
@@ -44,12 +45,16 @@ public class PassportStatusDocument implements Serializable {
 	@Version
 	private Long version;
 
+	@Indexed
 	private String fileNumber;
 
+	@Indexed
 	private String firstName;
 
+	@Indexed
 	private String lastName;
 
+	@Indexed
 	private String dateOfBirth;
 
 	private Status status;

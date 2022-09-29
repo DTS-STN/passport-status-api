@@ -100,6 +100,8 @@ spring:
       - optional:application-local.yml
       - optional:application-local.yaml
   data:
+    mongodb:
+      auto-index-creation: true
     web:
       pageable:
         one-indexed-parameters: true
