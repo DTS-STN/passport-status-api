@@ -33,7 +33,7 @@ The Passport Status API requires no installation process to run. 🙏
 
 ## Building
 
-- To build/run the application: `mvn clean spring-boot:run`
+- To build/run the application: `mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.data-initializer.enabled=true"`
 - To build a container image: `mvn clean spring-boot:build-image`
 
 ## Configuration
@@ -53,12 +53,25 @@ default values.
 
 ``` yaml
 application:
-  dev:
-    data-initializer:
-      duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
-      generated-statuses-number: 10_000 # number of random status to generate on startup
+  data-initializer:
+    enabled: false                    # enable the data initializer; WARNING -- THIS WILL DESTROY DATA
+    duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
+    generated-statuses-number: 10_000 # number of random status to generate on startup
+  endpoint:
+    changelog:
+      changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   http-trace-repository:
-    page-size: 100                      # number of http request/response trace requests to return from /actuator/httptrace
+    page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
+  security:
+    cors:
+      allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
+        - '*'
+      allowed-methods:                # list of HTTP methods to allow, e.g. GET, POST, PUT, etc.
+        - '*'
+      allowed-origins:                # list of origins for which cross-origin requests are allowed
+        - http://localhost
+      exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
+        - '*'
 ```
 
 ### `application-local.yaml`
@@ -72,10 +85,8 @@ by Git** so you can put all kinds of secrets in there!! 🍞
 
 If you have questions or need help running the Passport Status API, feel free to contact:
 
-- Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca) — Lead developer  
-  - Flashlight enthusiast, lawn care expert, headbanger
-- Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca) — `README.md` author;
-  - Java apologist, Kubernetes `${latestBuzzword}`, headbanger
+- Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
+- Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
 
 ## Advanced help
 
