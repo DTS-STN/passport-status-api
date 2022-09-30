@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
@@ -71,7 +72,7 @@ public class PassportStatusController {
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
-	public PagedModel<PassportStatusModel> getAll(@ParameterObject Pageable pageable) {
+	public PagedModel<PassportStatusModel> getAll(@SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
 		return assembler.toModel(service.readAll(pageable));
 	}
 
@@ -81,7 +82,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public PagedModel<PassportStatusModel> search(@ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
+	public PagedModel<PassportStatusModel> search(@SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
 		final var page = service.search(assembler.toDomain(passportStatusSearchModel), pageable);
 
 		if (unique && page.getNumberOfElements() > 1) {
