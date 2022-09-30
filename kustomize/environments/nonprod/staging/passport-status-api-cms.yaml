@@ -11,6 +11,11 @@ data:
           - http://localhost:8080
           - https://passport-status-api.staging.dev-rhp.dts-stn.com
 
+    # logging:
+    #   level:
+    #     # enable for request/response logging
+    #     '[org.springframework.web.filter.CommonsRequestLoggingFilter]': debug
+
     management:
       metrics:
         export:
