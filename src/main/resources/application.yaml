@@ -137,9 +137,9 @@ springdoc:
 
 application:
   data-initializer:
-    enabled: false                    # enable the data initializer; WARNING -- THIS WILL DESTROY DATA
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
+    run-on-startup: false             # enable the data initializer on startup; WARNING -- THIS WILL DESTROY DATA
   endpoint:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
