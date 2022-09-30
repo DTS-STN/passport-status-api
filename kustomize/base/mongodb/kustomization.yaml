@@ -4,8 +4,6 @@ commonLabels:
   app.kubernetes.io/name: mongodb
   app.kubernetes.io/component: database
   app.kubernetes.io/part-of: passport-status
-  app.kubernetes.io/instance: mongodb
-  app.kubernetes.io/version: latest
   app.kubernetes.io/managed-by: kustomize
 resources:
   - mongodb-deployments.yaml
