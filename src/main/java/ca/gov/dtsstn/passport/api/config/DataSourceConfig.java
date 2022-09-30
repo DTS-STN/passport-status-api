@@ -4,6 +4,9 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import ca.gov.dtsstn.passport.api.data.DataInitializer;
 import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepository;
 import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepositoryImpl;
 
@@ -28,6 +32,15 @@ public class DataSourceConfig {
 		log.info("Creating 'auditor' bean");
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 		return () -> Optional.of(applicationName);
+	}
+
+	@ConditionalOnProperty({ "application.data-initializer.run-on-startup" })
+	@Bean ApplicationListener<ApplicationStartedEvent> dataInitializerStartupListener(DataInitializer dataInitializer) {
+		log.info("Creating 'dataInitializerStartupListener' bean");
+		return event -> {
+			log.info("Initializing data");
+			dataInitializer.initializeData();
+		};
 	}
 
 }

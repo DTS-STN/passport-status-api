@@ -42,6 +42,7 @@ management:
           - health
           - httptrace
           - info
+          - init-data
           - metrics
           - refresh
   trace:

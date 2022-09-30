@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.dev;
+package ca.gov.dtsstn.passport.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

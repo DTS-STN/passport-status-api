@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.dev;
+package ca.gov.dtsstn.passport.api.data;
 
 import java.util.Locale;
 import java.util.Random;
@@ -7,16 +7,12 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
-import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
@@ -24,25 +20,12 @@ import net.datafaker.Faker;
 
 /**
  * This class is intended to be used for development purposes only!
- * <p>
- * DataInitializer is a Spring {@link ApplicationStartedEvent} listener that
- * initializes a development database to a baseline configuration (using datafaker).
- * <p>
- * Enable with the following configuration in your {@code application-local.yaml} file:
- * <p>
- *
- * <pre>
- * application:
- *   data-initializer:
- *    enabled: true
- * </pre>
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
 @ConfigurationProperties("application.data-initializer")
-@ConditionalOnProperty({ "application.data-initializer.enabled" })
-public class DataInitializer implements ApplicationListener<ApplicationStartedEvent> {
+public class DataInitializer {
 
 	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
@@ -61,9 +44,9 @@ public class DataInitializer implements ApplicationListener<ApplicationStartedEv
 		this.passportStatusRepository = passportStatusRepository;
 	}
 
-	@Override
+	@Async
 	@Transactional
-	public void onApplicationEvent(ApplicationStartedEvent event) {
+	public void initializeData() {
 		log.info("Deleting all http traces");
 		httpTraceRepository.deleteAll();
 
