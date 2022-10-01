@@ -10,6 +10,8 @@ import org.springframework.core.Ordered;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import ca.gov.dtsstn.passport.api.web.filter.RequestLoggingFilter;
+
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
@@ -23,9 +25,9 @@ public class ServletConfig {
 	 * properties.
 	 */
 	@ConfigurationProperties("application.request-logging-filter")
-	@Bean CommonsRequestLoggingFilter commonsRequestLoggingFilter() {
-		log.info("Creating 'commonsRequestLoggingFilter' bean");
-		return new CommonsRequestLoggingFilter();
+	@Bean RequestLoggingFilter requestLoggingFilter() {
+		log.info("Creating 'requestLoggingFilter' bean");
+		return new RequestLoggingFilter();
 	}
 
 	/**
@@ -41,10 +43,10 @@ public class ServletConfig {
 	 * A {@link FilterRegistrationBean} that ensures the
 	 * {@link CommonsRequestLoggingFilter} is fired first in the filter chain.
 	 */
-	@Bean FilterRegistrationBean<CommonsRequestLoggingFilter> commonsRequestLoggingFilterRegistration() {
-		log.info("Creating 'commonsRequestLoggingFilterRegistration' bean");
-		final var commonsRequestLoggingFilter = commonsRequestLoggingFilter();
-		final var filterRegistrationBean = new FilterRegistrationBean<>(commonsRequestLoggingFilter);
+	@Bean FilterRegistrationBean<RequestLoggingFilter> requestLoggingFilterRegistration() {
+		log.info("Creating 'requestLoggingFilterRegistration' bean");
+		final var requestLoggingFilter = requestLoggingFilter();
+		final var filterRegistrationBean = new FilterRegistrationBean<>(requestLoggingFilter);
 		filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return filterRegistrationBean;
 	}

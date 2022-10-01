@@ -54,12 +54,14 @@ default values.
 ``` yaml
 application:
   data-initializer:
-    enabled: false                    # enable the data initializer; WARNING -- THIS WILL DESTROY DATA
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
+    run-on-startup: false             # enable the data initializer on startup; WARNING -- THIS WILL DESTROY DATA
   endpoint:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
+  etag-header-filter:
+    write-weak-etag: true             # whether the ETag value written to the response should be weak, as per RFC 7232
   http-trace-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:
@@ -72,6 +74,22 @@ application:
         - http://localhost
       exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
         - '*'
+  request-logging-filter:
+    enabled: false                    # whether to enable the request logging filter
+    includeUrls:                      # list of URLs to include, in ant path style
+      - /**
+    excludeUrls:                      # list of URLs to exclude, in ant path style
+      - /actuator/health/liveness
+      - /actuator/health/readiness
+    include-headers: true             # whether the request headers should be included in the log message
+    include-payload: true             # whether the request payload (body) should be included in the log message
+    include-query-string: true        # whether the query string should be included in the log message
+    max-payload-length: 10240         # the maximum length (in bytes) of the payload body to be included in the log message
+  swagger:
+    application-name: Passport Status API
+    contact-name: Digital technology solutions
+    contact-url: https://github.com/dts-stn/passport-status-api/
+    terms-of-service-url: https://www.canada.ca/en/transparency/terms.html
 ```
 
 ### `application-local.yaml`
