@@ -1,20 +1,13 @@
 package ca.gov.dtsstn.passport.api.data.document;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.immutables.builder.Builder;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
@@ -23,51 +16,33 @@ import org.springframework.lang.Nullable;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@Document("httpTraces")
 @TypeAlias("HttpTrace")
+@Document("http-traces")
 @SuppressWarnings({ "serial" })
-public class HttpTraceDocument implements Serializable {
-
-	@Id
-	private String id;
-
-	@CreatedBy
-	private String createdBy;
-
-	@CreatedDate
-	private Instant createdDate;
-
-	@LastModifiedBy
-	private String lastModifiedBy;
-
-	@LastModifiedDate
-	private Instant lastModifiedDate;
-
-	@Version
-	private Long version;
-
-	private Instant timestamp;
+public class HttpTraceDocument extends AbstractDocument {
 
 	private String principalName;
 
-	private String sessionId;
+	private Map<String, List<String>> requestHeaders;
 
 	private String requestMethod;
 
+	private String requestRemoteAddress;
+
 	private URI requestUri;
 
-	private Map<String, List<String>> requestHeaders;
-
-	private String requestRemoteAddress;
+	private Map<String, List<String>> responseHeaders;
 
 	private Integer responseStatus;
 
-	private Map<String, List<String>> responseHeaders;
+	private String sessionId;
+
+	private Instant timestamp;
 
 	private Long timeTakenMillis;
 
 	public HttpTraceDocument() {
-		/* required by MongoDB */
+		super();
 	}
 
 	@Builder.Constructor
@@ -88,78 +63,17 @@ public class HttpTraceDocument implements Serializable {
 			@Nullable Integer responseStatus,
 			@Nullable Map<String, List<String>> responseHeaders,
 			@Nullable Long timeTakenMillis) {
-		this.id = id;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
-		this.lastModifiedBy = lastModifiedBy;
-		this.lastModifiedDate = lastModifiedDate;
-		this.version = version;
+		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, version);
 		this.timestamp = timestamp;
 		this.principalName = principalName;
-		this.sessionId = sessionId;
-		this.requestMethod = requestMethod;
-		this.requestUri = requestUri;
 		this.requestHeaders = requestHeaders;
+		this.requestMethod = requestMethod;
 		this.requestRemoteAddress = requestRemoteAddress;
-		this.responseStatus = responseStatus;
+		this.requestUri = requestUri;
 		this.responseHeaders = responseHeaders;
+		this.responseStatus = responseStatus;
+		this.sessionId = sessionId;
 		this.timeTakenMillis = timeTakenMillis;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Instant getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Instant createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public Instant getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Instant lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Instant getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Instant timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public String getPrincipalName() {
@@ -170,28 +84,12 @@ public class HttpTraceDocument implements Serializable {
 		this.principalName = principalName;
 	}
 
-	public String getSessionId() {
-		return sessionId;
-	}
-
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
-
 	public String getRequestMethod() {
 		return requestMethod;
 	}
 
 	public void setRequestMethod(String requestMethod) {
 		this.requestMethod = requestMethod;
-	}
-
-	public URI getRequestUri() {
-		return requestUri;
-	}
-
-	public void setRequestUri(URI requestUri) {
-		this.requestUri = requestUri;
 	}
 
 	public Map<String, List<String>> getRequestHeaders() {
@@ -210,12 +108,12 @@ public class HttpTraceDocument implements Serializable {
 		this.requestRemoteAddress = requestRemoteAddress;
 	}
 
-	public Integer getResponseStatus() {
-		return responseStatus;
+	public URI getRequestUri() {
+		return requestUri;
 	}
 
-	public void setResponseStatus(Integer responseStatus) {
-		this.responseStatus = responseStatus;
+	public void setRequestUri(URI requestUri) {
+		this.requestUri = requestUri;
 	}
 
 	public Map<String, List<String>> getResponseHeaders() {
@@ -224,6 +122,30 @@ public class HttpTraceDocument implements Serializable {
 
 	public void setResponseHeaders(Map<String, List<String>> responseHeaders) {
 		this.responseHeaders = responseHeaders;
+	}
+
+	public Integer getResponseStatus() {
+		return responseStatus;
+	}
+
+	public void setResponseStatus(Integer responseStatus) {
+		this.responseStatus = responseStatus;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public Instant getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Instant timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public Long getTimeTakenMillis() {
@@ -235,19 +157,20 @@ public class HttpTraceDocument implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
-
-		final var other = (HttpTraceDocument) obj;
-
-		return Objects.equals(id, other.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
+	public String toString() {
+		return new ToStringCreator(this)
+			.append("super", super.toString())
+			.append("principalName", principalName)
+			.append("requestHeaders", requestHeaders)
+			.append("requestMethod", requestMethod)
+			.append("requestRemoteAddress", requestRemoteAddress)
+			.append("requestUri", requestUri)
+			.append("responseHeaders", responseHeaders)
+			.append("responseStatus", responseStatus)
+			.append("sessionId", sessionId)
+			.append("timestamp", timestamp)
+			.append("timeTakenMillis", timeTakenMillis)
+			.toString();
 	}
 
 }

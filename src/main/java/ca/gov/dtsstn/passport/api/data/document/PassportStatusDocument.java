@@ -1,17 +1,10 @@
 package ca.gov.dtsstn.passport.api.data.document;
 
-import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 
 import org.immutables.builder.Builder;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.core.style.ToStringCreator;
 import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
@@ -23,27 +16,12 @@ import org.springframework.lang.Nullable;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @TypeAlias("PassportStatus")
-@Document("passportStatuses")
+@Document("passport-statuses")
 @SuppressWarnings({ "serial" })
-public class PassportStatusDocument implements Serializable {
+public class PassportStatusDocument extends AbstractDocument {
 
-	@Id
-	private String id;
-
-	@CreatedBy
-	private String createdBy;
-
-	@CreatedDate
-	private Instant createdDate;
-
-	@LastModifiedBy
-	private String lastModifiedBy;
-
-	@LastModifiedDate
-	private Instant lastModifiedDate;
-
-	@Version
-	private Long version;
+	@Indexed
+	private String dateOfBirth;
 
 	@Indexed
 	private String fileNumber;
@@ -54,13 +32,10 @@ public class PassportStatusDocument implements Serializable {
 	@Indexed
 	private String lastName;
 
-	@Indexed
-	private String dateOfBirth;
-
 	private Status status;
 
 	public PassportStatusDocument() {
-		/* required by MongoDB */
+		super();
 	}
 
 	@Builder.Constructor
@@ -76,12 +51,7 @@ public class PassportStatusDocument implements Serializable {
 			@Nullable String lastName,
 			@Nullable String dateOfBirth,
 			@Nullable Status status) {
-		this.id = id;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
-		this.lastModifiedBy = lastModifiedBy;
-		this.lastModifiedDate = lastModifiedDate;
-		this.version = version;
+		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, version);
 		this.fileNumber = fileNumber;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -89,52 +59,12 @@ public class PassportStatusDocument implements Serializable {
 		this.status = status;
 	}
 
-	public String getId() {
-		return id;
+	public String getDateOfBirth() {
+		return dateOfBirth;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Instant getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Instant createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-	public Instant getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Instant lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
+	public void setDateOfBirth(String dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	public String getFileNumber() {
@@ -161,14 +91,6 @@ public class PassportStatusDocument implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public void setDateOfBirth(String dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-
 	public Status getStatus() {
 		return status;
 	}
@@ -178,19 +100,15 @@ public class PassportStatusDocument implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
-
-		final var other = (PassportStatusDocument) obj;
-
-		return Objects.equals(id, other.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
+	public String toString() {
+		return new ToStringCreator(this)
+			.append("super", super.toString())
+			.append("dateOfBirth", dateOfBirth)
+			.append("fileNumber", fileNumber)
+			.append("firstName", firstName)
+			.append("lastName", lastName)
+			.append("status", status)
+			.toString();
 	}
 
 	public enum Status {
