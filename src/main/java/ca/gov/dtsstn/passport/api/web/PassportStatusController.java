@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,12 +68,12 @@ public class PassportStatusController {
 		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
-	@GetMapping({ /* root */ })
+	@GetMapping({ "" })
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
-	public PagedModel<PassportStatusModel> getAll(@SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
+	public PagedModel<PassportStatusModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
 		return assembler.toModel(service.readAll(pageable));
 	}
 

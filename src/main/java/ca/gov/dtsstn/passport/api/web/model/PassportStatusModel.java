@@ -80,7 +80,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	public abstract int hashCode();
 
 	@Override
-	public abstract boolean equals(Object obj);
+	public abstract boolean equals(@Nullable Object obj);
 
 	@Override
 	public abstract String toString();

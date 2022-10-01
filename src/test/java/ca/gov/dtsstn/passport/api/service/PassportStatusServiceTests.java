@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,10 +31,12 @@ class PassportStatusServiceTests {
 
 	PassportStatusService passportStatusService;
 
+	@Mock ApplicationEventPublisher applicationEventPublisher;
+
 	@Mock PassportStatusRepository passportStatusRepository;
 
 	@BeforeEach void beforeEach() {
-		this.passportStatusService = new PassportStatusService(passportStatusRepository);
+		this.passportStatusService = new PassportStatusService(applicationEventPublisher, passportStatusRepository);
 	}
 
 	@Test void testCreate() {
