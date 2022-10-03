@@ -24,6 +24,8 @@ import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 
 /**
+ * TODO:: GjB :: verify event publisher is fired for each method
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @ExtendWith({ MockitoExtension.class })
@@ -77,6 +79,8 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testDelete() {
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocument()));
+
 		passportStatusService.delete("id");
 
 		verify(passportStatusRepository).deleteById(any());
