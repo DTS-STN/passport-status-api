@@ -2,11 +2,11 @@ package ca.gov.dtsstn.passport.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 
 /**
@@ -17,6 +17,8 @@ public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
+	@Autowired Environment environment;
+
 	/**
 	 * The application entry point. This is where it all begins.
 	 */
@@ -25,21 +27,18 @@ public class Application {
 	}
 
 	/**
-	 * An {@link ApplicationListener} that prints some useful startup information.
+	 * An {@link EventListener} that prints some useful startup information.
 	 */
-	@Bean ApplicationListener<ContextRefreshedEvent> applicationStartupListener(Environment environment) {
-		log.info("Creating 'applicationStartupListener' bean");
+	@EventListener({ ApplicationReadyEvent.class })
+	protected void handleApplicationReadyEvent() {
+		final var applicationName = environment.getProperty("spring.application.name", "application");
+		final var serverPort = environment.getProperty("server.port", "8080");
+		final var contextPath = environment.getProperty("server.servlet.context-path", "/");
 
-		return event -> {
-			final var applicationName = environment.getProperty("spring.application.name", "application");
-			final var serverPort = environment.getProperty("server.port", "8080");
-			final var contextPath = environment.getProperty("server.servlet.context-path", "/");
-
-			log.info("===============================================================================");
-			log.info("Successfully started {}", applicationName);
-			log.info("	Local application URL: http://localhost:{}{}", serverPort, contextPath); // NOSONAR
-			log.info("===============================================================================");
-		};
+		log.info("===============================================================================");
+		log.info("Successfully started {}...", applicationName);
+		log.info("Local application URL: http://localhost:{}{}", serverPort, contextPath);
+		log.info("===============================================================================");
 	}
 
 }
