@@ -136,7 +136,7 @@ springdoc:
 #######################################################################################################################
 
 application:
-  data-initializer:
+  database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
     run-on-startup: false             # enable the data initializer on startup; WARNING -- THIS WILL DESTROY DATA

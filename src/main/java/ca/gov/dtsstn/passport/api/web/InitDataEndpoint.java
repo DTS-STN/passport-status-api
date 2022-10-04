@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.DataInitializer;
+import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -24,17 +24,17 @@ public class InitDataEndpoint {
 
 	private static final Logger log = LoggerFactory.getLogger(InitDataEndpoint.class);
 
-	private final DataInitializer dataInitializer;
+	private final DatabaseInitializer databaseInitializer;
 
-	public InitDataEndpoint(DataInitializer dataInitializer) {
-		Assert.notNull(dataInitializer, "dataInitializer is required; it must not be null");
-		this.dataInitializer = dataInitializer;
+	public InitDataEndpoint(DatabaseInitializer databaseInitializer) {
+		Assert.notNull(databaseInitializer, "databaseInitializer is required; it must not be null");
+		this.databaseInitializer = databaseInitializer;
 	}
 
 	@WriteOperation
 	public ResponseEntity<Map<String, ?>> initializeData() {
 		log.info("InitDataEndpoint called; invoking data initializer");
-		dataInitializer.initializeData();
+		databaseInitializer.initializeData();
 		return ResponseEntity.accepted().body(Map.of("message", "Request accepted; initializing database", "timestamp", Instant.now()));
 	}
 

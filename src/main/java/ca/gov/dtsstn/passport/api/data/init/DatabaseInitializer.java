@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.data;
+package ca.gov.dtsstn.passport.api.data.init;
 
 import java.util.Locale;
 import java.util.Random;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
+import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
@@ -24,10 +26,10 @@ import net.datafaker.Faker;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-@ConfigurationProperties("application.data-initializer")
-public class DataInitializer {
+@ConfigurationProperties("application.database-initializer")
+public class DatabaseInitializer {
 
-	private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+	private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
 	private final Faker faker = new Faker(Locale.CANADA_FRENCH, new Random(0L));
 
@@ -39,7 +41,7 @@ public class DataInitializer {
 
 	private int generatedStatusesNumber = 1000;
 
-	public DataInitializer(HttpTraceRepository httpTraceRepository, PassportStatusRepository passportStatusRepository) {
+	public DatabaseInitializer(HttpTraceRepository httpTraceRepository, PassportStatusRepository passportStatusRepository) {
 		this.httpTraceRepository = httpTraceRepository;
 		this.passportStatusRepository = passportStatusRepository;
 	}
@@ -87,12 +89,12 @@ public class DataInitializer {
 	}
 
 	public void setGeneratedStatusesNumber(int generatedStatusesNumber) {
-		Assert.isTrue(generatedStatusesNumber >= 0, "application.dev.data-initializer.generated-statuses-number must be greater than or equal to zero");
+		Assert.isTrue(generatedStatusesNumber >= 0, "application.dev.database-initializer.generated-statuses-number must be greater than or equal to zero");
 		this.generatedStatusesNumber = generatedStatusesNumber;
 	}
 
 	public void setDuplicateStatusesNumber(int duplicateStatusesNumber) {
-		Assert.isTrue(duplicateStatusesNumber >= 0, "application.dev.data-initializer.duplicate-statuses-number must be greater than or equal to zero");
+		Assert.isTrue(duplicateStatusesNumber >= 0, "application.dev.database-initializer.duplicate-statuses-number must be greater than or equal to zero");
 		this.duplicateStatusesNumber = duplicateStatusesNumber;
 	}
 

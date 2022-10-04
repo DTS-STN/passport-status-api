@@ -14,9 +14,9 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import ca.gov.dtsstn.passport.api.data.DataInitializer;
 import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepository;
 import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepositoryImpl;
+import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -34,12 +34,12 @@ public class DataSourceConfig {
 		return () -> Optional.of(applicationName);
 	}
 
-	@ConditionalOnProperty({ "application.data-initializer.run-on-startup" })
-	@Bean ApplicationListener<ApplicationStartedEvent> dataInitializerStartupListener(DataInitializer dataInitializer) {
-		log.info("Creating 'dataInitializerStartupListener' bean");
+	@ConditionalOnProperty({ "application.database-initializer.run-on-startup" })
+	@Bean ApplicationListener<ApplicationStartedEvent> databaseInitializerStartupListener(DatabaseInitializer databaseInitializer) {
+		log.info("Creating 'databaseInitializerStartupListener' bean");
 		return event -> {
 			log.info("Initializing data");
-			dataInitializer.initializeData();
+			databaseInitializer.initializeData();
 		};
 	}
 

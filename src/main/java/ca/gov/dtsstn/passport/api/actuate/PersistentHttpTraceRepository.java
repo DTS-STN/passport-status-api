@@ -29,7 +29,7 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 
 	private final HttpTraceMapper httpTraceMapper = Mappers.getMapper(HttpTraceMapper.class);
 
-	private final InMemoryHttpTraceRepository delegate = new InMemoryHttpTraceRepository();
+	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository = new InMemoryHttpTraceRepository();
 
 	public PersistentHttpTraceRepository(HttpTraceRepository httpTraceRepository) {
 		Assert.notNull(httpTraceRepository, "httpTraceRepository is required; it must not be null");
@@ -38,7 +38,7 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 
 	@Override
 	public void add(HttpTrace httpTrace) {
-		delegate.add(httpTrace);
+		inMemoryHttpTraceRepository.add(httpTrace);
 		Optional.ofNullable(httpTrace)
 			.map(httpTraceMapper::toDocument)
 			.ifPresent(httpTraceRepository::save);
@@ -46,12 +46,12 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 
 	@Override
 	public List<HttpTrace> findAll() {
-		return delegate.findAll();
+		return inMemoryHttpTraceRepository.findAll();
 	}
 
 	public void setCapacity(int capacity) {
 		Assert.isTrue(capacity >= 0, "application.http-trace-repository.capacity must be greater than or equal to zero");
-		delegate.setCapacity(capacity);
+		inMemoryHttpTraceRepository.setCapacity(capacity);
 	}
 
 	@Mapper
