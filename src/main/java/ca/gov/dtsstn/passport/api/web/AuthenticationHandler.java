@@ -23,13 +23,13 @@ import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorMo
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-public class ApiAuthenticationHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
+public class AuthenticationHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
 
-	private static final Logger log = LoggerFactory.getLogger(ApiAuthenticationHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(AuthenticationHandler.class);
 
 	private final ObjectMapper objectMapper;
 
-	public ApiAuthenticationHandler(ObjectMapper objectMapper) {
+	public AuthenticationHandler(ObjectMapper objectMapper) {
 		Assert.notNull(objectMapper, "objectMapper is required; it must not be null");
 		this.objectMapper = objectMapper;
 	}
