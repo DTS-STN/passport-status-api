@@ -90,7 +90,7 @@ server:
 
 spring:
   application:
-    name: passport-status-api
+    name: Passport Status API
   config:
     import:
       - optional:application-local.yml
