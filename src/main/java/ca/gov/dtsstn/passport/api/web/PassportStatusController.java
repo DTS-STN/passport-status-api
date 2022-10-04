@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,8 @@ import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
+import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.AuthenticationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ResourceNotFoundErrorModel;
@@ -59,20 +62,26 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ "/{id}" })
+	@PreAuthorize("isAuthenticated()")
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
+	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
+	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
 	public PassportStatusModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
 		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
 	@GetMapping({ "" })
+	@PreAuthorize("isAuthenticated()")
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
+	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
+	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	public PagedModel<PassportStatusModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
 		return assembler.toModel(service.readAll(pageable));
 	}

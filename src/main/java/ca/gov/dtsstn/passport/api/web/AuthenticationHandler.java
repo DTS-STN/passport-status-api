@@ -12,17 +12,19 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAccessDeniedErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorModel;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@Component
+@RestControllerAdvice
 public class AuthenticationHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthenticationHandler.class);
@@ -35,25 +37,15 @@ public class AuthenticationHandler implements AccessDeniedHandler, Authenticatio
 	}
 
 	@Override
+	@ExceptionHandler({ AuthenticationException.class })
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-		final var error = ImmutableAuthenticationErrorModel.builder()
-			.details(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-			.errorCode("API-0401")
-			.message(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-			.build();
-
-		sendResponse(response, HttpStatus.UNAUTHORIZED, error);
+		sendResponse(response, HttpStatus.UNAUTHORIZED, ImmutableAuthenticationErrorModel.of("Access to this resource is denied: bad credentials."));
 	}
 
 	@Override
+	@ExceptionHandler({ AccessDeniedException.class })
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-		final var error = ImmutableAuthenticationErrorModel.builder()
-			.details(HttpStatus.FORBIDDEN.getReasonPhrase())
-			.errorCode("API-0403")
-			.message(HttpStatus.FORBIDDEN.getReasonPhrase())
-			.build();
-
-		sendResponse(response, HttpStatus.FORBIDDEN, error);
+		sendResponse(response, HttpStatus.FORBIDDEN, ImmutableAccessDeniedErrorModel.of("Access to this resource is denied: forbidden by security policies."));
 	}
 
 	protected void sendResponse(HttpServletResponse response, HttpStatus httpStatus, Object body) throws IOException {

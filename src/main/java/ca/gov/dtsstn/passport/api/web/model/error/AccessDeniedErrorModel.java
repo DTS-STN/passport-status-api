@@ -10,34 +10,34 @@ import org.immutables.value.Value.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST model representing an HTTP 401 Unauthorized response
+ * REST model representing an HTTP 403 Forbidden response
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "AuthenticationError")
-public interface AuthenticationErrorModel extends Serializable {
+@Schema(name = "AccessDeniedError")
+public interface AccessDeniedErrorModel extends Serializable {
 
 	@Default
-	@Schema(example = "401")
+	@Schema(example = "403")
 	default int getStatusCode() {
-		return 401;
+		return 403;
 	}
 
 	@Parameter
-	@Schema(example = "Unauthorized.")
+	@Schema(example = "Forbidden.")
 	String getDetails();
 
 	@Default
-	@Schema(example = "API-0401")
+	@Schema(example = "API-0403")
 	default String getErrorCode() {
-		return "API-0401";
+		return "API-0403";
 	}
 
 	@Default
-	@Schema(example = "Unauthorized")
+	@Schema(example = "Forbidden")
 	default String getMessage() {
-		return "Unauthorized";
+		return "Forbidden";
 	}
 
 	@Default

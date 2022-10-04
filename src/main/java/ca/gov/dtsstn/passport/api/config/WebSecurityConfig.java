@@ -55,6 +55,7 @@ public class WebSecurityConfig {
 		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
 
 		http // general security configuration
+			.anonymous().disable()
 			.csrf().disable()
 			.cors().and()
 			.exceptionHandling()
