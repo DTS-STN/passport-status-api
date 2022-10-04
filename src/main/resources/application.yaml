@@ -148,6 +148,9 @@ application:
   http-trace-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:
+    content-security-policy: >-
+      default-src 'self';
+      img-src 'self' data:;
     cors:
       allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
         - '*'

@@ -11,6 +11,7 @@ import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,7 +50,9 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
-	@Bean SecurityFilterChain securityFilterChain(AuthenticationHandler authenticationHandler, HttpSecurity http) throws Exception {
+	@Bean SecurityFilterChain securityFilterChain(AuthenticationHandler authenticationHandler, Environment environment, HttpSecurity http) throws Exception {
+		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
+
 		http // general security configuration
 			.csrf().disable()
 			.cors().and()
@@ -57,6 +60,7 @@ public class WebSecurityConfig {
 				.accessDeniedHandler(authenticationHandler).and()
 			.headers()
 				.cacheControl().disable()
+				.contentSecurityPolicy(contentSecurityPolicy).and()
 				.frameOptions().sameOrigin().and()
 			.httpBasic()
 				.authenticationEntryPoint(authenticationHandler).and()
