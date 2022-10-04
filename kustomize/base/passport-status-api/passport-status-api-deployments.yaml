@@ -17,9 +17,6 @@ spec:
         - name: passport-status-api
           image: dtsdevcontainers.azurecr.io/passport-status-api
           imagePullPolicy: Always
-          env:
-            - name: SPRING_CLOUD_KUBERNETES_ENABLED
-              value: 'true'
           ports:
             - name: http
               containerPort: 8080
