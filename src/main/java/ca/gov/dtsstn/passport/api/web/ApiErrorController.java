@@ -34,9 +34,9 @@ import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice
-public class ErrorController {
+public class ApiErrorController {
 
-	private static final Logger log = LoggerFactory.getLogger(ErrorController.class);
+	private static final Logger log = LoggerFactory.getLogger(ApiErrorController.class);
 
 	@ExceptionHandler({ BindException.class })
 	protected ResponseEntity<BadRequestErrorModel> handleBindException(BindException ex) {

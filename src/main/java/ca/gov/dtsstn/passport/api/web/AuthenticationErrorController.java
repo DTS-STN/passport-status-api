@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -38,13 +40,13 @@ import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorMo
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice
-public class AuthenticationHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
+public class AuthenticationErrorController implements AccessDeniedHandler, AuthenticationEntryPoint {
 
-	private static final Logger log = LoggerFactory.getLogger(AuthenticationHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(AuthenticationErrorController.class);
 
 	private final ObjectMapper objectMapper;
 
-	public AuthenticationHandler(ObjectMapper objectMapper) {
+	public AuthenticationErrorController(ObjectMapper objectMapper) {
 		Assert.notNull(objectMapper, "objectMapper is required; it must not be null");
 		this.objectMapper = objectMapper;
 	}
@@ -75,6 +77,7 @@ public class AuthenticationHandler implements AccessDeniedHandler, Authenticatio
 		}
 
 		response.setStatus(httpStatus.value());
+		response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 		response.getWriter().write(objectMapper.writeValueAsString(body));
 	}
 
