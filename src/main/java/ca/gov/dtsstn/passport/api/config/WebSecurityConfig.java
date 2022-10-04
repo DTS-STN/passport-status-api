@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -61,7 +62,8 @@ public class WebSecurityConfig {
 			.headers()
 				.cacheControl().disable()
 				.contentSecurityPolicy(contentSecurityPolicy).and()
-				.frameOptions().sameOrigin().and()
+				.frameOptions().sameOrigin()
+				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()
 			.httpBasic()
 				.authenticationEntryPoint(authenticationHandler).and()
 			.sessionManagement()
