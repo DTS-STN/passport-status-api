@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import ca.gov.dtsstn.passport.api.actuate.ChangelogEndpoint;
+import ca.gov.dtsstn.passport.api.web.ApiAuthenticationHandler;
 
 /**
  * @author Greg Baker <gregory.j.baker@hrsdc-rhdcc.gc.ca>
@@ -48,14 +49,17 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
-	@Bean SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	@Bean SecurityFilterChain securityFilterChain(ApiAuthenticationHandler apiAuthenticationHandler, HttpSecurity http) throws Exception {
 		http // general security configuration
 			.csrf().disable()
 			.cors().and()
+			.exceptionHandling()
+				.accessDeniedHandler(apiAuthenticationHandler).and()
 			.headers()
 				.cacheControl().disable()
 				.frameOptions().sameOrigin().and()
-			.httpBasic().and()
+			.httpBasic()
+				.authenticationEntryPoint(apiAuthenticationHandler).and()
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
