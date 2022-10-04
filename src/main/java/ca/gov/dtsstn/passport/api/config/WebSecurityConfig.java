@@ -54,10 +54,6 @@ public class WebSecurityConfig {
 	@Bean SecurityFilterChain securityFilterChain(AuthenticationHandler authenticationHandler, Environment environment, HttpSecurity http) throws Exception {
 		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
 
-		// TODO :: GjB :: this is commented out because it breaks anonymous actuator security...
-		// however, with this commented out, @PreAuthorize(..) unauthorized requests are handled as forbidden requests
-		// http.anonymous().disable();
-
 		http // general security configuration
 			.csrf().disable()
 			.cors().and()

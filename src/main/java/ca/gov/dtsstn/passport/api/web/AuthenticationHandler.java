@@ -1,6 +1,8 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,7 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.util.Assert;
@@ -22,6 +28,13 @@ import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAccessDeniedErrorMode
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorModel;
 
 /**
+ * This class functions as both a {@code RestControllerAdvice}, as well as a
+ * Spring Security {@code AccessDeniedHandler} and {@code AuthenticationEntryPoint}.
+ * <p>
+ * The reason for the dual-responsibility is because of how Spring Security handles rules configured in its
+ * {@code SecurityFilterChain} vs {@code @PreAuthorize} annotated methods. The former are handled as
+ * {@code AccessDeniedHandler} and {@code AuthenticationEntryPoint}, the latter as an {@code @ExceptionHandler}.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice
@@ -45,6 +58,13 @@ public class AuthenticationHandler implements AccessDeniedHandler, Authenticatio
 	@Override
 	@ExceptionHandler({ AccessDeniedException.class })
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+		if (isAnonymous()) {
+			// Spring Security has this odd quirk whereby it will not throw an
+			// AuthenticationCredentialsNotFoundException if the current user is an anonymous user. 🤷
+			// see: AbstractSecurityInterceptor.beforeInvocation(..) for reference
+			throw new AuthenticationCredentialsNotFoundException(accessDeniedException.getMessage());
+		}
+
 		sendResponse(response, HttpStatus.FORBIDDEN, ImmutableAccessDeniedErrorModel.of("Access to this resource is denied: forbidden by security policies."));
 	}
 
@@ -56,6 +76,12 @@ public class AuthenticationHandler implements AccessDeniedHandler, Authenticatio
 
 		response.setStatus(httpStatus.value());
 		response.getWriter().write(objectMapper.writeValueAsString(body));
+	}
+
+	protected boolean isAnonymous() {
+		return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+			.map(Authentication::getAuthorities).orElse(Collections.emptyList()).stream()
+			.map(GrantedAuthority::getAuthority).anyMatch("ROLE_ANONYMOUS"::equals);
 	}
 
 }
