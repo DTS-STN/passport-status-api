@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import ca.gov.dtsstn.passport.api.config.WebMvcConfig;
 import ca.gov.dtsstn.passport.api.config.WebSecurityConfig;
-import ca.gov.dtsstn.passport.api.web.AuthenticationErrorController;
+import ca.gov.dtsstn.passport.api.web.AuthenticationErrorHandler;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -24,7 +24,7 @@ class WebMvcIT {
 
 	@Autowired MockMvc mvc;
 
-	@MockBean AuthenticationErrorController authenticationErrorController;
+	@MockBean AuthenticationErrorHandler authenticationErrorController;
 
 	@Test void testSwaggerRedirect() throws Exception {
 		mvc.perform(get("/"))

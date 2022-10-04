@@ -43,13 +43,13 @@ import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorMo
  */
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE) // this should fire before ApiErrorController
-public class AuthenticationErrorController implements AccessDeniedHandler, AuthenticationEntryPoint {
+public class AuthenticationErrorHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
 
-	private static final Logger log = LoggerFactory.getLogger(AuthenticationErrorController.class);
+	private static final Logger log = LoggerFactory.getLogger(AuthenticationErrorHandler.class);
 
 	private final ObjectMapper objectMapper;
 
-	public AuthenticationErrorController(ObjectMapper objectMapper) {
+	public AuthenticationErrorHandler(ObjectMapper objectMapper) {
 		Assert.notNull(objectMapper, "objectMapper is required; it must not be null");
 		this.objectMapper = objectMapper;
 	}

@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.actuate;
+package ca.gov.dtsstn.passport.api.web;
 
 import java.io.IOException;
 import java.io.Serializable;

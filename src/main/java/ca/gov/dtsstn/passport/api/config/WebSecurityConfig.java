@@ -22,8 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import ca.gov.dtsstn.passport.api.actuate.ChangelogEndpoint;
-import ca.gov.dtsstn.passport.api.web.AuthenticationErrorController;
+import ca.gov.dtsstn.passport.api.web.AuthenticationErrorHandler;
+import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
 
 /**
  * @author Greg Baker <gregory.j.baker@hrsdc-rhdcc.gc.ca>
@@ -51,7 +51,7 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
-	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorController authenticationErrorController, Environment environment, HttpSecurity http) throws Exception {
+	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http) throws Exception {
 		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
 
 		http // general security configuration
