@@ -5,7 +5,7 @@ metadata:
 data:
   application.yaml: |-
     application:
-      data-initializer:
+      database-initializer:
         run-on-startup: true
       request-logging-filter:
         enabled: true
