@@ -7,33 +7,34 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
-import ca.gov.dtsstn.passport.api.data.document.HttpTraceDocument;
+import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
+import ca.gov.dtsstn.passport.api.data.document.HttpRequestDocument;
 
 /**
- * A persistent implementation of {@link org.springframework.boot.actuate.trace.http.HttpTraceRepository}.
+ * A persistent implementation of {@link HttpTraceRepository}.
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Repository
-@ConfigurationProperties("application.http-trace-repository")
-public class PersistentHttpTraceRepository implements org.springframework.boot.actuate.trace.http.HttpTraceRepository {
+@ConfigurationProperties("application.http-request-repository")
+public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
-	private final HttpTraceRepository httpTraceRepository;
+	private final HttpRequestRepository httpRequestRepository;
 
 	private final HttpTraceMapper httpTraceMapper = Mappers.getMapper(HttpTraceMapper.class);
 
 	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository = new InMemoryHttpTraceRepository();
 
-	public PersistentHttpTraceRepository(HttpTraceRepository httpTraceRepository) {
-		Assert.notNull(httpTraceRepository, "httpTraceRepository is required; it must not be null");
-		this.httpTraceRepository = httpTraceRepository;
+	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository) {
+		Assert.notNull(httpRequestRepository, "httpRequestRepository is required; it must not be null");
+		this.httpRequestRepository = httpRequestRepository;
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 		inMemoryHttpTraceRepository.add(httpTrace);
 		Optional.ofNullable(httpTrace)
 			.map(httpTraceMapper::toDocument)
-			.ifPresent(httpTraceRepository::save);
+			.ifPresent(httpRequestRepository::save);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 	}
 
 	public void setCapacity(int capacity) {
-		Assert.isTrue(capacity >= 0, "application.http-trace-repository.capacity must be greater than or equal to zero");
+		Assert.isTrue(capacity >= 0, "application.http-request-repository.capacity must be greater than or equal to zero");
 		inMemoryHttpTraceRepository.setCapacity(capacity);
 	}
 
@@ -73,7 +74,7 @@ public class PersistentHttpTraceRepository implements org.springframework.boot.a
 		@Mapping(target = "lastModifiedBy", ignore = true)
 		@Mapping(target = "lastModifiedDate", ignore = true)
 		@Mapping(target = "version", ignore = true)
-		HttpTraceDocument toDocument(@Nullable HttpTrace httpTrace);
+		HttpRequestDocument toDocument(@Nullable HttpTrace httpTrace);
 
 	}
 

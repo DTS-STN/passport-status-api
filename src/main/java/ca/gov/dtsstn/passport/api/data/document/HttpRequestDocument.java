@@ -16,10 +16,10 @@ import org.springframework.lang.Nullable;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@TypeAlias("HttpTrace")
-@Document("http-traces")
+@TypeAlias("HttpRequest")
+@Document("http-requests")
 @SuppressWarnings({ "serial" })
-public class HttpTraceDocument extends AbstractDocument {
+public class HttpRequestDocument extends AbstractDocument {
 
 	private String principalName;
 
@@ -41,12 +41,12 @@ public class HttpTraceDocument extends AbstractDocument {
 
 	private Long timeTakenMillis;
 
-	public HttpTraceDocument() {
+	public HttpRequestDocument() {
 		super();
 	}
 
 	@Builder.Constructor
-	protected HttpTraceDocument( // NOSONAR
+	protected HttpRequestDocument( // NOSONAR
 			@Nullable String id,
 			@Nullable String createdBy,
 			@Nullable Instant createdDate,

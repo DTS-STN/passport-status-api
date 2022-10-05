@@ -21,7 +21,7 @@ import org.springframework.boot.actuate.trace.http.HttpTrace.Session;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
+import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -31,10 +31,10 @@ class PersistentHttpTraceRepositoryTests {
 
 	PersistentHttpTraceRepository persistentHttpTraceRepository;
 
-	@Mock HttpTraceRepository httpTraceRepository;
+	@Mock HttpRequestRepository httpRequestRepository;
 
 	@BeforeEach void beforeEach() {
-		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(httpTraceRepository);
+		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(httpRequestRepository);
 	}
 
 	@Test void testAdd() {
@@ -47,7 +47,7 @@ class PersistentHttpTraceRepositoryTests {
 
 		persistentHttpTraceRepository.add(new HttpTrace(request, response, timestamp, principal, session, timeTaken));
 
-		verify(httpTraceRepository).save(any());
+		verify(httpRequestRepository).save(any());
 	}
 
 }

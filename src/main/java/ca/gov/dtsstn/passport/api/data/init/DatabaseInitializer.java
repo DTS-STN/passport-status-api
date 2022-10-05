@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.HttpTraceRepository;
+import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
@@ -35,14 +35,14 @@ public class DatabaseInitializer {
 
 	private final PassportStatusRepository passportStatusRepository;
 
-	private final HttpTraceRepository httpTraceRepository;
+	private final HttpRequestRepository httpRequestRepository;
 
 	private int duplicateStatusesNumber = 10;
 
 	private int generatedStatusesNumber = 1000;
 
-	public DatabaseInitializer(HttpTraceRepository httpTraceRepository, PassportStatusRepository passportStatusRepository) {
-		this.httpTraceRepository = httpTraceRepository;
+	public DatabaseInitializer(HttpRequestRepository httpRequestRepository, PassportStatusRepository passportStatusRepository) {
+		this.httpRequestRepository = httpRequestRepository;
 		this.passportStatusRepository = passportStatusRepository;
 	}
 
@@ -50,7 +50,7 @@ public class DatabaseInitializer {
 	@Transactional
 	public void initializeData() {
 		log.info("Deleting all http traces");
-		httpTraceRepository.deleteAll();
+		httpRequestRepository.deleteAll();
 
 		log.info("Deleting all passport statuses");
 		passportStatusRepository.deleteAll();

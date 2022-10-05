@@ -20,22 +20,22 @@ import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
 @Component
 @Endpoint(id = "init-data")
 @ConfigurationProperties("application.endpoint.init-data")
-public class InitDataEndpoint {
+public class InitializeDatabaseEndpoint {
 
-	private static final Logger log = LoggerFactory.getLogger(InitDataEndpoint.class);
+	private static final Logger log = LoggerFactory.getLogger(InitializeDatabaseEndpoint.class);
 
 	private final DatabaseInitializer databaseInitializer;
 
-	public InitDataEndpoint(DatabaseInitializer databaseInitializer) {
+	public InitializeDatabaseEndpoint(DatabaseInitializer databaseInitializer) {
 		Assert.notNull(databaseInitializer, "databaseInitializer is required; it must not be null");
 		this.databaseInitializer = databaseInitializer;
 	}
 
 	@WriteOperation
-	public ResponseEntity<Map<String, ?>> initializeData() {
+	public ResponseEntity<Map<String, String>> initializeData() {
 		log.info("InitDataEndpoint called; invoking data initializer");
 		databaseInitializer.initializeData();
-		return ResponseEntity.accepted().body(Map.of("message", "Request accepted; initializing database", "timestamp", Instant.now()));
+		return ResponseEntity.accepted().body(Map.of("message", "Request accepted; initializing database", "timestamp", Instant.now().toString()));
 	}
 
 }

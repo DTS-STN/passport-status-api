@@ -33,7 +33,7 @@ The Passport Status API requires no installation process to run. 🙏
 
 ## Building
 
-- To build/run the application: `mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.data-initializer.enabled=true"`
+- To build/run the application: `mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.database-initializer.enabled=true"`
 - To build a container image: `mvn clean spring-boot:build-image`
 
 ## Configuration
@@ -53,7 +53,7 @@ default values.
 
 ``` yaml
 application:
-  data-initializer:
+  database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
     run-on-startup: false             # enable the data initializer on startup; WARNING -- THIS WILL DESTROY DATA
@@ -62,7 +62,7 @@ application:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   etag-header-filter:
     write-weak-etag: true             # whether the ETag value written to the response should be weak, as per RFC 7232
-  http-trace-repository:
+  http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:
     cors:
