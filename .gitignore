@@ -1,8 +1,8 @@
-# Custom entries (place custom .gitignore'd files here)
+#
+# Note: place custom .gitignore'd files/folders at the BOTTOM of this file.
+#
 
-**/application-local.properties
-**/application-local.yml
-**/application-local.yaml
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,windows,java,maven,eclipse,intellij,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,windows,java,maven,eclipse,intellij,visualstudiocode
@@ -331,3 +331,14 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,java,maven,eclipse,intellij,visualstudiocode
+
+
+
+#
+# Custom .gitignore'd files and folders
+#
+
+**/application-local.properties
+**/application-local.yml
+**/application-local.yaml
+.vscode/settings.json
