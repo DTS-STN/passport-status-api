@@ -3,19 +3,12 @@ kind: Kustomization
 commonLabels:
   # commonLabels must have at least one unique label
   # per environment to ensure selectors are applied correctly
-  app.kubernetes.io/instance: staging
+  app.kubernetes.io/instance: dev
 bases:
-  - ../../../base/mongodb/
-  - ../../../base/passport-status-api/
-images:
-  - name: dtsdevcontainers.azurecr.io/passport-status-api
-    newTag: 0.0.0-45983433
-  - name: docker.io/mongo
-    newTag: 5.0.6
+  - ../../base/passport-status-api/
 namespace: passport-status
-nameSuffix: -staging
+nameSuffix: -dev
 patchesStrategicMerge:
-  - mongodb-deployments.yaml
   - passport-status-api-cms.yaml
   - passport-status-api-deployments.yaml
   - passport-status-api-ingresses.yaml
