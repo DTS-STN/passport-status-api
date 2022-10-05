@@ -112,6 +112,30 @@ Deployment can be performed using the provided *Kustomize* scripts.
 
 Note that the namespace `passport-status` must already exist.
 
+## Builder container image
+
+To build the application in TeamCity, a custom builder image must be used that provides Maven and Java 17. To build and
+push this container image:
+
+``` sh
+az login
+az acr login --name dtsdevcontainers --subscription mts
+docker build --tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest - < docker/Dockerfile-MavenBuild
+docker tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.8-java17
+docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:latest
+docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.8-java17
+```
+
+### Listing existing tags
+
+To get a list of existing tags so you can correctly specify the version above:
+
+``` sh
+az login
+az acr login --name dtsdevcontainers --subscription mts
+az acr repository show-tags --name dtsdevcontainers --subscription mts --repository passport-status-api-builder
+```
+
 ## Maintainers
 
 If you have questions or need help running the Passport Status API, feel free to contact:
