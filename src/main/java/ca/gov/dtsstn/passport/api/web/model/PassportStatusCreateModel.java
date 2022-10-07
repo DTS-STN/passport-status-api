@@ -22,6 +22,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutablePassportStatusCreateModel.class)
 public interface PassportStatusCreateModel extends Serializable {
 
+	public enum Status {
+
+		APPROVED,
+		IN_EXAMINATION,
+		REJECTED;
+
+	}
+
 	@NotBlank(message = "applicationRegisterSid must not be null or blank")
 	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", example = "ABCD1234", required = true)
 	String getApplicationRegisterSid();
@@ -46,5 +54,9 @@ public interface PassportStatusCreateModel extends Serializable {
 	@NotBlank(message = "lastName must not be null or blank")
 	@Schema(description = "The last name of the passport applicant.", example = "Doe", required = true)
 	String getLastName();
+
+	@NotBlank(message = "status must not be null or blank")
+	@Schema(description = "The status of the passport application.", example = "APPROVED", required = true)
+	Status getStatus();
 
 }
