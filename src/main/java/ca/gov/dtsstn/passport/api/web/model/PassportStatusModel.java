@@ -57,6 +57,18 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	public abstract Long getVersion();
 
 	@Nullable
+	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.")
+	public abstract String getApplicationRegisterSid();
+
+	@Nullable
+	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01")
+	public abstract LocalDate getDateOfBirth();
+
+	@Nullable
+	@Schema(description = "The email address of the passport applicant.", example = "user@example.com")
+	public abstract String getEmail();
+
+	@Nullable
 	@Schema(description = "The electronic service request file number.", example = "ABCD1234")
 	public abstract String getFileNumber();
 
@@ -67,10 +79,6 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Nullable
 	@Schema(description = "The last name of the passport applicant.", example = "Doe")
 	public abstract String getLastName();
-
-	@Nullable
-	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01")
-	public abstract LocalDate getDateOfBirth();
 
 	@Nullable
 	@Schema(description = "The status of the passport application.")

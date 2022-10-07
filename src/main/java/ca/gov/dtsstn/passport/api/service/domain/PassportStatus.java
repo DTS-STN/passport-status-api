@@ -42,6 +42,15 @@ public interface PassportStatus extends Serializable {
 	Long getVersion();
 
 	@Nullable
+	String getApplicationRegisterSid();
+
+	@Nullable
+	LocalDate getDateOfBirth();
+
+	@Nullable
+	String getEmail();
+
+	@Nullable
 	String getFileNumber();
 
 	@Nullable
@@ -49,9 +58,6 @@ public interface PassportStatus extends Serializable {
 
 	@Nullable
 	String getLastName();
-
-	@Nullable
-	LocalDate getDateOfBirth();
 
 	@Nullable
 	Status getStatus();

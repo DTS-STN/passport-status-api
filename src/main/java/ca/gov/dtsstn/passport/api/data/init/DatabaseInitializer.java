@@ -1,7 +1,9 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
+import java.text.Normalizer;
 import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -32,6 +34,8 @@ public class DatabaseInitializer {
 	private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
 	private final Faker faker = new Faker(Locale.CANADA_FRENCH, new Random(0L));
+
+	private final Pattern diacriticsPattern	= Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
 	private final PassportStatusRepository passportStatusRepository;
 
@@ -67,25 +71,44 @@ public class DatabaseInitializer {
 
 	protected PassportStatusDocument generateRandomPassportStatus() {
 		final var statuses = PassportStatusDocument.Status.values();
+
+		final var firstName = faker.name().firstName();
+		final var lastName = faker.name().lastName();
+
+		final var applicationRegisterSid = faker.regexify("[A-Z0-9]{8}");
+		final var dateOfBirth = faker.date().birthday().toLocalDateTime().toLocalDate().toString();
+		final var email = stripDiacritics(firstName + "." + lastName + "@example.com").toLowerCase();
+		final var fileNumber = faker.regexify("[A-Z0-9]{8}");
+		final var id = faker.random().hex(24);
+		final var status = statuses[faker.random().nextInt(statuses.length)];
+
 		return new PassportStatusDocumentBuilder()
-			.id(faker.random().hex(24))
-			.fileNumber(faker.regexify("[A-Z0-9]{8}"))
-			.firstName(faker.name().firstName())
-			.lastName(faker.name().lastName())
-			.dateOfBirth(faker.date().birthday().toLocalDateTime().toLocalDate().toString())
-			.status(statuses[faker.random().nextInt(statuses.length)])
+			.id(id)
+			.applicationRegisterSid(applicationRegisterSid)
+			.dateOfBirth(dateOfBirth)
+			.email(email)
+			.fileNumber(fileNumber)
+			.firstName(firstName)
+			.lastName(lastName)
+			.status(status)
 			.build();
 	}
 
 	private PassportStatusDocument generateDuplicatePassportStatus() {
 		return new PassportStatusDocumentBuilder()
 			.id(faker.random().hex(24))
-			.fileNumber("DUPE0000") // NOSONAR
-			.firstName("DUPE0000")   // NOSONAR
-			.lastName("DUPE0000")     // NOSONAR
+			.applicationRegisterSid("DUPE0000") // NOSONAR
 			.dateOfBirth("2000-01-01")
+			.email("DUPE0000@example.com")                       // NOSONAR
+			.fileNumber("DUPE0000")                         // NOSONAR
+			.firstName("DUPE0000")                           // NOSONAR
+			.lastName("DUPE0000")                             // NOSONAR
 			.status(Status.APPROVED)
 			.build();
+	}
+
+	private String stripDiacritics(String string) {
+		return diacriticsPattern.matcher(Normalizer.normalize(string, Normalizer.Form.NFD)).replaceAll("");
 	}
 
 	public void setGeneratedStatusesNumber(int generatedStatusesNumber) {
