@@ -47,7 +47,7 @@ public class ApiErrorHandler {
 	}
 
 	@ExceptionHandler({ ConversionFailedException.class })
-	public ResponseEntity<Object> handleConversionFailedException(ConversionFailedException ex) {
+	public ResponseEntity<BadRequestErrorModel> handleConversionFailedException(ConversionFailedException ex) {
 		final var details = List.of("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName());
 		final var error = ImmutableBadRequestErrorModel.builder().details(details).build();
 		return ResponseEntity.badRequest().body(error);
