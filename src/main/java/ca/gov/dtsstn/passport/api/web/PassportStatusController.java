@@ -13,6 +13,8 @@ import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,6 +25,7 @@ import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
@@ -61,7 +64,23 @@ public class PassportStatusController {
 		this.service = service;
 	}
 
+	@PostMapping({ "" })
+	@PreAuthorize("isAuthenticated()")
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
+	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
+	@Operation(summary = "Create a new passport status.")
+	@ApiResponse(responseCode = "202", description = "The request was accepted")
+	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
+	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
+	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
+	public void create(Authentication authentication, @RequestBody PassportStatusCreateModel passportStatus) {
+		/* intentionally left blank (for now) */
+	}
+
+
 	@GetMapping({ "/{id}" })
+	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
@@ -75,6 +94,7 @@ public class PassportStatusController {
 	}
 
 	@GetMapping({ "" })
+	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@SecurityRequirement(name = SpringDocConfig.API_KEY_SECURITY)
