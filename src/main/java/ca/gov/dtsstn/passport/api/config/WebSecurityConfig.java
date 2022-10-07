@@ -64,7 +64,8 @@ public class WebSecurityConfig {
 				.contentSecurityPolicy(contentSecurityPolicy).and()
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()
-			.httpBasic()
+			.oauth2ResourceServer()
+				.jwt().and()
 				.authenticationEntryPoint(authenticationErrorController).and()
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
