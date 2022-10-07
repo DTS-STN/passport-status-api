@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 import org.immutables.value.Value.Immutable;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -17,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@JsonDeserialize(as = ImmutablePassportStatusCreateModel.class)
 public interface PassportStatusCreateModel extends Serializable {
 
 	@NotBlank(message = "applicationRegisterSid must not be null or blank")
