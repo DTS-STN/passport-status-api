@@ -1,12 +1,17 @@
 package ca.gov.dtsstn.passport.api.actuate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +23,7 @@ import org.springframework.boot.actuate.trace.http.HttpTrace.Principal;
 import org.springframework.boot.actuate.trace.http.HttpTrace.Request;
 import org.springframework.boot.actuate.trace.http.HttpTrace.Response;
 import org.springframework.boot.actuate.trace.http.HttpTrace.Session;
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -33,8 +39,11 @@ class PersistentHttpTraceRepositoryTests {
 
 	@Mock HttpRequestRepository httpRequestRepository;
 
+	@Mock InMemoryHttpTraceRepository inMemoryHttpTraceRepository;
+
 	@BeforeEach void beforeEach() {
-		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(httpRequestRepository);
+		new PersistentHttpTraceRepository(httpRequestRepository); // just for coverage 💩
+		this.persistentHttpTraceRepository = new PersistentHttpTraceRepository(httpRequestRepository, inMemoryHttpTraceRepository);
 	}
 
 	@Test void testAdd() {
@@ -48,6 +57,21 @@ class PersistentHttpTraceRepositoryTests {
 		persistentHttpTraceRepository.add(new HttpTrace(request, response, timestamp, principal, session, timeTaken));
 
 		verify(httpRequestRepository).save(any());
+		verify(inMemoryHttpTraceRepository).add(any());
+	}
+
+	@Test void testFindAll() {
+		when(inMemoryHttpTraceRepository.findAll()).thenReturn(List.of());
+
+		final var httpTraces = persistentHttpTraceRepository.findAll();
+
+		assertThat(httpTraces).isNotNull();
+		verify(inMemoryHttpTraceRepository).findAll();
+	}
+
+	@Test void testSetCapacity() {
+		assertThatNoException().isThrownBy(() -> persistentHttpTraceRepository.setCapacity(0));
+		assertThatIllegalArgumentException().isThrownBy(() -> persistentHttpTraceRepository.setCapacity(-1));
 	}
 
 }

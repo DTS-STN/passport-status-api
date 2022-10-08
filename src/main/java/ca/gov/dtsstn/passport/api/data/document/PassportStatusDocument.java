@@ -9,9 +9,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
-// •ESRF #, Surname, Given Name, Date of Birth,, Status, Email,  ApplicationRegisterSID
-
-
 /**
  * MongoDB document representing a passport status.
  *

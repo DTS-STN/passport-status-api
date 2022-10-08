@@ -30,11 +30,18 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
 	private final HttpTraceMapper httpTraceMapper = Mappers.getMapper(HttpTraceMapper.class);
 
-	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository = new InMemoryHttpTraceRepository();
+	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository;
 
 	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository) {
+		this(httpRequestRepository, new InMemoryHttpTraceRepository());
+	}
+
+	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository, InMemoryHttpTraceRepository inMemoryHttpTraceRepository) {
 		Assert.notNull(httpRequestRepository, "httpRequestRepository is required; it must not be null");
+		Assert.notNull(inMemoryHttpTraceRepository, "inMemoryHttpTraceRepository is required; it must not be null");
+		
 		this.httpRequestRepository = httpRequestRepository;
+		this.inMemoryHttpTraceRepository = inMemoryHttpTraceRepository;
 	}
 
 	@Override
