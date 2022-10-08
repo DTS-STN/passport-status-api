@@ -9,7 +9,7 @@ bases:
   - ../../base/passport-status-api/
 images:
   - name: dtsdevcontainers.azurecr.io/passport-status-api
-    newTag: 0.0.0-8408b965
+    newTag: 0.0.0-c6070597
   - name: docker.io/mongo
     newTag: 5.0.6
 namespace: passport-status
