@@ -35,10 +35,19 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
 
+	/**
+	 * JsonView used during resource creation operations.
+	 */
 	public interface CreateView {}
 
+	/**
+	 * JsonView used during resource read operations.
+	 */
 	public interface ReadView {}
 
+	/**
+	 * JsonView used during resource update operations.
+	 */
 	public interface UpdateView {}
 
 	public enum Status {

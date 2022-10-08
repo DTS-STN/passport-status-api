@@ -33,6 +33,7 @@ import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
  * API global error handler.
  *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
+ * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice
 public class ApiErrorHandler {

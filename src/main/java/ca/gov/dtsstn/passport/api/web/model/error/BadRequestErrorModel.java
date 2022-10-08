@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * REST model representing an HTTP 400 Bad Request response.
  *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
+ * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
 @Schema(name = "BadRequestError")

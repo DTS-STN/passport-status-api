@@ -1,14 +1,17 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import java.time.Instant;
-import java.util.Map;
 
+import org.immutables.value.Value.Default;
+import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -32,10 +35,25 @@ public class InitializeDatabaseEndpoint {
 	}
 
 	@WriteOperation
-	public ResponseEntity<Map<String, String>> initializeData() {
+	public ResponseEntity<EndpointResponse> initializeData() {
 		log.info("InitDataEndpoint called; invoking data initializer");
 		databaseInitializer.initializeData();
-		return ResponseEntity.accepted().body(Map.of("message", "Request accepted; initializing database", "timestamp", Instant.now().toString()));
+		return ResponseEntity.accepted().body(ImmutableEndpointResponse.of("Request accepted; initializing database"));
+	}
+
+	@Immutable
+	public interface EndpointResponse {
+
+		@Nullable
+		@Parameter
+		String getMessage();
+
+		@Nullable
+		@Default
+		default Instant getTimestamp() {
+			return Instant.now();
+		}
+
 	}
 
 }
