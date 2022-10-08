@@ -136,6 +136,18 @@ az acr login --name dtsdevcontainers --subscription mts
 az acr repository show-tags --name dtsdevcontainers --subscription mts --repository passport-status-api-builder
 ```
 
+## Obtaining a bearer token to use for authenticated requests
+
+``` sh
+curl --silent --request POST \
+  --url https://login.microsoftonline.com/9ed55846-8a81-4246-acd8-b1a01abfc0d1/oauth2/v2.0/token \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'grant_type=client_credentials' \
+  --form 'client_id={your-client-id}' \
+  --form 'client_secret={your-client-secret}' \
+  --form 'scope=api://passport-status.esdc-edsc.gc.ca/.default' | jq --raw-output '.access_token'
+```
+
 ## Maintainers
 
 If you have questions or need help running the Passport Status API, feel free to contact:
