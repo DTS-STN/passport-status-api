@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 /**
  * REST model representing a passport status.
@@ -133,7 +132,6 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 
 	@Override
 	@JsonView({ ReadView.class })
-	@Schema(accessMode = AccessMode.READ_ONLY)
 	public Links getLinks() {
 		return super.getLinks();
 	}

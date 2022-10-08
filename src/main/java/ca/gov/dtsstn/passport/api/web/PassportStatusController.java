@@ -81,7 +81,6 @@ public class PassportStatusController {
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
-	@JsonView({ PassportStatusModel.ReadView.class })
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
@@ -95,7 +94,6 @@ public class PassportStatusController {
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
-	@JsonView({ PassportStatusModel.ReadView.class })
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
@@ -107,7 +105,6 @@ public class PassportStatusController {
 
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
-	@JsonView({ PassportStatusModel.ReadView.class })
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
