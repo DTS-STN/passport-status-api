@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jms.core.JmsTemplate;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
@@ -24,7 +25,8 @@ import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 
 /**
- * TODO:: GjB :: verify event publisher is fired for each method
+ * TODO :: GjB :: verify event publisher is fired for each method
+ * TODO :: GjB :: add test for queueCreation
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
@@ -35,10 +37,12 @@ class PassportStatusServiceTests {
 
 	@Mock ApplicationEventPublisher applicationEventPublisher;
 
+	@Mock JmsTemplate jmsTemplate;
+
 	@Mock PassportStatusRepository passportStatusRepository;
 
 	@BeforeEach void beforeEach() {
-		this.passportStatusService = new PassportStatusService(applicationEventPublisher, passportStatusRepository);
+		this.passportStatusService = new PassportStatusService(applicationEventPublisher, jmsTemplate, passportStatusRepository);
 	}
 
 	@Test void testCreate() {

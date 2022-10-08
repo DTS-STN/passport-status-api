@@ -91,6 +91,10 @@ server:
 spring:
   application:
     name: Passport Status API
+  artemis:
+    embedded:
+      queues:
+        - passport-statuses
   config:
     import:
       - optional:application-local.yml
