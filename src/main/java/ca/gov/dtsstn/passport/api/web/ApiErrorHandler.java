@@ -56,7 +56,7 @@ public class ApiErrorHandler {
 
 	@ExceptionHandler({ HttpMessageNotReadableException.class })
 	public ResponseEntity<BadRequestErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build();
+		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build(); // NOSONAR
 		return ResponseEntity.badRequest().body(error);
 	}
 
