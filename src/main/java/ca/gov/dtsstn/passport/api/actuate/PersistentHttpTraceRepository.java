@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.trace.http.HttpTrace;
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
@@ -32,6 +33,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
 	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository;
 
+	@Autowired // marks this constructor as the primary one spring will use
 	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository) {
 		this(httpRequestRepository, new InMemoryHttpTraceRepository());
 	}
@@ -39,7 +41,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository, InMemoryHttpTraceRepository inMemoryHttpTraceRepository) {
 		Assert.notNull(httpRequestRepository, "httpRequestRepository is required; it must not be null");
 		Assert.notNull(inMemoryHttpTraceRepository, "inMemoryHttpTraceRepository is required; it must not be null");
-		
+
 		this.httpRequestRepository = httpRequestRepository;
 		this.inMemoryHttpTraceRepository = inMemoryHttpTraceRepository;
 	}
