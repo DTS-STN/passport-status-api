@@ -44,16 +44,16 @@ public class PassportStatusService {
 	}
 
 	public PassportStatus create(PassportStatus passportStatus) {
-		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
-		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance");
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");                  // NOSONAR
+		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance"); // NOSONAR
 		final var createdPassportStatus = mapper.fromDocument(repository.save(mapper.toDocument(passportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
 	}
 
 	public void queueCreation(PassportStatus passportStatus) {
-		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
-		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance");
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");                  // NOSONAR
+		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance"); // NOSONAR
 		jmsTemplate.convertAndSend("passport-statuses", passportStatus);
 	}
 
