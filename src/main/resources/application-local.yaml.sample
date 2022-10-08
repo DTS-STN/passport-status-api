@@ -1,0 +1,13 @@
+#######################################################################################################################
+#
+# Sample application-local.yaml file...
+#
+# Copy this file to application-local.yaml and update the values as required.
+#######################################################################################################################
+
+application:
+  authentication:
+    oauth:
+      auth-scopes: api://passport-status.esdc-edsc.gc.ca/.default
+      client-id: de3625ec-c6e6-46a6-b761-7b1039ab546a
+      tenant-id: 9ed55846-8a81-4246-acd8-b1a01abfc0d1

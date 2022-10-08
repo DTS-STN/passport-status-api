@@ -116,8 +116,12 @@ spring:
     embedded:
       version: 5.0.6
   security:
-    user:
-      name: admin
+    oauth2:
+      resourceserver:
+        jwt:
+          audiences: ${application.authentication.oauth.client-id}
+          issuer-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0
+          jwk-set-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/discovery/v2.0/keys
 
 #######################################################################################################################
 #
@@ -130,6 +134,9 @@ springdoc:
   swagger-ui:
     display-request-duration: true
     disable-swagger-default-url: true
+    oauth:
+      client-id: ${application.authentication.oauth.client-id}
+      scopes: ${application.authentication.oauth.auth-scopes}
   writer-with-default-pretty-printer: true
   writer-with-order-by-keys: true
 
@@ -140,6 +147,13 @@ springdoc:
 #######################################################################################################################
 
 application:
+  authentication:
+    oauth:
+      auth-scopes: # must be set externally (sample: api://something.esdc-edsc.gc.ca/.default)
+      authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
+      client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      token-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token
   database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
