@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jms.core.JmsTemplate;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
@@ -37,12 +36,10 @@ class PassportStatusServiceTests {
 
 	@Mock ApplicationEventPublisher applicationEventPublisher;
 
-	@Mock JmsTemplate jmsTemplate;
-
 	@Mock PassportStatusRepository passportStatusRepository;
 
 	@BeforeEach void beforeEach() {
-		this.passportStatusService = new PassportStatusService(applicationEventPublisher, jmsTemplate, passportStatusRepository);
+		this.passportStatusService = new PassportStatusService(applicationEventPublisher, passportStatusRepository);
 	}
 
 	@Test void testCreate() {
