@@ -16,6 +16,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 import org.springframework.lang.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -32,6 +33,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Style(passAnnotations = { Relation.class })
 @JsonDeserialize(as = ImmutablePassportStatusModel.class)
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
+@JsonPropertyOrder(value = { "id", "applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "version", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
 
 	/**
