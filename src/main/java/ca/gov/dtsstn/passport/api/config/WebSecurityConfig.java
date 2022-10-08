@@ -6,6 +6,7 @@ import static org.springframework.boot.actuate.autoconfigure.security.servlet.En
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,12 +17,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import ca.gov.dtsstn.passport.api.security.JwtGrantedAuthoritiesConverter;
 import ca.gov.dtsstn.passport.api.web.AuthenticationErrorHandler;
 import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
 
@@ -33,6 +36,9 @@ import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
 public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
+
+	@Autowired
+	private JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter;
 
 	/**
 	 * CORS configuration bean.
@@ -54,6 +60,9 @@ public class WebSecurityConfig {
 	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http) throws Exception {
 		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
 
+		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
 		http // general security configuration
 			.csrf().disable()
 			.cors().and()
@@ -65,7 +74,7 @@ public class WebSecurityConfig {
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()
 			.oauth2ResourceServer()
-				.jwt().and()
+				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and()
 				.authenticationEntryPoint(authenticationErrorController).and()
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
