@@ -4,13 +4,23 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
+import org.springframework.hateoas.Links;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 import org.springframework.lang.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 /**
  * REST model representing a passport status.
@@ -21,8 +31,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(name = "PassportStatus")
 @SuppressWarnings({ "serial" })
 @Style(passAnnotations = { Relation.class })
+@JsonDeserialize(as = ImmutablePassportStatusModel.class)
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
+
+	public interface CreateView {}
+
+	public interface ReadView {}
+
+	public interface UpdateView {}
 
 	public enum Status {
 
@@ -33,56 +50,84 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	}
 
 	@Nullable
+	@JsonView({ ReadView.class })
 	@Schema(description = "The internal database ID of the passport status.", example = "476743eac593f65fd6964a15")
 	public abstract String getId();
 
 	@Nullable
+	@JsonView({ ReadView.class })
 	@Schema(description = "The creator of the resource.", example = "Passport Status API")
 	public abstract String getCreatedBy();
 
 	@Nullable
+	@JsonView({ ReadView.class })
 	@Schema(description = "The creation timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	public abstract Instant getCreatedDate();
 
 	@Nullable
+	@JsonView({ ReadView.class })
 	@Schema(description = "The last modifier of the resource.", example = "Passport Status API")
 	public abstract String getLastModifiedBy();
 
 	@Nullable
+	@JsonView({ ReadView.class })
 	@Schema(description = "The last modification timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	public abstract Instant getLastModifiedDate();
 
 	@Nullable
+	@JsonView({ ReadView.class, UpdateView.class })
 	@Schema(description = "The current version of the resource. Used to enforce opportunistic locking during updates.", example = "0")
 	public abstract Long getVersion();
 
 	@Nullable
-	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@NotBlank(message = "applicationRegisterSid is required; it must not be null or blank")
+	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", required = true)
 	public abstract String getApplicationRegisterSid();
 
 	@Nullable
-	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@NotNull(message = "dateOfBirth is required; it must not be null")
+	@PastOrPresent(message = "dateOfBirth must be a date in the past")
+	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
 	public abstract LocalDate getDateOfBirth();
 
 	@Nullable
+	@Email(message = "email must be a valid email address")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
 	@Schema(description = "The email address of the passport applicant.", example = "user@example.com")
 	public abstract String getEmail();
 
 	@Nullable
-	@Schema(description = "The electronic service request file number.", example = "ABCD1234")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@NotBlank(message = "fileNumber is required; it must not be null or blank")
+	@Schema(description = "The electronic service request file number.", example = "ABCD1234", required = true)
 	public abstract String getFileNumber();
 
 	@Nullable
-	@Schema(description = "The first name of the passport applicant.", example = "John")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@NotBlank(message = "firstName is required; it must not be null or blank")
+	@Schema(description = "The first name of the passport applicant.", example = "John", required = true)
 	public abstract String getFirstName();
 
 	@Nullable
-	@Schema(description = "The last name of the passport applicant.", example = "Doe")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@NotBlank(message = "lastName is required; it must not be null or blank")
+	@Schema(description = "The last name of the passport applicant.", example = "Doe", required = true)
 	public abstract String getLastName();
 
 	@Nullable
-	@Schema(description = "The status of the passport application.")
+	@NotNull(message = "status is required; it must not be null")
+	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
+	@Schema(description = "The status of the passport application.", required = true)
 	public abstract Status getStatus();
+
+	@Override
+	@JsonView({ ReadView.class })
+	@Schema(accessMode = AccessMode.READ_ONLY)
+	public Links getLinks() {
+		return super.getLinks();
+	}
 
 	@Override
 	public abstract int hashCode();

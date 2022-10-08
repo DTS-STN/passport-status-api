@@ -49,11 +49,11 @@ public interface BadRequestErrorModel extends Serializable {
 	}
 
 	@Nullable
-	List<ValidationErrorModel> getValidationErrors();
+	List<FieldValidationErrorModel> getFieldValidationErrors();
 
 	@Immutable
-	@Schema(name = "ValidationError")
-	public interface ValidationErrorModel extends Serializable {
+	@Schema(name = "FieldValidationError")
+	public interface FieldValidationErrorModel extends Serializable {
 
 		@Schema(example = "NotBlank")
 		String getCode();

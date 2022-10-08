@@ -20,12 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
@@ -73,13 +74,14 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @RequestBody PassportStatusCreateModel passportStatus) {
+	public void create(Authentication authentication, @JsonView({ PassportStatusModel.CreateView.class }) @RequestBody @Validated PassportStatusModel passportStatus) {
 		service.queueCreation(assembler.getMapper().toDomain(passportStatus));
 	}
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
+	@JsonView({ PassportStatusModel.ReadView.class })
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
@@ -93,6 +95,7 @@ public class PassportStatusController {
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
 	@PreAuthorize("isAuthenticated()")
+	@JsonView({ PassportStatusModel.ReadView.class })
 	@SecurityRequirement(name = SpringDocConfig.BASIC_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
@@ -104,6 +107,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
+	@JsonView({ PassportStatusModel.ReadView.class })
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )

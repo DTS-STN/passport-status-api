@@ -13,7 +13,6 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
@@ -72,14 +71,6 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 		@Mapping(target = "status", ignore = true)
 		@Mapping(target = "version", ignore = true)
 		PassportStatus toDomain(PassportStatusSearchModel passportStatus);
-
-		@Mapping(target = "id", ignore = true)
-		@Mapping(target = "createdBy", ignore = true)
-		@Mapping(target = "createdDate", ignore = true)
-		@Mapping(target = "lastModifiedBy", ignore = true)
-		@Mapping(target = "lastModifiedDate", ignore = true)
-		@Mapping(target = "version", ignore = true)
-		PassportStatus toDomain(PassportStatusCreateModel passportStatus);
 
 		PassportStatusModel fromDomain(PassportStatus passportStatus);
 
