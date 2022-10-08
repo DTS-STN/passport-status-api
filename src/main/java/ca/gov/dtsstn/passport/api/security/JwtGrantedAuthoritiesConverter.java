@@ -1,11 +1,10 @@
 package ca.gov.dtsstn.passport.api.security;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.convert.converter.Converter;
@@ -43,7 +42,7 @@ public class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection
 		return Optional.ofNullable(jwt.getClaimAsStringList(rolesClaim))
 			.orElse(Collections.emptyList()).stream()
 			.map(SimpleGrantedAuthority::new)
-			.collect(toList());
+			.collect(Collectors.toUnmodifiableList());
 	}
 
 	public void setRolesClaim(String rolesClaim) {
