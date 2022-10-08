@@ -90,7 +90,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Nullable
 	@JsonView({ CreateView.class, ReadView.class, UpdateView.class })
 	@NotBlank(message = "applicationRegisterSid is required; it must not be null or blank")
-	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", required = true)
+	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", example = "ABCD1234", required = true)
 	public abstract String getApplicationRegisterSid();
 
 	@Nullable
