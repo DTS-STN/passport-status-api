@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.config;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.SpringDocUtils;
@@ -16,7 +14,6 @@ import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
-import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 
@@ -28,7 +25,9 @@ public class SpringDocConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
 
-	public static final String OAUTH2_SECURITY = "oauth2";
+	public static final String HTTP = "JSON Web Token";
+
+	public static final String OAUTH2 = "Azure Active Directory";
 
 	static {
 		SpringDocUtils.getConfig()
@@ -40,14 +39,10 @@ public class SpringDocConfig {
 
 		final var applicationName = environment.getProperty("application.swagger.application-name", "application");
 		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
-		final var authScopes = List.of(environment.getProperty("application.authentication.oauth.auth-scopes", String[].class));
 		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
 		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
 		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
 		final var tokenUrl = environment.getProperty("application.authentication.oauth.token-uri");
-
-		final var scopes = new Scopes();
-		authScopes.forEach(scope -> scopes.addString(scope, scope));
 
 		return openApi -> {
 			openApi.getInfo()
@@ -58,12 +53,20 @@ public class SpringDocConfig {
 				.version(getApplicationVersion(gitProperties));
 
 			openApi.getComponents()
-				.addSecuritySchemes(OAUTH2_SECURITY, new SecurityScheme()
+				.addSecuritySchemes(HTTP, new SecurityScheme()
+					.type(Type.HTTP)
+					.description("Use the JSON Web Token authorization for service account access.")
+					.scheme("Bearer")
+					.bearerFormat("JWT"));
+
+			openApi.getComponents()
+				.addSecuritySchemes(OAUTH2, new SecurityScheme()
 					.type(Type.OAUTH2)
+					.description("Use the Azure Active Directory authorization for Government of Canada employ access.")
 					.flows(new OAuthFlows()
-						.implicit(new OAuthFlow()
+						.authorizationCode(new OAuthFlow()
 							.authorizationUrl(authorizationUrl)
-							.scopes(scopes)
+							.refreshUrl(tokenUrl)
 							.tokenUrl(tokenUrl))));
 		};
 	}

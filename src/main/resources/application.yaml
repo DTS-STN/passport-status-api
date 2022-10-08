@@ -19,6 +19,10 @@
 
 ---
 
+logging:
+  level:
+    '[org.apache.activemq.audit.message]': warn
+
 #######################################################################################################################
 #
 # Actuator properties
@@ -93,6 +97,7 @@ spring:
     name: Passport Status API
   artemis:
     embedded:
+      data-directory: target/artemis
       queues:
         - passport-statuses
   config:
@@ -137,6 +142,7 @@ springdoc:
     oauth:
       client-id: ${application.authentication.oauth.client-id}
       scopes: ${application.authentication.oauth.auth-scopes}
+      use-pkce-with-authorization-code-grant: true
   writer-with-default-pretty-printer: true
   writer-with-order-by-keys: true
 
@@ -149,7 +155,7 @@ springdoc:
 application:
   authentication:
     oauth:
-      auth-scopes: # must be set externally (sample: api://something.esdc-edsc.gc.ca/.default)
+      auth-scopes: ${application.authentication.oauth.client-id}/.default
       authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
       client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
       tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
@@ -168,7 +174,9 @@ application:
   security:
     content-security-policy: >-
       default-src 'self';
+      connect-src 'self' https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token;
       img-src 'self' data:;
+      script-src 'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw=';
     cors:
       allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
         - '*'
