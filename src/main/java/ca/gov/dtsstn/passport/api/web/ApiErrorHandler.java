@@ -21,10 +21,10 @@ import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableBadRequestErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableInternalServerErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableResourceNotFoundErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableUnprocessableEntityErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ResourceNotFoundErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
@@ -87,8 +87,8 @@ public class ApiErrorHandler {
 
 	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
-		return ImmutableValidationErrorModel.builder()
-			.code(fieldError.getCode()) // NOSONAR
+		return ImmutableFieldValidationErrorModel.builder()
+			.code(fieldError.getCode())              // NOSONAR
 			.field(fieldError.getField())
 			.message(fieldError.getDefaultMessage()) // NOSONAR
 			.build();
