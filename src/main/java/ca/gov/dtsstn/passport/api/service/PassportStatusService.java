@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -28,18 +27,14 @@ public class PassportStatusService {
 
 	private final ApplicationEventPublisher eventPublisher;
 
-	private final JmsTemplate jmsTemplate;
-
 	private final PassportStatusMapper mapper = Mappers.getMapper(PassportStatusMapper.class);
 
 	private final PassportStatusRepository repository;
 
-	public PassportStatusService(ApplicationEventPublisher eventPublisher, JmsTemplate jmsTemplate, PassportStatusRepository repository) {
+	public PassportStatusService(ApplicationEventPublisher eventPublisher, PassportStatusRepository repository) {
 		Assert.notNull(eventPublisher, "eventPublisher is required; it must not be null");
-		Assert.notNull(jmsTemplate, "jmsTemplate is required; it must not be null");
 		Assert.notNull(repository, "repository is required; it must not be null");
 		this.eventPublisher = eventPublisher;
-		this.jmsTemplate = jmsTemplate;
 		this.repository = repository;
 	}
 
@@ -49,12 +44,6 @@ public class PassportStatusService {
 		final var createdPassportStatus = mapper.fromDocument(repository.save(mapper.toDocument(passportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
-	}
-
-	public void queueCreation(PassportStatus passportStatus) {
-		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");                  // NOSONAR
-		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance"); // NOSONAR
-		jmsTemplate.convertAndSend("passport-statuses", passportStatus);
 	}
 
 	public Optional<PassportStatus> read(String id) {

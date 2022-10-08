@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
@@ -57,12 +58,16 @@ public class PassportStatusController {
 
 	private final PassportStatusModelAssembler assembler;
 
+	private final JmsTemplate jms;
+
 	private final PassportStatusService service;
 
-	public PassportStatusController(PassportStatusModelAssembler assembler, PassportStatusService service) {
+	public PassportStatusController(PassportStatusModelAssembler assembler, JmsTemplate jms, PassportStatusService service) {
 		Assert.notNull(assembler, "assembler is required; it must not be null");
+		Assert.notNull(jms, "jms is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
 		this.assembler = assembler;
+		this.jms = jms;
 		this.service = service;
 	}
 
@@ -76,8 +81,10 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @JsonView({ PassportStatusModel.CreateView.class }) @RequestBody @Validated PassportStatusModel passportStatus) {
-		service.queueCreation(assembler.getMapper().toDomain(passportStatus));
+	public void create(Authentication authentication, @JsonView({ PassportStatusModel.CreateView.class }) @RequestBody PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
+		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
+
+		jms.convertAndSend("passport-statuses", passportStatus);
 	}
 
 	@GetMapping({ "/{id}" })
