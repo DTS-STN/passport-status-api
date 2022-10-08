@@ -24,14 +24,13 @@ import org.springframework.util.Assert;
  * <pre>
  * 	{
  * 	  roles: [
- * 	    "CPP.Manage",
- * 	    "CPP.SomeOtherRole"
+ * 	    "Application.Manage",
+ * 	    "PassportStatus.Write"
  * 	  ]
  * 	}
  * </pre>
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
- * @since 0.0.0
  */
 @Component
 @ConfigurationProperties("application.jwt-granted-authorities-converter")

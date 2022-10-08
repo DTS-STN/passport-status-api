@@ -6,7 +6,6 @@ import static org.springframework.boot.actuate.autoconfigure.security.servlet.En
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,9 +36,6 @@ public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-	@Autowired
-	private JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter;
-
 	/**
 	 * CORS configuration bean.
 	 */
@@ -57,10 +53,10 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
-	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http) throws Exception {
+	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
 		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
 
-		final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
 		http // general security configuration
@@ -74,8 +70,8 @@ public class WebSecurityConfig {
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()
 			.oauth2ResourceServer()
-				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and()
-				.authenticationEntryPoint(authenticationErrorController).and()
+				.authenticationEntryPoint(authenticationErrorController)
+				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and().and()
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

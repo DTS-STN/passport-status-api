@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.customizers.OpenApiCustomiser;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +30,6 @@ public class SpringDocConfig {
 
 	public static final String OAUTH2_SECURITY = "oauth2";
 
-	@Value("${application.authentication.oauth.auth-scopes}")
-	private List<String> authScopes;
-
 	static {
 		SpringDocUtils.getConfig()
 			.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
@@ -43,21 +39,15 @@ public class SpringDocConfig {
 		log.info("Creating 'openApiCustomizer' bean");
 
 		final var applicationName = environment.getProperty("application.swagger.application-name", "application");
+		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
+		final var authScopes = List.of(environment.getProperty("application.authentication.oauth.auth-scopes", String[].class));
 		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
 		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
 		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
-
-		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
 		final var tokenUrl = environment.getProperty("application.authentication.oauth.token-uri");
-		final var implicitFlow = new OAuthFlow()
-				.authorizationUrl(authorizationUrl)
-				.tokenUrl(tokenUrl);
 
-		if (authScopes != null) {
-			final var scopes = new Scopes();
-			authScopes.forEach(scope -> scopes.addString(scope, scope));
-			implicitFlow.scopes(scopes);
-		}
+		final var scopes = new Scopes();
+		authScopes.forEach(scope -> scopes.addString(scope, scope));
 
 		return openApi -> {
 			openApi.getInfo()
@@ -71,9 +61,10 @@ public class SpringDocConfig {
 				.addSecuritySchemes(OAUTH2_SECURITY, new SecurityScheme()
 					.type(Type.OAUTH2)
 					.flows(new OAuthFlows()
-						.implicit(implicitFlow)
-					)
-				);
+						.implicit(new OAuthFlow()
+							.authorizationUrl(authorizationUrl)
+							.scopes(scopes)
+							.tokenUrl(tokenUrl))));
 		};
 	}
 

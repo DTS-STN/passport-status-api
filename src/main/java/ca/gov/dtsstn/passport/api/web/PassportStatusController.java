@@ -68,9 +68,9 @@ public class PassportStatusController {
 
 	@PostMapping({ "" })
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_WRITE + "')")
-	@SecurityRequirement(name = SpringDocConfig.OAUTH2_SECURITY)
 	@Operation(summary = "Create a new passport status.")
+	@SecurityRequirement(name = SpringDocConfig.OAUTH2_SECURITY)
+	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_WRITE + "')")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
@@ -81,9 +81,9 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ + "')")
 	@SecurityRequirement(name = SpringDocConfig.OAUTH2_SECURITY)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
+	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ + "')")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
@@ -94,9 +94,9 @@ public class PassportStatusController {
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ + "')")
 	@SecurityRequirement(name = SpringDocConfig.OAUTH2_SECURITY)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
+	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ + "')")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
