@@ -38,8 +38,16 @@ application:
         --form "client_id=$CLIENT_ID" --form "client_secret=$CLIENT_SECRET" \
         --form "scope=${application.authentication.oauth.auth-scopes}" | jq --raw-output ".access_token"
       ```
-
       The Azure Active Directory OpenID discovery endpoint can be found here: <${application.authentication.oauth.discovery-uri}>.
+
+      #### Using the *Passport Status* service account
+
+      If you are logging in as the ***Passport Status*** service account, you must use `scope=${application.authentication.oauth.client-id}/.default`.
+      Failure to do so will result in the following error message:
+
+      > **TAADSTS90009:** The application is requesting a token for itself. This scenario is supported only if the resource that's specified is using the GUID-based application ID.
+
+      See <https://learn.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes#aadsts-error-codes> for more information.
     tos-url: https://www.canada.ca/en/transparency/terms.html
 
 #######################################################################################################################
