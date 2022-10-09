@@ -159,7 +159,7 @@ application:
   security:
     content-security-policy: >-
       default-src 'self';
-      connect-src 'self' login.microsoftonline.com;
+      connect-src 'self' login.microsoftonline.com passport-status-api.dev.dev-rhp.dts-stn.com passport-status-api.staging.dev-rhp.dts-stn.com;
       img-src 'self' data:;
       script-src 'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw=';
     cors:
