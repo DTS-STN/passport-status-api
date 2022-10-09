@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value.Immutable;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
 
@@ -31,7 +30,6 @@ public interface PassportStatusSearchModel extends Serializable {
 	@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
 	String getLastName();
 
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	@NotNull(message = "dateOfBirth must not be null or blank")
 	@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
 	LocalDate getDateOfBirth();

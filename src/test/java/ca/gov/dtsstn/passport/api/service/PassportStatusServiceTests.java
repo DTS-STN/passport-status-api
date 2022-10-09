@@ -24,7 +24,8 @@ import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 
 /**
- * TODO:: GjB :: verify event publisher is fired for each method
+ * TODO :: GjB :: verify event publisher is fired for each method
+ * TODO :: GjB :: add test for queueCreation
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */

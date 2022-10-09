@@ -1,7 +1,26 @@
 # Passport Status API
 
-Passport Status API is a (for now) bare-bones API for retrieving Canadian
-passport application statuses.
+Passport Status API is a Spring Boot API for retrieving Canadian passport
+application statuses.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Recommended software](#recommended-software)
+- [Installation](#installation)
+- [Building](#building)
+- [Configuration](#configuration)
+  - [Application specific configration](#application-specific-configration)
+  - [Embedded Artemis](#embedded-artemis)
+  - [application-local.yaml](#application-localyaml)
+- [Deploying to Kubernetes cluster](#deploying-to-kubernetes-cluster)
+- [Builder container image](#builder-container-image)
+  - [Listing existing tags](#listing-existing-tags)
+- [Obtaining a bearer token to use for authenticated requests](#obtaining-a-bearer-token-to-use-for-authenticated-requests)
+- [Maintainers](#maintainers)
+- [Advanced help](#advanced-help)
+- [Errata](#errata)
 
 ## Introduction
 
@@ -33,8 +52,17 @@ The Passport Status API requires no installation process to run. 🙏
 
 ## Building
 
-- To build/run the application: `mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.database-initializer.enabled=true"`
-- To build a container image: `mvn clean spring-boot:build-image`
+- To build/run the application:
+
+  ``` sh
+  mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.database-initializer.enabled=true"
+  ```
+
+- To build a container image:
+
+  ``` sh
+  mvn clean spring-boot:build-image
+  ```
 
 ## Configuration
 
@@ -92,6 +120,20 @@ application:
     terms-of-service-url: https://www.canada.ca/en/transparency/terms.html
 ```
 
+### Embedded Artemis
+
+The application will run an embedded Artemis im-memory message queue by default.
+To persist the message queue to disk, you can use the following configuration:
+
+``` yaml
+spring:
+  artemis:
+    embedded:
+      persistent: true
+      data-directory: target/artemis
+
+```
+
 ### `application-local.yaml`
 
 When running in an IDE (ie: VSCode, Eclipse), a developer can configure the
@@ -114,8 +156,8 @@ Note that the namespace `passport-status` must already exist.
 
 ## Builder container image
 
-To build the application in TeamCity, a custom builder image must be used that provides Maven and Java 17. To build and
-push this container image:
+To build the application in TeamCity, a custom builder image must be used that
+provides Maven and Java 17. To build and push this container image:
 
 ``` sh
 az login
@@ -136,9 +178,22 @@ az acr login --name dtsdevcontainers --subscription mts
 az acr repository show-tags --name dtsdevcontainers --subscription mts --repository passport-status-api-builder
 ```
 
+## Obtaining a bearer token to use for authenticated requests
+
+``` sh
+curl --silent --request POST \
+  --url https://login.microsoftonline.com/9ed55846-8a81-4246-acd8-b1a01abfc0d1/oauth2/v2.0/token \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'grant_type=client_credentials' \
+  --form 'client_id={your-client-id}' \
+  --form 'client_secret={your-client-secret}' \
+  --form 'scope=api://passport-status.esdc-edsc.gc.ca/.default' | jq --raw-output '.access_token'
+```
+
 ## Maintainers
 
-If you have questions or need help running the Passport Status API, feel free to contact:
+If you have questions or need help running the Passport Status API, feel free to
+contact:
 
 - Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
 - Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

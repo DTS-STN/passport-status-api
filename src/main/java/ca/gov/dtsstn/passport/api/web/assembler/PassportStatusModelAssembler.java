@@ -62,15 +62,18 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 		PassportStatus toDomain(PassportStatusModel passportStatus);
 
 		@Mapping(target = "id", ignore = true)
+		@Mapping(target = "applicationRegisterSid", ignore = true)
 		@Mapping(target = "createdBy", ignore = true)
 		@Mapping(target = "createdDate", ignore = true)
+		@Mapping(target = "email", ignore = true)
 		@Mapping(target = "lastModifiedBy", ignore = true)
 		@Mapping(target = "lastModifiedDate", ignore = true)
 		@Mapping(target = "status", ignore = true)
 		@Mapping(target = "version", ignore = true)
-		PassportStatus toDomain(PassportStatusSearchModel passportStatusSearch);
+		PassportStatus toDomain(PassportStatusSearchModel passportStatus);
 
 		PassportStatusModel fromDomain(PassportStatus passportStatus);
+
 
 	}
 

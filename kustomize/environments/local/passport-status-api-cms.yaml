@@ -17,20 +17,9 @@ data:
         cors.allowed-origins:
           - http://localhost:3000
           - http://localhost:8080
-          - https://passport-status-main.dev-rhp.dts-stn.com
 
     # logging:
     #   level:
     #     '[org.springframework]': debug
     #     '[org.springframework.data.auditing.AuditingHandlerSupport]': info
     #     '[org.springframework.data.mongodb.core.MongoTemplate]': info
-
-    management:
-      metrics:
-        export:
-          dynatrace:
-            enabled: true
-            v2:
-              default-dimensions:
-                stack: nonprod
-                region: canadacentral

@@ -11,4 +11,5 @@ nameSuffix: -dev
 patchesStrategicMerge:
   - passport-status-api-cms.yaml
   - passport-status-api-deployments.yaml
+resources:
   - passport-status-api-ingresses.yaml

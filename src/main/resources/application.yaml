@@ -19,6 +19,10 @@
 
 ---
 
+logging:
+  level:
+    '[org.apache.activemq.audit.message]': warn
+
 #######################################################################################################################
 #
 # Actuator properties
@@ -91,6 +95,10 @@ server:
 spring:
   application:
     name: Passport Status API
+  artemis:
+    embedded:
+      queues:
+        - passport-statuses
   config:
     import:
       - optional:application-local.yml
@@ -112,8 +120,12 @@ spring:
     embedded:
       version: 5.0.6
   security:
-    user:
-      name: admin
+    oauth2:
+      resourceserver:
+        jwt:
+          audiences: ${application.authentication.oauth.client-id}
+          issuer-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0
+          jwk-set-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/discovery/v2.0/keys
 
 #######################################################################################################################
 #
@@ -126,6 +138,10 @@ springdoc:
   swagger-ui:
     display-request-duration: true
     disable-swagger-default-url: true
+    oauth:
+      client-id: ${application.authentication.oauth.client-id}
+      scopes: ${application.authentication.oauth.auth-scopes}
+      use-pkce-with-authorization-code-grant: true
   writer-with-default-pretty-printer: true
   writer-with-order-by-keys: true
 
@@ -136,6 +152,13 @@ springdoc:
 #######################################################################################################################
 
 application:
+  authentication:
+    oauth:
+      auth-scopes: ${application.authentication.oauth.client-id}/.default
+      authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
+      client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      token-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token
   database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
@@ -150,7 +173,9 @@ application:
   security:
     content-security-policy: >-
       default-src 'self';
+      connect-src 'self' https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token;
       img-src 'self' data:;
+      script-src 'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw=';
     cors:
       allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
         - '*'

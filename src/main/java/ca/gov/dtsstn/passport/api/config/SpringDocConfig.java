@@ -12,6 +12,8 @@ import org.springframework.core.env.Environment;
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 
@@ -23,9 +25,9 @@ public class SpringDocConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
 
-	public static final String API_KEY_SECURITY = "api-key";
+	public static final String HTTP = "JSON Web Token";
 
-	public static final String BASIC_SECURITY = "basic";
+	public static final String OAUTH2 = "Azure Active Directory";
 
 	static {
 		SpringDocUtils.getConfig()
@@ -36,9 +38,12 @@ public class SpringDocConfig {
 		log.info("Creating 'openApiCustomizer' bean");
 
 		final var applicationName = environment.getProperty("application.swagger.application-name", "application");
+		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
 		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
 		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
+		final var scopes = environment.getProperty("application.authentication.oauth.auth-scopes");
 		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
+		final var tokenUrl = environment.getProperty("application.authentication.oauth.token-uri");
 
 		return openApi -> {
 			openApi.getInfo()
@@ -49,8 +54,38 @@ public class SpringDocConfig {
 				.version(getApplicationVersion(gitProperties));
 
 			openApi.getComponents()
-				// .addSecuritySchemes(API_KEY_SECURITY, new SecurityScheme().type(Type.APIKEY).in(In.HEADER).name("Authorization"))
-				.addSecuritySchemes(BASIC_SECURITY, new SecurityScheme().type(Type.HTTP).scheme("basic")); // NOSONAR
+				.addSecuritySchemes(HTTP, new SecurityScheme()
+					.type(Type.HTTP)
+					.description("""
+						**Use the JSON Web Token authorization for service account access.**
+
+						To acquire a token to use with this API, you can use the following curl command:
+
+						```
+						TOKEN_URI="%s"
+						SCOPE="%s"
+						CLIENT_ID="{your-client-id}"
+						CLIENT_SECRET="{your-client-secret}"
+
+						curl --silent --request POST --url "$TOKEN_URI" \\
+						  --form "grant_type=client_credentials"        \\
+						  --form "client_id=$CLIENT_ID"                 \\
+						  --form "client_secret=$CLIENT_SECRET"         \\
+						  --form "scope=$SCOPE" | jq --raw-output ".access_token"
+						```
+						""".formatted(tokenUrl, scopes))
+					.scheme("Bearer")
+					.bearerFormat("JWT"));
+
+			openApi.getComponents()
+				.addSecuritySchemes(OAUTH2, new SecurityScheme()
+					.type(Type.OAUTH2)
+					.description("**Use the Azure Active Directory authorization for Government of Canada employ access.**")
+					.flows(new OAuthFlows()
+						.authorizationCode(new OAuthFlow()
+							.authorizationUrl(authorizationUrl)
+							.refreshUrl(tokenUrl)
+							.tokenUrl(tokenUrl))));
 		};
 	}
 

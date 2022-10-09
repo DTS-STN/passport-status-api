@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.ValidationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableBadRequestErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableInternalServerErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableResourceNotFoundErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableUnprocessableEntityErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ResourceNotFoundErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
@@ -32,6 +33,7 @@ import ca.gov.dtsstn.passport.api.web.model.error.UnprocessableEntityErrorModel;
  * API global error handler.
  *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
+ * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @RestControllerAdvice
 public class ApiErrorHandler {
@@ -42,14 +44,20 @@ public class ApiErrorHandler {
 	protected ResponseEntity<BadRequestErrorModel> handleBindException(BindException ex) {
 		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList();
 		final var validationErrors = ex.getFieldErrors().stream().map(this::toValidationError).toList();
-		final var errorModel = ImmutableBadRequestErrorModel.builder().details(details).validationErrors(validationErrors).build();
+		final var errorModel = ImmutableBadRequestErrorModel.builder().details(details).fieldValidationErrors(validationErrors).build();
 		return ResponseEntity.badRequest().body(errorModel);
 	}
 
 	@ExceptionHandler({ ConversionFailedException.class })
-	public ResponseEntity<Object> handleConversionFailedException(ConversionFailedException ex) {
+	public ResponseEntity<BadRequestErrorModel> handleConversionFailedException(ConversionFailedException ex) {
 		final var details = List.of("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName());
 		final var error = ImmutableBadRequestErrorModel.builder().details(details).build();
+		return ResponseEntity.badRequest().body(error);
+	}
+
+	@ExceptionHandler({ HttpMessageNotReadableException.class })
+	public ResponseEntity<BadRequestErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build(); // NOSONAR
 		return ResponseEntity.badRequest().body(error);
 	}
 
@@ -77,10 +85,10 @@ public class ApiErrorHandler {
 		return UUID.randomUUID().toString();
 	}
 
-	protected ValidationErrorModel toValidationError(FieldError fieldError) {
+	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
-		return ImmutableValidationErrorModel.builder()
-			.code(fieldError.getCode()) // NOSONAR
+		return ImmutableFieldValidationErrorModel.builder()
+			.code(fieldError.getCode())              // NOSONAR
 			.field(fieldError.getField())
 			.message(fieldError.getDefaultMessage()) // NOSONAR
 			.build();

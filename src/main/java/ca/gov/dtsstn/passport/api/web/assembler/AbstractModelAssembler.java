@@ -30,12 +30,15 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 		return page.isEmpty() ? (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType()) : pagedResourcesAssembler.toModel(page, this);
 	}
 
-	// XXX :: GjB :: commenting this out because it fails compilation.. although for some reason it works in VSCode 🤷
-	// @Override
-	// @SuppressWarnings({ "unchecked" })
-	// public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
-	// 	Assert.notNull(entities, "entities is required; it must not be null");
-	// 	return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
-	// }
+	// XXX / TODO :: GjB :: commenting this out because it fails compilation.. although for some reason it works in VSCode 🤷
+
+/*
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
+		Assert.notNull(entities, "entities is required; it must not be null");
+		return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
+	}
+*/
 
 }
