@@ -41,6 +41,7 @@ public class SpringDocConfig {
 		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
 		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
 		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
+		final var scopes = environment.getProperty("application.authentication.oauth.auth-scopes");
 		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
 		final var tokenUrl = environment.getProperty("application.authentication.oauth.token-uri");
 
@@ -55,14 +56,31 @@ public class SpringDocConfig {
 			openApi.getComponents()
 				.addSecuritySchemes(HTTP, new SecurityScheme()
 					.type(Type.HTTP)
-					.description("Use the JSON Web Token authorization for service account access.")
+					.description("""
+						**Use the JSON Web Token authorization for service account access.**
+
+						To acquire a token to use with this API, you can use the following curl command:
+
+						```
+						TOKEN_URI="%s"
+						SCOPE="%s"
+						CLIENT_ID="{your-client-id}"
+						CLIENT_SECRET="{your-client-secret}"
+
+						curl --silent --request POST --url "$TOKEN_URI" \\
+						  --form "grant_type=client_credentials"        \\
+						  --form "client_id=$CLIENT_ID"                 \\
+						  --form "client_secret=$CLIENT_SECRET"         \\
+						  --form "scope=$SCOPE" | jq --raw-output ".access_token"
+						```
+						""".formatted(tokenUrl, scopes))
 					.scheme("Bearer")
 					.bearerFormat("JWT"));
 
 			openApi.getComponents()
 				.addSecuritySchemes(OAUTH2, new SecurityScheme()
 					.type(Type.OAUTH2)
-					.description("Use the Azure Active Directory authorization for Government of Canada employ access.")
+					.description("**Use the Azure Active Directory authorization for Government of Canada employ access.**")
 					.flows(new OAuthFlows()
 						.authorizationCode(new OAuthFlow()
 							.authorizationUrl(authorizationUrl)
