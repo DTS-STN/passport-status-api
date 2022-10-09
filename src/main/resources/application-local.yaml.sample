@@ -6,6 +6,10 @@
 #######################################################################################################################
 
 application:
+  artemis:
+    embedded:
+      persistent: true
+      data-directory: target/artemis
   authentication:
     oauth:
       auth-scopes: api://passport-status.esdc-edsc.gc.ca/.default
