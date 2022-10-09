@@ -23,11 +23,15 @@ application:
 
       ### Authentication
 
-      To acquire a token to use with this API, you can use the following curl command:
+      Some endpoints exposed by this API require Azure Active Directory authentication.<br/>
+      Two OAuth authentication schemes are available: **[AuthorizationCode w/ PKCE](https://datatracker.ietf.org/doc/html/rfc7636)** for user login;
+      and **[HTTP Bearer Token](https://datatracker.ietf.org/doc/html/rfc6750)** for service account login.
+
+      To acquire a bearer token to use with this API, you can use the following curl command:
 
       ```
-      CLIENT_ID="{ ...your-client-id... }"
-      CLIENT_SECRET="{ ...your-client-secret... }"
+      CLIENT_ID="{ ...service-account-id... }"
+      CLIENT_SECRET="{ ...service-account-secret... }"
 
       curl --silent --request POST "${application.authentication.oauth.token-uri}" \
         --form "grant_type=client_credentials" \
