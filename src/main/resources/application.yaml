@@ -112,6 +112,8 @@ spring:
         max-page-size: 500
   jackson:
     default-property-inclusion: non-null
+    mapper:
+      default-view-inclusion: true
     serialization:
       indent-output: true
   main:

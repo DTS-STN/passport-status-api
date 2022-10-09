@@ -73,15 +73,15 @@ public class PassportStatusController {
 
 	@PostMapping({ "" })
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	@Operation(summary = "Create a new passport status.")
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH2)
+	@Operation(summary = "Create a new passport status.")
 	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_WRITE + "')")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @JsonView({ PassportStatusModel.CreateView.class }) @RequestBody PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
+	public void create(Authentication authentication, @JsonView({ PassportStatusModel.Views.POST.class }) @RequestBody PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
 
 		jms.convertAndSend("passport-statuses", passportStatus);
@@ -89,6 +89,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
+	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH2)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
@@ -103,6 +104,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
+	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH2)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
@@ -116,6 +118,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
+	@JsonView(PassportStatusModel.Views.GET.class)
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
