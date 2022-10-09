@@ -1,5 +1,8 @@
 package ca.gov.dtsstn.passport.api.config.properties;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -18,8 +21,13 @@ public record SwaggerUiProperties(
 	@NotBlank String contactName,
 	@NotNull @URL String contactUrl,
 	@NotBlank String description,
+	List<SwaggerUiProperties.Server> servers,
 	@NotNull @URL String tosUrl
 ) {
+
+	public List<SwaggerUiProperties.Server> servers() {
+		return Optional.ofNullable(this.servers).orElse(List.of());
+	}
 
 	public record AuthenticationProperties(
 		AuthenticationProperties.HttpProperties http,
@@ -37,4 +45,8 @@ public record SwaggerUiProperties(
 		) {}
 	}
 
+	public record Server(
+		String description,
+		@NotNull @URL String url
+	) {}
 }

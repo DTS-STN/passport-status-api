@@ -14,10 +14,20 @@ data:
       request-logging-filter:
         enabled: true
       security:
+        content-security-policy: >-
+          default-src 'self';
+          connect-src 'self' login.microsoftonline.com passport-status-api.staging.dev-rhp.dts-stn.com;
+          img-src 'self' data:;
+      script-src 'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw=';
         cors.allowed-origins:
           - http://localhost:3000
           - http://localhost:8080
-          - https://passport-status-main.dev-rhp.dts-stn.com
+          - https://passport-status-api.staging.dev-rhp.dts-stn.com
+      swagger-ui:
+        servers:
+          - description: Staging environment
+            url: https://passport-status-api.staging.dev-rhp.dts-stn.com/
+
 
     # logging:
     #   level:
