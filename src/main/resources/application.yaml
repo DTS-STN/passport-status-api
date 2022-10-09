@@ -101,6 +101,7 @@ spring:
         - passport-statuses
   config:
     import:
+      - swagger-ui.yaml
       - optional:application-local.yml
       - optional:application-local.yaml
   data:
@@ -131,24 +132,6 @@ spring:
 
 #######################################################################################################################
 #
-# Springdoc properties
-#
-#######################################################################################################################
-
-springdoc:
-  pre-loading-enabled: true
-  swagger-ui:
-    display-request-duration: true
-    disable-swagger-default-url: true
-    oauth:
-      client-id: ${application.authentication.oauth.client-id}
-      scopes: ${application.authentication.oauth.auth-scopes}
-      use-pkce-with-authorization-code-grant: true
-  writer-with-default-pretty-printer: true
-  writer-with-order-by-keys: true
-
-#######################################################################################################################
-#
 # Application-specific properties.
 #
 #######################################################################################################################
@@ -159,6 +142,7 @@ application:
       auth-scopes: ${application.authentication.oauth.client-id}/.default
       authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
       client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      discovery-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0/.well-known/openid-configuration
       tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
       token-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token
   database-initializer:
@@ -197,9 +181,4 @@ application:
     include-headers: true             # whether the request headers should be included in the log message
     include-payload: true             # whether the request payload (body) should be included in the log message
     include-query-string: true        # whether the query string should be included in the log message
-    max-payload-length: 10240         # the maximum length (in bytes) of the payload body to be included in the log message
-  swagger:
-    application-name: Passport Status API
-    contact-name: Digital technology solutions
-    contact-url: https://github.com/dts-stn/passport-status-api/
-    terms-of-service-url: https://www.canada.ca/en/transparency/terms.html
+    max-payload-length: 10240         # the maximum length (in bytes) of the payload body to be included in the log messagehttp

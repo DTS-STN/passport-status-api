@@ -6,13 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
+
+import ca.gov.dtsstn.passport.api.config.properties.ApplicationProperties;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @SpringBootApplication
+@EnableConfigurationProperties({ ApplicationProperties.class })
 public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);

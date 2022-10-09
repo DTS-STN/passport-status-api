@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.info.Contact;
@@ -27,65 +28,42 @@ public class SpringDocConfig {
 
 	public static final String HTTP = "JSON Web Token";
 
-	public static final String OAUTH2 = "Azure Active Directory";
+	public static final String OAUTH = "Azure Active Directory";
 
 	static {
 		SpringDocUtils.getConfig()
 			.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
 	}
 
-	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties) {
+	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties, SwaggerUiProperties swaggerUiProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
-
-		final var applicationName = environment.getProperty("application.swagger.application-name", "application");
-		final var authorizationUrl = environment.getProperty("application.authentication.oauth.authorization-uri");
-		final var contactName = environment.getProperty("application.swagger.contact-name", "The Development Team");
-		final var contactUrl = environment.getProperty("application.swagger.contact-url", "https://canada.ca/");
-		final var scopes = environment.getProperty("application.authentication.oauth.auth-scopes");
-		final var termsOfServiceUrl = environment.getProperty("application.swagger.terms-of-service-url", "https://canada.ca/");
-		final var tokenUrl = environment.getProperty("application.authentication.oauth.token-uri");
 
 		return openApi -> {
 			openApi.getInfo()
-				.title(applicationName)
-				.contact(new Contact().name(contactName).url(contactUrl))
-				.description("This OpenAPI document describes the key areas where developers typically engage with this API.")
-				.termsOfService(termsOfServiceUrl)
+				.title(swaggerUiProperties.applicationName())
+				.contact(new Contact()
+					.name(swaggerUiProperties.contactName())
+					.url(swaggerUiProperties.contactUrl()))
+				.description(swaggerUiProperties.description())
+				.termsOfService(swaggerUiProperties.tosUrl())
 				.version(getApplicationVersion(gitProperties));
 
 			openApi.getComponents()
 				.addSecuritySchemes(HTTP, new SecurityScheme()
 					.type(Type.HTTP)
-					.description("""
-						**Use the JSON Web Token authorization for service account access.**
-
-						To acquire a token to use with this API, you can use the following curl command:
-
-						```
-						TOKEN_URI="%s"
-						SCOPE="%s"
-						CLIENT_ID="{your-client-id}"
-						CLIENT_SECRET="{your-client-secret}"
-
-						curl --silent --request POST --url "$TOKEN_URI" \\
-						  --form "grant_type=client_credentials"        \\
-						  --form "client_id=$CLIENT_ID"                 \\
-						  --form "client_secret=$CLIENT_SECRET"         \\
-						  --form "scope=$SCOPE" | jq --raw-output ".access_token"
-						```
-						""".formatted(tokenUrl, scopes))
+					.description(swaggerUiProperties.authentication().http().description())
 					.scheme("Bearer")
 					.bearerFormat("JWT"));
 
 			openApi.getComponents()
-				.addSecuritySchemes(OAUTH2, new SecurityScheme()
+				.addSecuritySchemes(OAUTH, new SecurityScheme()
 					.type(Type.OAUTH2)
-					.description("**Use the Azure Active Directory authorization for Government of Canada employ access.**")
+					.description(swaggerUiProperties.authentication().oauth().description())
 					.flows(new OAuthFlows()
 						.authorizationCode(new OAuthFlow()
-							.authorizationUrl(authorizationUrl)
-							.refreshUrl(tokenUrl)
-							.tokenUrl(tokenUrl))));
+							.authorizationUrl(swaggerUiProperties.authentication().oauth().authorizationUrl())
+							.refreshUrl(swaggerUiProperties.authentication().oauth().tokenUrl())
+							.tokenUrl(swaggerUiProperties.authentication().oauth().tokenUrl()))));
 		};
 	}
 
