@@ -51,7 +51,7 @@
 		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.13.17</gitlog-maven-plugin.version>
-		<immutables.version>2.9.1</immutables.version>
+		<immutables.version>2.9.2</immutables.version>
 		<mapstruct.version>1.5.2.Final</mapstruct.version>
 		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
 		<springdoc.version>1.6.11</springdoc.version>
