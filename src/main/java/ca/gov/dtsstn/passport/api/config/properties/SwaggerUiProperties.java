@@ -40,18 +40,10 @@ public record SwaggerUiProperties(
 
 		public record OAuthProperties(
 			@NotNull @URL String authorizationUrl,
+			@NotBlank String clientId,
 			@NotBlank String description,
-			List<OAuthProperties.Scope> scopes,
 			@NotNull @URL String tokenUrl
-		) {
-
-			public List<OAuthProperties.Scope> scopes() {
-				return Optional.ofNullable(this.scopes).orElse(List.of());
-			}
-
-			public record Scope(String name, String scope) {}
-
-		}
+		) {}
 	}
 
 	public record Server(

@@ -13,13 +13,9 @@ application:
           **Use the *JSON Web Token* authorization scheme for *service account* access.**
       oauth:
         authorization-url: ${application.authentication.oauth.authorization-uri}
+        client-id: ${application.authentication.oauth.client-id}
         description: |
           **Use the *Azure Active Directory* authorization scheme for *Government of Canada employee* access.**
-        scopes:
-          - name: Passport Status service account
-            scope: de3625ec-c6e6-46a6-b761-7b1039ab546a/.default
-          - name: Other service sccount
-            scope: api://passport-status.esdc-edsc.gc.ca/.default
         token-url: ${application.authentication.oauth.token-uri}
     contact-name: Digital Technology Solutions
     contact-url: https://github.com/dts-stn/passport-status-api/
@@ -68,6 +64,7 @@ springdoc:
     disable-swagger-default-url: true
     oauth:
       client-id: ${application.authentication.oauth.client-id}
+      scopes: ${application.authentication.oauth.auth-scopes}
       use-pkce-with-authorization-code-grant: true
   writer-with-default-pretty-printer: true
   writer-with-order-by-keys: true
