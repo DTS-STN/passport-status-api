@@ -37,7 +37,7 @@ application:
       curl --silent --request POST "${application.authentication.oauth.token-uri}" \
         --form "grant_type=client_credentials" \
         --form "client_id=$CLIENT_ID" --form "client_secret=$CLIENT_SECRET" \
-        --form "scope=${application.authentication.oauth.auth-scopes}" | jq --raw-output ".access_token"
+        --form "scope=api://passport-status.esdc-edsc.gc.ca/.default" | jq --raw-output ".access_token"
       ```
       The Azure Active Directory OpenID discovery endpoint can be found here: <${application.authentication.oauth.discovery-uri}>.
 
