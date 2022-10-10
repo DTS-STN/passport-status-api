@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.config;
 
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.SpringDocUtils;
@@ -10,11 +12,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
+import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties.AuthenticationProperties.OAuthProperties.Scope;
 import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
@@ -64,6 +68,7 @@ public class SpringDocConfig {
 						.authorizationCode(new OAuthFlow()
 							.authorizationUrl(swaggerUiProperties.authentication().oauth().authorizationUrl())
 							.refreshUrl(swaggerUiProperties.authentication().oauth().tokenUrl())
+							.scopes(getOAuthScopes(swaggerUiProperties))
 							.tokenUrl(swaggerUiProperties.authentication().oauth().tokenUrl()))));
 
 			swaggerUiProperties.servers().stream()
@@ -76,6 +81,12 @@ public class SpringDocConfig {
 
 	protected String getApplicationVersion(GitProperties gitProperties) {
 		return String.format("v%s+%s", gitProperties.get("build.version"), gitProperties.getShortCommitId());
+	}
+
+	protected Scopes getOAuthScopes(SwaggerUiProperties swaggerUiProperties) {
+		final var scopes = new Scopes();
+		scopes.putAll(swaggerUiProperties.authentication().oauth().scopes().stream().collect(Collectors.toMap(Scope::scope, Scope::name)));
+		return scopes;
 	}
 
 }
