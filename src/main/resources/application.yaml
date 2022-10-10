@@ -21,6 +21,7 @@
 
 logging:
   level:
+    '[org.apache.activemq.audit.base]': warn
     '[org.apache.activemq.audit.message]': warn
 
 #######################################################################################################################

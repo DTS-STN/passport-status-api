@@ -11,6 +11,8 @@ import javax.validation.constraints.PastOrPresent;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.Links;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
@@ -93,6 +95,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	public abstract String getApplicationRegisterSid();
 
 	@Nullable
+	@DateTimeFormat(iso = ISO.DATE)
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotNull(message = "dateOfBirth is required; it must not be null")
 	@PastOrPresent(message = "dateOfBirth must be a date in the past")
