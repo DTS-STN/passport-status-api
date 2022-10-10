@@ -141,19 +141,6 @@ Passport Status API by creating an `application-local.yaml` file anywhere on the
 classpath (ex: `src/main/resources`). This configuration file **will be ignored
 by Git** so you can put all kinds of secrets in there!! 🍞
 
-## Deploying to Kubernetes cluster
-
-Deployment can be performed using the provided *Kustomize* scripts.
-
-  ``` sh
-  kubectl apply \
-      --kubeconfig {path-to-kubeconfig} \
-      --namespace {namespace} \
-      --kustomize kustomize/environments/{environment-name}/
-  ```
-
-Note that the namespace `passport-status` must already exist.
-
 ## Builder container image
 
 To build the application in TeamCity, a custom builder image must be used that

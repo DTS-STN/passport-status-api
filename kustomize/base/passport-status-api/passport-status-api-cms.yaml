@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: passport-status-api
-data:
-  application.yaml: |-
-    # Overwrite using a Kustomize overlay per-environment.
