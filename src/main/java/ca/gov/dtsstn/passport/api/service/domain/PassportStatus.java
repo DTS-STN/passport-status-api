@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import org.immutables.value.Value.Immutable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 /**
@@ -45,6 +46,7 @@ public interface PassportStatus extends Serializable {
 	String getApplicationRegisterSid();
 
 	@Nullable
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	LocalDate getDateOfBirth();
 
 	@Nullable

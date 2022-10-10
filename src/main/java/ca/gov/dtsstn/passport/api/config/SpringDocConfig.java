@@ -10,6 +10,7 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.format.datetime.standard.TemporalAccessorParser;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties.AuthenticationProperties.OAuthProperties.Scope;

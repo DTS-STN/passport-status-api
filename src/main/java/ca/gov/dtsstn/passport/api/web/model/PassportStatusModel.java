@@ -11,6 +11,7 @@ import javax.validation.constraints.PastOrPresent;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Links;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
@@ -97,6 +98,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@NotNull(message = "dateOfBirth is required; it must not be null")
 	@PastOrPresent(message = "dateOfBirth must be a date in the past")
 	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	public abstract LocalDate getDateOfBirth();
 
 	@Nullable
