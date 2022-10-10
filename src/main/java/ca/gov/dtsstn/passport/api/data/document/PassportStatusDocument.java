@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
@@ -15,8 +16,9 @@ import org.springframework.lang.Nullable;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @TypeAlias("PassportStatus")
-@Document("passport-statuses")
+@Document("passportStatuses")
 @SuppressWarnings({ "serial" })
+@CompoundIndex(name = "search", def = "{ 'applicationRegisterSid': 1, 'dateOfBirth': 1, 'fileNumber': 1, 'firstName': 1, 'lastName': 1 }")
 public class PassportStatusDocument extends AbstractDocument {
 
 	@Indexed
@@ -37,6 +39,7 @@ public class PassportStatusDocument extends AbstractDocument {
 	@Indexed
 	private String lastName;
 
+	@Indexed
 	private Status status;
 
 	public PassportStatusDocument() {
