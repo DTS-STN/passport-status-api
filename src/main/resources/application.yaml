@@ -139,7 +139,7 @@ spring:
 application:
   authentication:
     oauth:
-      auth-scopes: api://passport-status.esdc-edsc.gc.ca/.default
+      auth-scopes: ${application.authentication.oauth.client-id}/.default
       authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
       client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
       discovery-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0/.well-known/openid-configuration
