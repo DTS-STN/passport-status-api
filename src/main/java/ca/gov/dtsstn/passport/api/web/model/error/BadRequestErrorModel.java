@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.lang.Nullable;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -44,6 +46,7 @@ public interface BadRequestErrorModel extends Serializable {
 	}
 
 	@Default
+	@DateTimeFormat(iso = ISO.DATE_TIME)
 	@Schema(example = "2000-01-01T00:00:00Z")
 	default Instant getTimestamp() {
 		return Instant.now();
