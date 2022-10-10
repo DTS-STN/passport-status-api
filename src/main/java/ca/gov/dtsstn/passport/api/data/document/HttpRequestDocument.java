@@ -17,7 +17,7 @@ import org.springframework.lang.Nullable;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @TypeAlias("HttpRequest")
-@Document("http-requests")
+@Document("httpRequests")
 @SuppressWarnings({ "serial" })
 public class HttpRequestDocument extends AbstractDocument {
 
