@@ -3,8 +3,6 @@ package ca.gov.dtsstn.passport.api.web.assembler;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -13,6 +11,7 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
+import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
@@ -50,31 +49,6 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 		final var searchLink = linkTo(searchMethod).slash(searchQueryTemplate).withRel("search").expand(passportStatus.getDateOfBirth(), passportStatus.getFileNumber(), passportStatus.getFirstName(), passportStatus.getLastName());
 
 		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink); // NOSONAR
-	}
-
-	public PassportStatusModelMapper getMapper() {
-		return mapper;
-	}
-
-	@Mapper
-	public interface PassportStatusModelMapper {
-
-		PassportStatus toDomain(PassportStatusModel passportStatus);
-
-		@Mapping(target = "id", ignore = true)
-		@Mapping(target = "applicationRegisterSid", ignore = true)
-		@Mapping(target = "createdBy", ignore = true)
-		@Mapping(target = "createdDate", ignore = true)
-		@Mapping(target = "email", ignore = true)
-		@Mapping(target = "lastModifiedBy", ignore = true)
-		@Mapping(target = "lastModifiedDate", ignore = true)
-		@Mapping(target = "status", ignore = true)
-		@Mapping(target = "version", ignore = true)
-		PassportStatus toDomain(PassportStatusSearchModel passportStatus);
-
-		PassportStatusModel fromDomain(PassportStatus passportStatus);
-
-
 	}
 
 }
