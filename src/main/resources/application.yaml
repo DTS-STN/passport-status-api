@@ -150,27 +150,27 @@ application:
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:
-    content-security-policy: >-
-      default-src 'self';
-      connect-src 'self' login.microsoftonline.com passport-status-api.dev.dev-rhp.dts-stn.com passport-status-api.staging.dev-rhp.dts-stn.com;
-      img-src 'self' data:;
-      script-src 'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw=';
+    content-security-policy:
+      default-src: "'self'"
+      connect-src: "'self' login.microsoftonline.com passport-status-api.dev.dev-rhp.dts-stn.com passport-status-api.staging.dev-rhp.dts-stn.com"
+      img-src: "'self' data:"
+      script-src: "'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw='"
     cors:
-      allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
+      allowed-headers:
         - '*'
-      allowed-methods:                # list of HTTP methods to allow, e.g. GET, POST, PUT, etc.
+      allowed-methods:
         - '*'
-      allowed-origins:                # list of origins for which cross-origin requests are allowed
+      allowed-origins:
         - http://localhost
-      exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
+      exposed-headers:
         - '*'
     oauth:
       auth-scopes: ${application.security.oauth.client-id}/.default
-      authorization-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/authorize
+      authorization-url: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/authorize
       client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
-      discovery-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/v2.0/.well-known/openid-configuration
+      discovery-url: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/v2.0/.well-known/openid-configuration
       tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
-      token-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/token
+      token-url: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/token
   request-logging-filter:
     enabled: false                    # whether to enable the request logging filter
     includeUrls:                      # list of URLs to include, in ant path style

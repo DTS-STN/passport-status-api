@@ -12,11 +12,11 @@ application:
         description: |
           **Use the *JSON Web Token* authorization scheme for *service account* access.**
       oauth:
-        authorization-url: ${application.security.oauth.authorization-uri}
+        authorization-url: ${application.security.oauth.authorization-url}
         client-id: ${application.security.oauth.client-id}
         description: |
           **Use the *Azure Active Directory* authorization scheme for *Government of Canada employee* access.**
-        token-url: ${application.security.oauth.token-uri}
+        token-url: ${application.security.oauth.token-url}
     contact-name: Digital Technology Solutions
     contact-url: https://github.com/dts-stn/passport-status-api/
     description: |
@@ -34,12 +34,12 @@ application:
       CLIENT_ID="{ ...service-account-id... }"
       CLIENT_SECRET="{ ...service-account-secret... }"
 
-      curl --silent --request POST "${application.security.oauth.token-uri}" \
+      curl --silent --request POST "${application.security.oauth.token-url}" \
         --form "grant_type=client_credentials" \
         --form "client_id=$CLIENT_ID" --form "client_secret=$CLIENT_SECRET" \
         --form "scope=api://passport-status.esdc-edsc.gc.ca/.default" | jq --raw-output ".access_token"
       ```
-      The Azure Active Directory OpenID discovery endpoint can be found here: <${application.security.oauth.discovery-uri}>.
+      The Azure Active Directory OpenID discovery endpoint can be found here: <${application.security.oauth.discovery-url}>.
 
       #### Using the *Passport Status* service account
 

@@ -6,9 +6,9 @@ import static org.springframework.boot.actuate.autoconfigure.security.servlet.En
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -23,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import ca.gov.dtsstn.passport.api.config.properties.ApplicationProperties;
 import ca.gov.dtsstn.passport.api.security.JwtGrantedAuthoritiesConverter;
 import ca.gov.dtsstn.passport.api.web.AuthenticationErrorHandler;
 import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
@@ -36,13 +37,19 @@ public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
+	@Autowired ApplicationProperties applicationProperties;
+
 	/**
 	 * CORS configuration bean.
 	 */
-	@ConfigurationProperties("application.security.cors")
 	@Bean CorsConfiguration corsConfiguration() {
 		log.info("Creating 'corsConfiguration' bean");
-		return new CorsConfiguration();
+		final var corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowedHeaders(applicationProperties.security().cors().allowedHeaders());
+		corsConfiguration.setAllowedMethods(applicationProperties.security().cors().allowedMethods());
+		corsConfiguration.setAllowedOrigins(applicationProperties.security().cors().allowedOrigins());
+		corsConfiguration.setExposedHeaders(applicationProperties.security().cors().exposedHeaders());
+		return corsConfiguration;
 	}
 
 	@Bean CorsConfigurationSource corsConfigurationSource() {
@@ -54,8 +61,6 @@ public class WebSecurityConfig {
 	}
 
 	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
-		final var contentSecurityPolicy = environment.getProperty("application.security.content-security-policy");
-
 		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
@@ -66,7 +71,7 @@ public class WebSecurityConfig {
 				.accessDeniedHandler(authenticationErrorController).and()
 			.headers()
 				.cacheControl().disable()
-				.contentSecurityPolicy(contentSecurityPolicy).and()
+				.contentSecurityPolicy(applicationProperties.security().contentSecurityPolicy().toString()).and()
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()
 			.oauth2ResourceServer()
