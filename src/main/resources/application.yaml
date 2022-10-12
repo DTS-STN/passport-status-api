@@ -127,9 +127,9 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          audiences: ${application.authentication.oauth.client-id}
-          issuer-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0
-          jwk-set-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/discovery/v2.0/keys
+          audiences: ${application.security.oauth.client-id}
+          issuer-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/v2.0
+          jwk-set-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/discovery/v2.0/keys
 
 #######################################################################################################################
 #
@@ -138,14 +138,6 @@ spring:
 #######################################################################################################################
 
 application:
-  authentication:
-    oauth:
-      auth-scopes: ${application.authentication.oauth.client-id}/.default
-      authorization-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/authorize
-      client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
-      discovery-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/v2.0/.well-known/openid-configuration
-      tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
-      token-uri: https://login.microsoftonline.com/${application.authentication.oauth.tenant-id}/oauth2/v2.0/token
   database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
@@ -172,6 +164,13 @@ application:
         - http://localhost
       exposed-headers:                # list of response headers other than simple headers (i.e. Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, or Pragma) that an actual response might have and can be exposed
         - '*'
+    oauth:
+      auth-scopes: ${application.security.oauth.client-id}/.default
+      authorization-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/authorize
+      client-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      discovery-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/v2.0/.well-known/openid-configuration
+      tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
+      token-uri: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/token
   request-logging-filter:
     enabled: false                    # whether to enable the request logging filter
     includeUrls:                      # list of URLs to include, in ant path style

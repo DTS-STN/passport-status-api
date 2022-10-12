@@ -12,11 +12,11 @@ application:
         description: |
           **Use the *JSON Web Token* authorization scheme for *service account* access.**
       oauth:
-        authorization-url: ${application.authentication.oauth.authorization-uri}
-        client-id: ${application.authentication.oauth.client-id}
+        authorization-url: ${application.security.oauth.authorization-uri}
+        client-id: ${application.security.oauth.client-id}
         description: |
           **Use the *Azure Active Directory* authorization scheme for *Government of Canada employee* access.**
-        token-url: ${application.authentication.oauth.token-uri}
+        token-url: ${application.security.oauth.token-uri}
     contact-name: Digital Technology Solutions
     contact-url: https://github.com/dts-stn/passport-status-api/
     description: |
@@ -34,16 +34,16 @@ application:
       CLIENT_ID="{ ...service-account-id... }"
       CLIENT_SECRET="{ ...service-account-secret... }"
 
-      curl --silent --request POST "${application.authentication.oauth.token-uri}" \
+      curl --silent --request POST "${application.security.oauth.token-uri}" \
         --form "grant_type=client_credentials" \
         --form "client_id=$CLIENT_ID" --form "client_secret=$CLIENT_SECRET" \
         --form "scope=api://passport-status.esdc-edsc.gc.ca/.default" | jq --raw-output ".access_token"
       ```
-      The Azure Active Directory OpenID discovery endpoint can be found here: <${application.authentication.oauth.discovery-uri}>.
+      The Azure Active Directory OpenID discovery endpoint can be found here: <${application.security.oauth.discovery-uri}>.
 
       #### Using the *Passport Status* service account
 
-      If you are logging in as the ***Passport Status*** service account, you must use `scope=${application.authentication.oauth.client-id}/.default`.
+      If you are logging in as the ***Passport Status*** service account, you must use `scope=${application.security.oauth.client-id}/.default`.
       Failure to do so will result in the following error message:
 
       > **TAADSTS90009:** The application is requesting a token for itself. This scenario is supported only if the resource that's specified is using the GUID-based application ID.
@@ -63,8 +63,8 @@ springdoc:
     display-request-duration: true
     disable-swagger-default-url: true
     oauth:
-      client-id: ${application.authentication.oauth.client-id}
-      scopes: ${application.authentication.oauth.auth-scopes}
+      client-id: ${application.security.oauth.client-id}
+      scopes: ${application.security.oauth.auth-scopes}
       use-pkce-with-authorization-code-grant: true
   writer-with-default-pretty-printer: true
   writer-with-order-by-keys: true
