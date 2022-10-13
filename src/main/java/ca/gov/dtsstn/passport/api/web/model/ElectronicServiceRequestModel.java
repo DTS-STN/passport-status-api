@@ -10,6 +10,8 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 
 import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Style;
+import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -21,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableElectronicServiceRequestModel.class)
 public interface ElectronicServiceRequestModel extends Serializable {
 
@@ -31,6 +34,7 @@ public interface ElectronicServiceRequestModel extends Serializable {
 	LocalDate getDateOfBirth();
 
 	@Email(message = "email must be a valid email address")
+	@NotNull(message = "email is required; it must not be null")
 	@Pattern(message = "email must be a valid email address", regexp = "[^@]+@[^@]+\\.[^@]+") // prevents user@localhost style emails
 	@Schema(description = "The email address of the user submitting the electronic service request.", required = true, example = "user@example.com")
 	String getEmail();

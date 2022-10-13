@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Style;
+import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -18,6 +20,7 @@ import ca.gov.dtsstn.passport.api.web.annotation.Parameter;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Style(validationMethod = ValidationMethod.NONE)
 public interface PassportStatusSearchModel extends Serializable {
 
 	@NotBlank(message = "fileNumber must not be null or blank")

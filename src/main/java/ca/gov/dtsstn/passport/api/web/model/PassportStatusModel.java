@@ -12,6 +12,7 @@ import javax.validation.constraints.Pattern;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
+import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.Links;
@@ -38,9 +39,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Immutable
 @SuppressWarnings({ "serial" })
 @Schema(name = "PassportStatus")
-@Style(passAnnotations = { Relation.class })
 @JsonDeserialize(as = ImmutablePassportStatusModel.class)
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
+@Style(passAnnotations = { Relation.class }, validationMethod = ValidationMethod.NONE)
 @JsonPropertyOrder(value = { "id", "applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "version" })
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
 
@@ -89,13 +90,11 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Schema(description = "The current version of the resource. Used to enforce opportunistic locking during updates.", example = "0")
 	public abstract Long getVersion();
 
-	@Nullable
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotBlank(message = "applicationRegisterSid is required; it must not be null or blank")
 	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", example = "ABCD1234", required = true)
 	public abstract String getApplicationRegisterSid();
 
-	@Nullable
 	@DateTimeFormat(iso = ISO.DATE)
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotNull(message = "dateOfBirth is required; it must not be null")
@@ -103,32 +102,28 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
 	public abstract LocalDate getDateOfBirth();
 
-	@Nullable
 	@Email(message = "email must be a valid email address")
+	@NotNull(message = "email is required; it must not be null")
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@Pattern(message = "email must be a valid email address", regexp = "[^@]+@[^@]+\\.[^@]+") // prevents user@localhost style emails
 	@Schema(description = "The email address of the passport applicant.", example = "user@example.com")
 	public abstract String getEmail();
 
-	@Nullable
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotBlank(message = "fileNumber is required; it must not be null or blank")
 	@Schema(description = "The electronic service request file number.", example = "ABCD1234", required = true)
 	public abstract String getFileNumber();
 
-	@Nullable
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotBlank(message = "firstName is required; it must not be null or blank")
 	@Schema(description = "The first name of the passport applicant.", example = "John", required = true)
 	public abstract String getFirstName();
 
-	@Nullable
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotBlank(message = "lastName is required; it must not be null or blank")
 	@Schema(description = "The last name of the passport applicant.", example = "Doe", required = true)
 	public abstract String getLastName();
 
-	@Nullable
 	@NotNull(message = "status is required; it must not be null")
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@Schema(description = "The status of the passport application.", required = true)
