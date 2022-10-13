@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +66,7 @@ public class ElectronicServiceRequestController {
 	@Operation(summary = "Create a new electronic service request.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
-	public void create(@RequestBody ElectronicServiceRequestModel electronicServiceRequest) {
+	public void create(@RequestBody @Validated ElectronicServiceRequestModel electronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", electronicServiceRequest);
 
 		final var fileNumbers = passportStatusService.search(mapper.toDomain(electronicServiceRequest), Pageable.unpaged()).map(PassportStatus::getFileNumber);
