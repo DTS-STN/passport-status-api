@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("application")
 @EnableConfigurationProperties({ GcNotifyProperties.class, SecurityProperties.class, SwaggerUiProperties.class })
 public record ApplicationProperties(
-	GcNotifyProperties gcNotify,
+	GcNotifyProperties gcnotify,
 	SecurityProperties security,
 	SwaggerUiProperties swaggerUi
 ) {}

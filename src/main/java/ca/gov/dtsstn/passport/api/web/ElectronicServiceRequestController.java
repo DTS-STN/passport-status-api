@@ -78,7 +78,7 @@ public class ElectronicServiceRequestController {
 
 		fileNumbers.get().findFirst().ifPresent(fileNumber -> {
 			final var email = electronicServiceRequest.getEmail();
-			final var templateId = applicationProperties.gcNotify().fileNumberNotification().templateId();
+			final var templateId = applicationProperties.gcnotify().fileNumberNotification().templateId();
 			final var parameters = Map.of("esrf", fileNumber);
 			notificationService.send(email, templateId, parameters);
 		});
