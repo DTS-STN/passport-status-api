@@ -15,13 +15,10 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "applicationRegisterSid", ignore = true)
 	@Mapping(target = "createdBy", ignore = true)
 	@Mapping(target = "createdDate", ignore = true)
-	@Mapping(target = "dateOfBirth", ignore = true)
 	@Mapping(target = "fileNumber", ignore = true)
-	@Mapping(target = "firstName", ignore = true)
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
-	@Mapping(target = "lastName", ignore = true)
 	@Mapping(target = "status", ignore = true)
 	@Mapping(target = "version", ignore = true)
 	PassportStatus toDomain(ElectronicServiceRequestModel electronicServiceRequest);
