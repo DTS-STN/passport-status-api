@@ -11,8 +11,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConstructorBinding
 @ConfigurationProperties("application")
-@EnableConfigurationProperties({ SecurityProperties.class, SwaggerUiProperties.class })
+@EnableConfigurationProperties({ GcNotifyProperties.class, SecurityProperties.class, SwaggerUiProperties.class })
 public record ApplicationProperties(
+	GcNotifyProperties gcNotify,
 	SecurityProperties security,
 	SwaggerUiProperties swaggerUi
 ) {}

@@ -21,6 +21,7 @@
 
 logging:
   level:
+    '[ca.gov.dtsstn.passport.api]': info
     '[org.apache.activemq.audit.base]': warn
     '[org.apache.activemq.audit.message]': warn
 
@@ -147,6 +148,11 @@ application:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   etag-header-filter:
     write-weak-etag: true             # whether the ETag value written to the response should be weak, as per RFC 7232
+  gcnotify:
+    base-url: https://api.notification.canada.ca/v2/notifications/email
+    secret-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+    file-number-notification:
+      template-id: 5768860b-6953-4e41-9f56-4e508f4fa9f3
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:

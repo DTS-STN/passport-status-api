@@ -53,6 +53,8 @@ public class DatabaseInitializer {
 	@Async
 	@Transactional
 	public void initializeData() {
+		final var stopWatch = StopWatch.create();
+
 		log.info("Deleting all http traces");
 		httpRequestRepository.deleteAll();
 
@@ -60,13 +62,26 @@ public class DatabaseInitializer {
 		passportStatusRepository.deleteAll();
 
 		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
-		final var stopWatch = StopWatch.createStarted();
+		stopWatch.reset(); stopWatch.start();
 		Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
 		log.info("Fake random data created in {}ms", stopWatch.getTime());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
+		stopWatch.reset(); stopWatch.start();
 		Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).forEach(passportStatusRepository::save);
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
+
+		log.info("Generating passport team fake passport statuses");
+		stopWatch.reset(); stopWatch.start();
+		Stream.of(
+				"gregory.j.baker@hrsdc-rhdcc.gc.ca",
+				"kristopher.charbonneau@hrsdc-rhdcc.gc.ca",
+				"maxim.lam@hrsdc-rhdcc.gc.ca",
+				"sebastien.comeau@hrsdc-rhdcc.gc.ca",
+				"shaun.laughland@hrsdc-rhdcc.gc.ca",
+				"stefan.oconnell@hrsdc-rhdcc.gc.ca")
+			.map(this::generatePassportTeamPassportStatus).forEach(passportStatusRepository::save);
+		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
 	}
 
 	protected PassportStatusDocument generateRandomPassportStatus() {
@@ -105,6 +120,12 @@ public class DatabaseInitializer {
 			.lastName("DUPE0000")                             // NOSONAR
 			.status(Status.APPROVED)
 			.build();
+	}
+
+	private PassportStatusDocument generatePassportTeamPassportStatus(String email) {
+		final var passportStatus = generateRandomPassportStatus();
+		passportStatus.setEmail(email);
+		return passportStatus;
 	}
 
 	private String stripDiacritics(String string) {

@@ -5,13 +5,27 @@
 # Copy this file to application-local.yaml and update the values as required.
 #######################################################################################################################
 
-application:
+spring:
   artemis:
     embedded:
       persistent: true
       data-directory: target/artemis
-  authentication:
+  profiles:
+    active:
+      - embedded-mongo
+
+application:
+  database-initializer:
+    run-on-startup: true
+  gcnotify:
+    api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
+  security:
     oauth:
-      auth-scopes: api://passport-status.esdc-edsc.gc.ca/.default
       client-id: de3625ec-c6e6-46a6-b761-7b1039ab546a
       tenant-id: 9ed55846-8a81-4246-acd8-b1a01abfc0d1
+  swagger-ui:
+    servers:
+      - description: Development environment
+        url: https://passport-status-api.dev.dev-rhp.dts-stn.com/
+      - description: Staging environment
+        url: https://passport-status-api.staging.dev-rhp.dts-stn.com/
