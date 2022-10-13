@@ -73,62 +73,92 @@ public class DatabaseInitializer {
 
 		log.info("Generating passport team fake passport statuses");
 		stopWatch.reset(); stopWatch.start();
-		Stream.of(
-				"gregory.j.baker@hrsdc-rhdcc.gc.ca",
-				"kristopher.charbonneau@hrsdc-rhdcc.gc.ca",
-				"maxim.lam@hrsdc-rhdcc.gc.ca",
-				"sebastien.comeau@hrsdc-rhdcc.gc.ca",
-				"shaun.laughland@hrsdc-rhdcc.gc.ca",
-				"stefan.oconnell@hrsdc-rhdcc.gc.ca")
-			.map(this::generatePassportTeamPassportStatus).forEach(passportStatusRepository::save);
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", "2000-01-01", "gregory.j.baker@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", "2000-01-01", "kristopher.charbonneau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", "2000-01-01", "maxim.lam@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", "2000-01-01", "sebastien.comeau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", "2000-01-01", "shaun.laughland@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", "2000-01-01", "stefan.oconnell@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", "2000-01-01", "stephane.viau@hrsdc-rhdcc.gc.ca"));
 		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
 	}
 
 	protected PassportStatusDocument generateRandomPassportStatus() {
-		final var statuses = PassportStatusDocument.Status.values();
-
-		final var firstName = faker.name().firstName();
-		final var lastName = faker.name().lastName();
-
-		final var applicationRegisterSid = faker.regexify("[A-Z0-9]{8}");
-		final var dateOfBirth = faker.date().birthday().toLocalDateTime().toLocalDate().toString();
-		final var email = stripDiacritics(firstName + "." + lastName + "@example.com").toLowerCase();
-		final var fileNumber = faker.regexify("[A-Z0-9]{8}");
-		final var id = faker.random().hex(24);
-		final var status = statuses[faker.random().nextInt(statuses.length)];
+		final var firstName = generateFirstName();
+		final var lastName = generateLastName();
 
 		return new PassportStatusDocumentBuilder()
-			.id(id)
-			.applicationRegisterSid(applicationRegisterSid)
-			.dateOfBirth(dateOfBirth)
-			.email(email)
-			.fileNumber(fileNumber)
+			.id(generateId())
+			.applicationRegisterSid(generateApplicationRegisterSid())
+			.dateOfBirth(generateDateOfBirth())
+			.email(generateEmail(firstName, lastName))
+			.fileNumber(generateFileNumber())
 			.firstName(firstName)
 			.lastName(lastName)
-			.status(status)
+			.status(generateStatus())
 			.build();
 	}
 
-	private PassportStatusDocument generateDuplicatePassportStatus() {
+	protected PassportStatusDocument generateDuplicatePassportStatus() {
 		return new PassportStatusDocumentBuilder()
-			.id(faker.random().hex(24))
-			.applicationRegisterSid("DUPE0000") // NOSONAR
+			.id(generateId())
+			.applicationRegisterSid(generateApplicationRegisterSid())
 			.dateOfBirth("2000-01-01")
-			.email("DUPE0000@example.com")                       // NOSONAR
-			.fileNumber("DUPE0000")                         // NOSONAR
-			.firstName("DUPE0000")                           // NOSONAR
-			.lastName("DUPE0000")                             // NOSONAR
-			.status(Status.APPROVED)
+			.email("dupe0000.dupe0000@example.com")
+			.fileNumber("DUPE0000") // NOSONAR
+			.firstName("DUPE0000")   // NOSONAR
+			.lastName("DUPE0000")     // NOSONAR
+			.status(generateStatus())
 			.build();
 	}
 
-	private PassportStatusDocument generatePassportTeamPassportStatus(String email) {
-		final var passportStatus = generateRandomPassportStatus();
-		passportStatus.setEmail(email);
-		return passportStatus;
+	protected PassportStatusDocument generatePassportTeamPassportStatus(String firstName, String lastName, String dateOfBirth, String email) {
+		return new PassportStatusDocumentBuilder()
+			.id(generateId())
+			.applicationRegisterSid(generateApplicationRegisterSid())
+			.dateOfBirth(dateOfBirth)
+			.email(email)
+			.fileNumber(generateFileNumber())
+			.firstName(firstName)
+			.lastName(lastName)
+			.status(generateStatus())
+			.build();
 	}
 
-	private String stripDiacritics(String string) {
+	protected String generateApplicationRegisterSid() {
+		return generateId().toLowerCase();
+	}
+
+	protected String generateDateOfBirth() {
+		return faker.date().birthday().toLocalDateTime().toLocalDate().toString();
+	}
+
+	protected String generateEmail(final String firstName, final String lastName) {
+		return stripDiacritics(firstName + "." + lastName + "@example.com").toLowerCase();
+	}
+
+	protected String generateFileNumber() {
+		return faker.random().hex(8);
+	}
+
+	protected String generateFirstName() {
+		return faker.name().firstName();
+	}
+
+	protected String generateId() {
+		return faker.random().hex(24);
+	}
+
+	protected String generateLastName() {
+		return faker.name().lastName();
+	}
+
+	protected Status generateStatus() {
+		final var statuses = PassportStatusDocument.Status.values();
+		return statuses[faker.random().nextInt(statuses.length)];
+	}
+
+	protected String stripDiacritics(String string) {
 		return diacriticsPattern.matcher(Normalizer.normalize(string, Normalizer.Form.NFD)).replaceAll("");
 	}
 
