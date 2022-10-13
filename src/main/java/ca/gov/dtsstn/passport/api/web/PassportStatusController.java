@@ -81,7 +81,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @JsonView({ PassportStatusModel.Views.POST.class }) @RequestBody PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
+	public void create(Authentication authentication, @JsonView({ PassportStatusModel.Views.POST.class }) @RequestBody @Validated PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
 
 		jms.convertAndSend("passport-statuses", passportStatus);

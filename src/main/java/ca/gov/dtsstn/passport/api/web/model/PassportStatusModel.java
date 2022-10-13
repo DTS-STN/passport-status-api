@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Pattern;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
@@ -105,6 +106,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@Nullable
 	@Email(message = "email must be a valid email address")
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
+	@Pattern(message = "email must be a valid email address", regexp = "[^@]+@[^@]+\\.[^@]+") // prevents user@localhost style emails
 	@Schema(description = "The email address of the passport applicant.", example = "user@example.com")
 	public abstract String getEmail();
 
