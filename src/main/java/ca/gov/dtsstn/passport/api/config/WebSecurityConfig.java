@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -93,6 +94,10 @@ public class WebSecurityConfig {
 				.requestMatchers(toAnyEndpoint()).authenticated();
 
 		return http.build();
+	}
+
+	@Bean WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> web.ignoring().antMatchers("/h2-console/**");
 	}
 
 }
