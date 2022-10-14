@@ -107,8 +107,6 @@ spring:
       - optional:application-local.yml
       - optional:application-local.yaml
   data:
-    mongodb:
-      auto-index-creation: true
     web:
       pageable:
         one-indexed-parameters: true
@@ -124,9 +122,6 @@ spring:
       indent-output: true
   main:
     allow-bean-definition-overriding: true
-  mongodb:
-    embedded:
-      version: 6.0.1
   security:
     oauth2:
       resourceserver:

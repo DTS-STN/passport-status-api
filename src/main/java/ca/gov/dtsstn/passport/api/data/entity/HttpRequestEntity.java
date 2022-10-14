@@ -28,7 +28,7 @@ public class HttpRequestEntity extends AbstractEntity {
 	@Column(nullable = true)
 	private String requestRemoteAddress;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 0xFFF)
 	private String requestUri;
 
 	@Column(nullable = true, length = 0xFFFF)
