@@ -43,13 +43,13 @@ import ca.gov.dtsstn.passport.api.data.UuidGenerator;
 public abstract class AbstractEntity implements Persistable<String>, Serializable {
 
 	@Id
-	@Column(nullable = false, updatable = false)
 	@GeneratedValue(generator = "uuid-generator")
+	@Column(length = 64, nullable = false, updatable = false)
 	@GenericGenerator(name = "uuid-generator", strategy = UuidGenerator.STRATEGY)
 	protected String id;
 
 	@CreatedBy
-	@Column(nullable = false, updatable = false)
+	@Column(length = 64, nullable = false, updatable = false)
 	protected String createdBy;
 
 	@CreatedDate
@@ -57,7 +57,7 @@ public abstract class AbstractEntity implements Persistable<String>, Serializabl
 	protected Instant createdDate;
 
 	@LastModifiedBy
-	@Column(nullable = true)
+	@Column(length = 64, nullable = true)
 	protected String lastModifiedBy;
 
 	@LastModifiedDate

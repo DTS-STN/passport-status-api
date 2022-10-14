@@ -20,32 +20,32 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings({ "serial" })
 @Entity(name = "PassportStatus")
 @Table(indexes = {
-	@Index(name = "idxPassportStatusSearch", columnList = "dateOfBirth, fileNumber, firstName, lastName"),
-	@Index(name = "idxEsrfSearch", columnList = "dateOfBirth, email, firstName, lastName") })
+	@Index(name = "ix_esrf_search", columnList = "dateOfBirth, email, firstName, lastName"),
+	@Index(name = "ix_passport_status_search", columnList = "dateOfBirth, fileNumber, firstName, lastName") })
 public class PassportStatusEntity extends AbstractEntity {
 
 	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
 
-	@Column(nullable = false)
+	@Column(length = 256, nullable = false)
 	private String applicationRegisterSid;
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
 
-	@Column(nullable = false)
+	@Column(length = 256, nullable = false)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(length = 32, nullable = false)
 	private String fileNumber;
 
-	@Column(nullable = false)
+	@Column(length = 64, nullable = false)
 	private String firstName;
 
-	@Column(nullable = false)
+	@Column(length = 64, nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32, nullable = false)
 	private Status status;
 
 	public PassportStatusEntity() {

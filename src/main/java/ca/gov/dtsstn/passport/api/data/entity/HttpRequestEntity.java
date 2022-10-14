@@ -16,28 +16,28 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings({ "serial" })
 public class HttpRequestEntity extends AbstractEntity {
 
-	@Column(nullable = true)
+	@Column(length = 64, nullable = true)
 	private String principalName;
 
-	@Column(nullable = true, length = 0xFFFF)
+	@Column(length = 65536, nullable = true)
 	private String requestHeaders;
 
-	@Column(nullable = false)
+	@Column(length = 8, nullable = false)
 	private String requestMethod;
 
-	@Column(nullable = true)
+	@Column(length = 64, nullable = true)
 	private String requestRemoteAddress;
 
-	@Column(nullable = false, length = 0xFFF)
+	@Column(length = 4096, nullable = false)
 	private String requestUri;
 
-	@Column(nullable = true, length = 0xFFFF)
+	@Column(length = 65536, nullable = true)
 	private String responseHeaders;
 
 	@Column(nullable = false)
 	private Integer responseStatus;
 
-	@Column(nullable = true)
+	@Column(length = 256, nullable = true)
 	private String sessionId;
 
 	@Column(nullable = false)
