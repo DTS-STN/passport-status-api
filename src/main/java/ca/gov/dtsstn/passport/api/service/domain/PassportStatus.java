@@ -21,13 +21,7 @@ import org.springframework.lang.Nullable;
 @Style(validationMethod = ValidationMethod.NONE)
 public interface PassportStatus extends Serializable {
 
-	public enum Status {
-
-		APPROVED,
-		IN_EXAMINATION,
-		REJECTED;
-
-	}
+	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
 
 	@Nullable
 	String getId();
@@ -43,9 +37,6 @@ public interface PassportStatus extends Serializable {
 
 	@Nullable
 	Instant getLastModifiedDate();
-
-	@Nullable
-	Long getVersion();
 
 	@Nullable
 	String getApplicationRegisterSid();

@@ -42,7 +42,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutablePassportStatusModel.class)
 @Relation(collectionRelation = "passportStatuses", itemRelation = "passportStatus")
 @Style(passAnnotations = { Relation.class }, validationMethod = ValidationMethod.NONE)
-@JsonPropertyOrder(value = { "id", "applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate", "version" })
+@JsonPropertyOrder(value = { "id", "applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 public abstract class PassportStatusModel extends RepresentationModel<PassportStatusModel> implements Serializable {
 
 	public interface Views {
@@ -52,13 +52,7 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 
 	}
 
-	public enum Status {
-
-		APPROVED,
-		IN_EXAMINATION,
-		REJECTED;
-
-	}
+	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
 
 	@Nullable
 	@JsonView({ Views.GET.class })
@@ -84,11 +78,6 @@ public abstract class PassportStatusModel extends RepresentationModel<PassportSt
 	@JsonView({ Views.GET.class })
 	@Schema(description = "The last modification timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	public abstract Instant getLastModifiedDate();
-
-	@Nullable
-	@JsonView({ Views.GET.class, Views.PUT.class })
-	@Schema(description = "The current version of the resource. Used to enforce opportunistic locking during updates.", example = "0")
-	public abstract Long getVersion();
 
 	@JsonView({ Views.POST.class, Views.GET.class, Views.PUT.class })
 	@NotBlank(message = "applicationRegisterSid is required; it must not be null or blank")

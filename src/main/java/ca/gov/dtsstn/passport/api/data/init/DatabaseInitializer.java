@@ -1,8 +1,10 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
 import java.text.Normalizer;
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -17,9 +19,8 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument.Status;
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
+import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
+import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
 import net.datafaker.Faker;
 
 /**
@@ -73,21 +74,21 @@ public class DatabaseInitializer {
 
 		log.info("Generating passport team fake passport statuses");
 		stopWatch.reset(); stopWatch.start();
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", "2000-01-01", "gregory.j.baker@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", "2000-01-01", "kristopher.charbonneau@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", "2000-01-01", "maxim.lam@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", "2000-01-01", "sebastien.comeau@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", "2000-01-01", "shaun.laughland@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", "2000-01-01", "stefan.oconnell@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", "2000-01-01", "stephane.viau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", LocalDate.of(2000, 01, 01), "kristopher.charbonneau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", LocalDate.of(2000, 01, 01), "maxim.lam@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(2000, 01, 01), "sebastien.comeau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", LocalDate.of(2000, 01, 01), "stephane.viau@hrsdc-rhdcc.gc.ca"));
 		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
 	}
 
-	protected PassportStatusDocument generateRandomPassportStatus() {
+	protected PassportStatusEntity generateRandomPassportStatus() {
 		final var firstName = generateFirstName();
 		final var lastName = generateLastName();
 
-		return new PassportStatusDocumentBuilder()
+		return new PassportStatusEntityBuilder()
 			.id(generateId())
 			.applicationRegisterSid(generateApplicationRegisterSid())
 			.dateOfBirth(generateDateOfBirth())
@@ -99,11 +100,11 @@ public class DatabaseInitializer {
 			.build();
 	}
 
-	protected PassportStatusDocument generateDuplicatePassportStatus() {
-		return new PassportStatusDocumentBuilder()
+	protected PassportStatusEntity generateDuplicatePassportStatus() {
+		return new PassportStatusEntityBuilder()
 			.id(generateId())
 			.applicationRegisterSid(generateApplicationRegisterSid())
-			.dateOfBirth("2000-01-01")
+			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.email("dupe0000.dupe0000@example.com")
 			.fileNumber("DUPE0000") // NOSONAR
 			.firstName("DUPE0000")   // NOSONAR
@@ -112,8 +113,8 @@ public class DatabaseInitializer {
 			.build();
 	}
 
-	protected PassportStatusDocument generatePassportTeamPassportStatus(String firstName, String lastName, String dateOfBirth, String email) {
-		return new PassportStatusDocumentBuilder()
+	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email) {
+		return new PassportStatusEntityBuilder()
 			.id(generateId())
 			.applicationRegisterSid(generateApplicationRegisterSid())
 			.dateOfBirth(dateOfBirth)
@@ -129,8 +130,8 @@ public class DatabaseInitializer {
 		return generateId().toLowerCase();
 	}
 
-	protected String generateDateOfBirth() {
-		return faker.date().birthday().toLocalDateTime().toLocalDate().toString();
+	protected LocalDate generateDateOfBirth() {
+		return faker.date().birthday().toLocalDateTime().toLocalDate();
 	}
 
 	protected String generateEmail(final String firstName, final String lastName) {
@@ -146,15 +147,15 @@ public class DatabaseInitializer {
 	}
 
 	protected String generateId() {
-		return faker.random().hex(24);
+		return UUID.nameUUIDFromBytes(faker.random().nextRandomBytes(24)).toString();
 	}
 
 	protected String generateLastName() {
 		return faker.name().lastName();
 	}
 
-	protected Status generateStatus() {
-		final var statuses = PassportStatusDocument.Status.values();
+	protected ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity.Status generateStatus() {
+		final var statuses = PassportStatusEntity.Status.values();
 		return statuses[faker.random().nextInt(statuses.length)];
 	}
 

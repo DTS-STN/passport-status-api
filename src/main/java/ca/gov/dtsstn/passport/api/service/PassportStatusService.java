@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,14 +42,14 @@ public class PassportStatusService {
 	public PassportStatus create(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");                  // NOSONAR
 		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance"); // NOSONAR
-		final var createdPassportStatus = mapper.fromDocument(repository.save(mapper.toDocument(passportStatus)));
+		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
 	}
 
 	public Optional<PassportStatus> read(String id) {
 		Assert.hasText(id, "id is required; it must not be null or blank");
-		final var passportStatus = repository.findById(id).map(mapper::fromDocument);
+		final var passportStatus = repository.findById(id).map(mapper::fromEntity);
 		passportStatus.map(ImmutablePassportStatusReadEvent::of).ifPresent(eventPublisher::publishEvent);
 		return passportStatus;
 	}
@@ -57,14 +58,14 @@ public class PassportStatusService {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.notNull(passportStatus.getId(), "passportStatus.id must not be null when updating existing instance");
 		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow(); // NOSONAR
-		final var updatedPassportStatus = mapper.fromDocument(repository.save(mapper.update(passportStatus, originalPassportStatus)));
-		eventPublisher.publishEvent(ImmutablePassportStatusUpdatedEvent.of(mapper.fromDocument(originalPassportStatus), updatedPassportStatus));
+		final var updatedPassportStatus = mapper.fromEntity(repository.save(mapper.update(passportStatus, originalPassportStatus)));
+		eventPublisher.publishEvent(ImmutablePassportStatusUpdatedEvent.of(mapper.fromEntity(originalPassportStatus), updatedPassportStatus));
 		return updatedPassportStatus;
 	}
 
 	public void delete(String id) {
 		repository.findById(id)
-			.map(mapper::fromDocument)
+			.map(mapper::fromEntity)
 			.ifPresent(passportStatus -> {
 				repository.deleteById(id);
 				eventPublisher.publishEvent(ImmutablePassportStatusDeletedEvent.of(passportStatus));
@@ -73,7 +74,7 @@ public class PassportStatusService {
 
 	public Page<PassportStatus> readAll(Pageable pageable) {
 		Assert.notNull(pageable, "pageable is required; it must not be null");
-		final var passportStatuses = repository.findAll(pageable).map(mapper::fromDocument);
+		final var passportStatuses = repository.findAll(pageable).map(mapper::fromEntity);
 		passportStatuses.map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}
@@ -81,8 +82,8 @@ public class PassportStatusService {
 	public Page<PassportStatus> search(PassportStatus passportStatusProbe, Pageable pageable) {
 		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
 		Assert.notNull(pageable, "pageable is required; it must not be null");
-		final var searchablePassportStatusProbe = mapper.toSearchableDocument(passportStatusProbe);
-		final var passportStatuses = repository.findAllCaseInsensitive(searchablePassportStatusProbe, pageable).map(mapper::fromDocument);
+		final var searchablePassportStatusProbe = mapper.toSearchableEntity(passportStatusProbe);
+		final var passportStatuses = repository.findAll(Example.of(searchablePassportStatusProbe), pageable).map(mapper::fromEntity);
 		passportStatuses.map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}

@@ -15,12 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocumentBuilder;
+import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
+import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 
 /**
@@ -52,7 +53,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testRead() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocumentBuilder().build()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
 
 		final var passportStatus = passportStatusService.read("id");
 
@@ -61,7 +62,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testUpdate() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocumentBuilder().build()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
 		final var passportStatus = passportStatusService.update(ImmutablePassportStatus.builder().id("id").build());
@@ -80,7 +81,7 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testDelete() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusDocument()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntity()));
 
 		passportStatusService.delete("id");
 
@@ -97,11 +98,11 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testSearch() {
-		when(passportStatusRepository.findAllCaseInsensitive(any(PassportStatusDocument.class), any(Pageable.class))).thenReturn(Page.empty());
+		when(passportStatusRepository.findAll(any(Example.class), any(Pageable.class))).thenReturn(Page.empty());
 
 		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build(), Pageable.unpaged());
 
 		assertThat(passportStatus).isNotNull();
-		verify(passportStatusRepository).findAllCaseInsensitive(any(PassportStatusDocument.class), any(Pageable.class));
+		verify(passportStatusRepository).findAll(any(Example.class), any(Pageable.class));
 	}
 }

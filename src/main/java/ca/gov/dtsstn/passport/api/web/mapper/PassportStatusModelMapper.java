@@ -23,7 +23,6 @@ public interface PassportStatusModelMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "status", ignore = true)
-	@Mapping(target = "version", ignore = true)
 	PassportStatus toDomain(PassportStatusSearchModel passportStatus);
 
 	PassportStatusModel fromDomain(PassportStatus passportStatus);
