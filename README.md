@@ -55,7 +55,7 @@ The Passport Status API requires no installation process to run. 🙏
 - To build/run the application:
 
   ``` sh
-  mvn clean spring-boot:run --define spring-boot.run.arguments="--spring.profiles.active=embedded-mongo --application.database-initializer.enabled=true"
+  mvn clean spring-boot:run --define spring-boot.run.arguments="--application.database-initializer.enabled=true"
   ```
 
 - To build a container image:
