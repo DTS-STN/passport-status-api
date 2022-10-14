@@ -1,70 +1,74 @@
-package ca.gov.dtsstn.passport.api.data.document;
+package ca.gov.dtsstn.passport.api.data.entity;
 
-import java.net.URI;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.data.annotation.TypeAlias;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
 /**
- * MongoDB document representing an HTTP trace (request/response and other related data).
- *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@TypeAlias("HttpRequest")
-@Document("httpRequests")
+@Entity(name = "HttpRequest")
 @SuppressWarnings({ "serial" })
-public class HttpRequestDocument extends AbstractDocument {
+public class HttpRequestEntity extends AbstractEntity {
 
+	@Column(nullable = true)
 	private String principalName;
 
-	private Map<String, List<String>> requestHeaders;
+	@Column(nullable = true, length = 0xFFFF)
+	private String requestHeaders;
 
+	@Column(nullable = false)
 	private String requestMethod;
 
+	@Column(nullable = true)
 	private String requestRemoteAddress;
 
-	private URI requestUri;
+	@Column(nullable = false)
+	private String requestUri;
 
-	private Map<String, List<String>> responseHeaders;
+	@Column(nullable = true, length = 0xFFFF)
+	private String responseHeaders;
 
+	@Column(nullable = false)
 	private Integer responseStatus;
 
+	@Column(nullable = true)
 	private String sessionId;
 
+	@Column(nullable = false)
 	private Instant timestamp;
 
+	@Column(nullable = true)
 	private Long timeTakenMillis;
 
-	public HttpRequestDocument() {
+	public HttpRequestEntity() {
 		super();
 	}
 
 	@Builder.Constructor
-	protected HttpRequestDocument( // NOSONAR
+	protected HttpRequestEntity(
 			@Nullable String id,
 			@Nullable String createdBy,
 			@Nullable Instant createdDate,
 			@Nullable String lastModifiedBy,
 			@Nullable Instant lastModifiedDate,
-			@Nullable Long version,
-			@Nullable Instant timestamp,
+			@Nullable Boolean isNew,
 			@Nullable String principalName,
-			@Nullable String sessionId,
+			@Nullable String requestHeaders,
 			@Nullable String requestMethod,
-			@Nullable URI requestUri,
-			@Nullable Map<String, List<String>> requestHeaders,
 			@Nullable String requestRemoteAddress,
+			@Nullable String requestUri,
+			@Nullable String responseHeaders,
 			@Nullable Integer responseStatus,
-			@Nullable Map<String, List<String>> responseHeaders,
+			@Nullable String sessionId,
+			@Nullable Instant timestamp,
 			@Nullable Long timeTakenMillis) {
-		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, version);
-		this.timestamp = timestamp;
+		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.principalName = principalName;
 		this.requestHeaders = requestHeaders;
 		this.requestMethod = requestMethod;
@@ -73,6 +77,7 @@ public class HttpRequestDocument extends AbstractDocument {
 		this.responseHeaders = responseHeaders;
 		this.responseStatus = responseStatus;
 		this.sessionId = sessionId;
+		this.timestamp = timestamp;
 		this.timeTakenMillis = timeTakenMillis;
 	}
 
@@ -84,20 +89,20 @@ public class HttpRequestDocument extends AbstractDocument {
 		this.principalName = principalName;
 	}
 
+	public String getRequestHeaders() {
+		return requestHeaders;
+	}
+
+	public void setRequestHeaders(String requestHeaders) {
+		this.requestHeaders = requestHeaders;
+	}
+
 	public String getRequestMethod() {
 		return requestMethod;
 	}
 
 	public void setRequestMethod(String requestMethod) {
 		this.requestMethod = requestMethod;
-	}
-
-	public Map<String, List<String>> getRequestHeaders() {
-		return requestHeaders;
-	}
-
-	public void setRequestHeaders(Map<String, List<String>> requestHeaders) {
-		this.requestHeaders = requestHeaders;
 	}
 
 	public String getRequestRemoteAddress() {
@@ -108,19 +113,19 @@ public class HttpRequestDocument extends AbstractDocument {
 		this.requestRemoteAddress = requestRemoteAddress;
 	}
 
-	public URI getRequestUri() {
+	public String getRequestUri() {
 		return requestUri;
 	}
 
-	public void setRequestUri(URI requestUri) {
+	public void setRequestUri(String requestUri) {
 		this.requestUri = requestUri;
 	}
 
-	public Map<String, List<String>> getResponseHeaders() {
+	public String getResponseHeaders() {
 		return responseHeaders;
 	}
 
-	public void setResponseHeaders(Map<String, List<String>> responseHeaders) {
+	public void setResponseHeaders(String responseHeaders) {
 		this.responseHeaders = responseHeaders;
 	}
 
@@ -160,6 +165,12 @@ public class HttpRequestDocument extends AbstractDocument {
 	public String toString() {
 		return new ToStringCreator(this)
 			.append("super", super.toString())
+			.append("id", id)
+			.append("createdBy", createdBy)
+			.append("createdDate", createdDate)
+			.append("lastModifiedBy", lastModifiedBy)
+			.append("lastModifiedDate", lastModifiedDate)
+			.append("isNew", isNew)
 			.append("principalName", principalName)
 			.append("requestHeaders", requestHeaders)
 			.append("requestMethod", requestMethod)

@@ -12,11 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepository;
-import ca.gov.dtsstn.passport.api.data.ExtendedMongoRepositoryImpl;
 import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
 
 /**
@@ -24,8 +20,6 @@ import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
  */
 @Configuration
 @EnableJpaAuditing
-@EnableMongoAuditing
-@EnableMongoRepositories(basePackageClasses = { ExtendedMongoRepository.class }, repositoryBaseClass = ExtendedMongoRepositoryImpl.class)
 public class DataSourceConfig {
 
 	private final Logger log = LoggerFactory.getLogger(DataSourceConfig.class);

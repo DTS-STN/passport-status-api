@@ -82,7 +82,7 @@ public class PassportStatusService {
 	public Page<PassportStatus> search(PassportStatus passportStatusProbe, Pageable pageable) {
 		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
 		Assert.notNull(pageable, "pageable is required; it must not be null");
-		final var searchablePassportStatusProbe = mapper.toSearchableEntity(passportStatusProbe);
+		final var searchablePassportStatusProbe = mapper.toEntity(passportStatusProbe);
 		final var passportStatuses = repository.findAll(Example.of(searchablePassportStatusProbe), pageable).map(mapper::fromEntity);
 		passportStatuses.map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;

@@ -6,7 +6,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import ca.gov.dtsstn.passport.api.data.document.PassportStatusDocument;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
@@ -16,13 +15,10 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper
-public interface PassportStatusMapper extends BaseDomainMapper {
+public interface PassportStatusMapper {
 
 	@Mapping(target = "isNew", ignore = true)
 	PassportStatusEntity toEntity(PassportStatus passportStatus);
-
-	@Mapping(target = "isNew", ignore = true)
-	PassportStatusEntity toSearchableEntity(PassportStatus passportStatus);
 
 	PassportStatus fromEntity(PassportStatusEntity passportStatus);
 

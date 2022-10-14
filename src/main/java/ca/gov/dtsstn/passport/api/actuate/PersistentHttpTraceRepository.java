@@ -1,6 +1,8 @@
 package ca.gov.dtsstn.passport.api.actuate;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.mapstruct.Mapper;
@@ -15,8 +17,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
-import ca.gov.dtsstn.passport.api.data.document.HttpRequestDocument;
+import ca.gov.dtsstn.passport.api.data.entity.HttpRequestEntity;
 
 /**
  * A persistent implementation of {@link HttpTraceRepository}.
@@ -50,7 +55,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 	public void add(HttpTrace httpTrace) {
 		inMemoryHttpTraceRepository.add(httpTrace);
 		Optional.ofNullable(httpTrace)
-			.map(httpTraceMapper::toDocument)
+			.map(httpTraceMapper::toEntity)
 			.ifPresent(httpRequestRepository::save);
 	}
 
@@ -65,7 +70,9 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 	}
 
 	@Mapper
-	interface HttpTraceMapper {
+	static abstract class HttpTraceMapper {
+
+		protected final ObjectMapper objectMapper = new ObjectMapper();
 
 		@Nullable
 		@Mapping(target = "id", ignore = true)
@@ -78,12 +85,20 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 		@Mapping(target = "responseStatus", source = "response.status")
 		@Mapping(target = "responseHeaders", source = "response.headers")
 		@Mapping(target = "timeTakenMillis", source = "timeTaken")
+		@Mapping(target = "isNew", ignore = true)
 		@Mapping(target = "createdBy", ignore = true)
 		@Mapping(target = "createdDate", ignore = true)
 		@Mapping(target = "lastModifiedBy", ignore = true)
 		@Mapping(target = "lastModifiedDate", ignore = true)
-		@Mapping(target = "version", ignore = true)
-		HttpRequestDocument toDocument(@Nullable HttpTrace httpTrace);
+		public abstract HttpRequestEntity toEntity(@Nullable HttpTrace httpTrace);
+
+		public String toString(Map<String, List<String>> headers) throws JsonProcessingException {
+			return objectMapper.writeValueAsString(headers);
+		}
+
+		public String toString(URI uri) {
+			return uri.toString();
+		}
 
 	}
 
