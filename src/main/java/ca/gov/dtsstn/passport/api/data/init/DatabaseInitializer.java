@@ -14,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
@@ -40,36 +38,29 @@ public class DatabaseInitializer {
 
 	private final PassportStatusRepository passportStatusRepository;
 
-	private final HttpRequestRepository httpRequestRepository;
-
 	private int duplicateStatusesNumber = 10;
 
 	private int generatedStatusesNumber = 1000;
 
-	public DatabaseInitializer(HttpRequestRepository httpRequestRepository, PassportStatusRepository passportStatusRepository) {
-		this.httpRequestRepository = httpRequestRepository;
+	public DatabaseInitializer(PassportStatusRepository passportStatusRepository) {
 		this.passportStatusRepository = passportStatusRepository;
 	}
 
 	@Async
-	@Transactional
 	public void initializeData() {
 		final var stopWatch = StopWatch.create();
-
-		log.info("Deleting all http traces");
-		httpRequestRepository.deleteAll();
 
 		log.info("Deleting all passport statuses");
 		passportStatusRepository.deleteAll();
 
 		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).forEach(passportStatusRepository::save);
+		passportStatusRepository.saveAll(Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).toList());
 		log.info("Fake random data created in {}ms", stopWatch.getTime());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).forEach(passportStatusRepository::save);
+		passportStatusRepository.saveAll(Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).toList());
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 
 		log.info("Generating passport team fake passport statuses");

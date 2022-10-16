@@ -131,6 +131,11 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+    properties:
+      '[hibernate.batch_versioned_data]': true
+      '[hibernate.jdbc.batch_size]': 100
+      '[hibernate.order_inserts]': true
+      '[hibernate.order_updates]': true
   main:
     allow-bean-definition-overriding: true
   security:
