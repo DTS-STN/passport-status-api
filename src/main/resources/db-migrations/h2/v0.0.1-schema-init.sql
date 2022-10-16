@@ -1,1 +1,1 @@
-CREATE ALIAS remove_diacritics AS '@CODE String removeDiacritics(String string) { return string; }';
+CREATE ALIAS remove_diacritics FOR 'org.apache.commons.lang3.StringUtils.stripAccents';
