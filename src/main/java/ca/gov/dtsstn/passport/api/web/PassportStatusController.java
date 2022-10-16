@@ -1,10 +1,21 @@
 package ca.gov.dtsstn.passport.api.web;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.core.EmbeddedWrappers;
@@ -32,7 +43,6 @@ import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AuthenticationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
@@ -127,15 +137,37 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public CollectionModel<PassportStatusModel> search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
-		final var passportStatuses = service.fileNumberSearch(passportStatusSearchModel.getDateOfBirth(), passportStatusSearchModel.getFileNumber(), passportStatusSearchModel.getFirstName(), passportStatusSearchModel.getLastName());
+	public CollectionModel<PassportStatusModel> search(
+			@DateTimeFormat(iso = ISO.DATE)
+			@NotNull(message = "dateOfBirth must not be null or blank")
+			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
+			@RequestParam LocalDate dateOfBirth,
+
+			@NotBlank(message = "fileNumber must not be null or blank")
+			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
+			@RequestParam String fileNumber,
+
+			@NotBlank(message = "firstName must not be null or blank")
+			@Parameter(description = "The first name of the passport applicant.", example = "John", required = true)
+			@RequestParam String firstName,
+
+			@NotBlank(message = "lastName must not be null or blank")
+			@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
+			@RequestParam String lastName,
+
+			@Parameter(description = "If the query should return a single unique result.")
+			@RequestParam(defaultValue = "true") boolean unique) {
+		final var passportStatuses = service.fileNumberSearch(dateOfBirth, fileNumber, firstName, lastName);
 
 		if (unique && passportStatuses.size() > 1) {
-			log.warn("Search query returned non-unique results: {}", passportStatusSearchModel);
+			log.warn("Search query returned non-unique results: {}", List.of(dateOfBirth, fileNumber, firstName, lastName));
 			throw new NonUniqueResourceException("Search query returned non-unique results");
 		}
 
-		return assembler.wrapCollection(assembler.toCollectionModel(passportStatuses), PassportStatusModel.class);
+		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, firstName, lastName, unique)).withSelfRel();
+		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
+
+		return assembler.wrapCollection(collection, PassportStatusModel.class);
 	}
 
 }

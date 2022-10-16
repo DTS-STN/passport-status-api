@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.web.assembler;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -34,12 +32,6 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 	public PagedModel<D> toModel(Page<T> page) {
 		Assert.notNull(page, "page is required; it must not be null");
 		return page.isEmpty() ? (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType()) : pagedResourcesAssembler.toModel(page, this);
-	}
-
-	@Override
-	public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
-		Assert.notNull(entities, "entities is required; it must not be null");
-		return super.toCollectionModel(entities).add(linkTo(getControllerClass()).withSelfRel());
 	}
 
 	/**
