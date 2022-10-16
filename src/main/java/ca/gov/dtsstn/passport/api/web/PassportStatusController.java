@@ -155,7 +155,7 @@ public class PassportStatusController {
 			@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
 			@RequestParam String lastName,
 
-			@Parameter(description = "If the query should return a single unique result.")
+			@Parameter(description = "If the query should return a single unique result.", required = false)
 			@RequestParam(defaultValue = "true") boolean unique) {
 		final var passportStatuses = service.fileNumberSearch(dateOfBirth, fileNumber, firstName, lastName);
 

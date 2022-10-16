@@ -2,7 +2,6 @@ package ca.gov.dtsstn.passport.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.core.SpringDocUtils;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
-import ca.gov.dtsstn.passport.api.web.model.ImmutablePassportStatusSearchModel;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
@@ -31,11 +28,6 @@ public class SpringDocConfig {
 	public static final String HTTP = "JSON Web Token";
 
 	public static final String OAUTH = "Azure Active Directory";
-
-	static {
-		SpringDocUtils.getConfig()
-			.replaceParameterObjectWithClass(PassportStatusSearchModel.class, ImmutablePassportStatusSearchModel.class);
-	}
 
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties, SwaggerUiProperties swaggerUiProperties) {
 		log.info("Creating 'openApiCustomizer' bean");

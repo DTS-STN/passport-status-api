@@ -114,7 +114,7 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email) {
-		return new PassportStatusEntityBuilder()
+		final var passportStatus = new PassportStatusEntityBuilder()
 			.id(generateId())
 			.applicationRegisterSid(generateApplicationRegisterSid())
 			.dateOfBirth(dateOfBirth)
@@ -124,6 +124,9 @@ public class DatabaseInitializer {
 			.lastName(lastName)
 			.status(generateStatus())
 			.build();
+
+		log.trace("Creating fake passport team status: {}", passportStatus);
+		return passportStatus;
 	}
 
 	protected String generateApplicationRegisterSid() {

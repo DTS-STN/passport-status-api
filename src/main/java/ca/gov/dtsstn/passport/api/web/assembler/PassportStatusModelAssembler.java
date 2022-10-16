@@ -13,7 +13,6 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
 import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusSearchModel;
 
 /**
  * A Spring {@link RepresentationModelAssembler} to add HATEOAS metadata to a {@link PassportStatusModel}.
@@ -33,10 +32,6 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 	protected PassportStatusModel instantiateModel(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		return mapper.fromDomain(passportStatus);
-	}
-
-	public PassportStatus toDomain(PassportStatusSearchModel passportStatusSearchModel) {
-		return mapper.toDomain(passportStatusSearchModel);
 	}
 
 	@Override
