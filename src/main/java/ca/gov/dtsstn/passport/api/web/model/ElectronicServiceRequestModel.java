@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Schema(name = "ElectronicServiceRequest")
 @Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableElectronicServiceRequestModel.class)
 public interface ElectronicServiceRequestModel extends Serializable {

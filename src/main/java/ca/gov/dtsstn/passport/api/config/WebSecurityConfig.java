@@ -83,17 +83,18 @@ public class WebSecurityConfig {
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http // public resources
-			.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.requestMatchers(toLinks()).permitAll()
-				.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
-				.requestMatchers(to(HealthEndpoint.class)).permitAll()
-				.requestMatchers(to(InfoEndpoint.class)).permitAll();
 
-		http // protected resources
-			.authorizeRequests()
-				.requestMatchers(toAnyEndpoint()).authenticated();
+		// public resources
+		http.authorizeHttpRequests(authorize -> authorize
+			.antMatchers(HttpMethod.OPTIONS).permitAll()
+			.requestMatchers(toLinks()).permitAll()
+			.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
+			.requestMatchers(to(HealthEndpoint.class)).permitAll()
+			.requestMatchers(to(InfoEndpoint.class)).permitAll());
+
+		// protected resources
+		http.authorizeHttpRequests(authorize -> authorize
+			.requestMatchers(toAnyEndpoint()).hasAuthority("Application.Manage"));
 
 		return http.build();
 	}

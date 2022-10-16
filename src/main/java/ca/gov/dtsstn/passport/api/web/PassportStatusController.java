@@ -20,7 +20,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -36,8 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
-import ca.gov.dtsstn.passport.api.security.AuthoritiesConstants;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
+import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.assembler.PassportStatusModelAssembler;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
@@ -83,11 +82,11 @@ public class PassportStatusController {
 	}
 
 	@PostMapping({ "" })
+	@Authorities.PassportStatusWriteAll
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Create a new passport status.")
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_WRITE_ALL + "')")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
@@ -99,11 +98,11 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
+	@Authorities.PassportStatusRead
 	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ + "')")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
@@ -114,11 +113,11 @@ public class PassportStatusController {
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
+	@Authorities.PassportStatusReadAll
 	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
-	@PreAuthorize("hasAuthority('" + AuthoritiesConstants.PASSPORTSTATUS_READ_ALL + "')")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })

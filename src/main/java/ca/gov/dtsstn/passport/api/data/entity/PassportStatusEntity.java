@@ -7,8 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
@@ -19,9 +17,6 @@ import org.springframework.lang.Nullable;
  */
 @SuppressWarnings({ "serial" })
 @Entity(name = "PassportStatus")
-@Table(indexes = {
-	@Index(name = "ix_esrf_search", columnList = "dateOfBirth, email, firstName, lastName"),
-	@Index(name = "ix_passport_status_search", columnList = "dateOfBirth, fileNumber, firstName, lastName") })
 public class PassportStatusEntity extends AbstractEntity {
 
 	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
