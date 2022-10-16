@@ -1,10 +1,11 @@
 package ca.gov.dtsstn.passport.api.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -79,12 +80,23 @@ public class PassportStatusService {
 		return passportStatuses;
 	}
 
-	public Page<PassportStatus> search(PassportStatus passportStatusProbe, Pageable pageable) {
-		Assert.notNull(passportStatusProbe, "passportStatusProbe is required; it must not be null");
-		Assert.notNull(pageable, "pageable is required; it must not be null");
-		final var searchablePassportStatusProbe = mapper.toEntity(passportStatusProbe);
-		final var passportStatuses = repository.findAll(Example.of(searchablePassportStatusProbe), pageable).map(mapper::fromEntity);
-		passportStatuses.map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
+	public List<PassportStatus> emailSearch(LocalDate dateOfBirth, String email, String firstName, String lastName) {
+		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+		Assert.hasText(email, "email is required; it must not be blank or null");
+		Assert.hasText(firstName, "firstName is required, it must not be blank or null");
+		Assert.hasText(lastName, "lastName is required; it must not be blank or null");
+		final var passportStatuses = repository.emailSearch(email, dateOfBirth, firstName, lastName).stream().map(mapper::fromEntity).toList();
+		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
+		return passportStatuses;
+	}
+
+	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String firstName, String lastName) {
+		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
+		Assert.hasText(firstName, "firstName is required, it must not be blank or null");
+		Assert.hasText(lastName, "lastName is required; it must not be blank or null");
+		final var passportStatuses = repository.fileNumberSearch(fileNumber, dateOfBirth, firstName, lastName).stream().map(mapper::fromEntity).toList();
+		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}
 

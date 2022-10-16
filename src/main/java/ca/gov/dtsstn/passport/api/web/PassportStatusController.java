@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.core.EmbeddedWrappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,9 +58,11 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
-	private final PassportStatusModelAssembler assembler;
+	private final EmbeddedWrappers embeddedWrappers = new EmbeddedWrappers(false);
 
 	private final JmsTemplate jms;
+
+	private final PassportStatusModelAssembler assembler;
 
 	private final PassportStatusService service;
 
@@ -123,15 +127,15 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public PagedModel<PassportStatusModel> search(@SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable, @ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
-		final var page = service.search(assembler.toDomain(passportStatusSearchModel), pageable);
+	public CollectionModel<PassportStatusModel> search(@ParameterObject @Validated PassportStatusSearchModel passportStatusSearchModel, @Parameter(description = "If the query should return a single unique result.") @RequestParam(defaultValue = "true") boolean unique) {
+		final var passportStatuses = service.fileNumberSearch(passportStatusSearchModel.getDateOfBirth(), passportStatusSearchModel.getFileNumber(), passportStatusSearchModel.getFirstName(), passportStatusSearchModel.getLastName());
 
-		if (unique && page.getNumberOfElements() > 1) {
+		if (unique && passportStatuses.size() > 1) {
 			log.warn("Search query returned non-unique results: {}", passportStatusSearchModel);
 			throw new NonUniqueResourceException("Search query returned non-unique results");
 		}
 
-		return assembler.toModel(page);
+		return assembler.wrapCollection(assembler.toCollectionModel(passportStatuses), PassportStatusModel.class);
 	}
 
 }

@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -15,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -98,11 +99,11 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testSearch() {
-		when(passportStatusRepository.findAll(any(Example.class), any(Pageable.class))).thenReturn(Page.empty());
+		when(passportStatusRepository.fileNumberSearch(any(), any(), any(), any())).thenReturn(List.of());
 
-		final var passportStatus = passportStatusService.search(ImmutablePassportStatus.builder().build(), Pageable.unpaged());
+		final var passportStatuses = passportStatusService.fileNumberSearch(LocalDate.now(), "fileNumber", "firstName", "lastName");
 
-		assertThat(passportStatus).isNotNull();
-		verify(passportStatusRepository).findAll(any(Example.class), any(Pageable.class));
+		assertThat(passportStatuses).isNotNull();
+		verify(passportStatusRepository).fileNumberSearch(any(), any(), any(), any());
 	}
 }

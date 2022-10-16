@@ -114,11 +114,13 @@ spring:
   datasource:
     generate-unique-name: false
     url: jdbc:h2:mem:testdb;COLLATION=ENGLISH STRENGTH PRIMARY;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+  devtools:
+    livereload:
+      enabled: false
   flyway:
     sql-migration-prefix: v
     sql-migration-separator: '-'
-    fail-on-missing-locations: true
-    locations: classpath:db-migrations,classpath:db-migrations/{vendor}
+    locations: classpath:db-migrations/common,classpath:db-migrations/{vendor}
   jackson:
     default-property-inclusion: non-null
     mapper:
@@ -128,6 +130,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    open-in-view: false
   main:
     allow-bean-definition-overriding: true
   security:

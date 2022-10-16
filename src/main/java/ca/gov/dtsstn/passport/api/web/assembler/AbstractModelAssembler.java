@@ -1,9 +1,15 @@
 package ca.gov.dtsstn.passport.api.web.assembler;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.EmbeddedWrapper;
 import org.springframework.hateoas.server.core.EmbeddedWrappers;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.util.Assert;
@@ -30,15 +36,21 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 		return page.isEmpty() ? (PagedModel<D>) pagedResourcesAssembler.toEmptyModel(page, getResourceType()) : pagedResourcesAssembler.toModel(page, this);
 	}
 
-	// XXX / TODO :: GjB :: commenting this out because it fails compilation.. although for some reason it works in VSCode 🤷
-
-/*
 	@Override
-	@SuppressWarnings({ "unchecked" })
 	public CollectionModel<D> toCollectionModel(Iterable<? extends T> entities) {
 		Assert.notNull(entities, "entities is required; it must not be null");
-		return Streamable.of(entities).isEmpty() ? (CollectionModel<D>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(getResourceType()))) : super.toCollectionModel(entities);
+		return super.toCollectionModel(entities).add(linkTo(getControllerClass()).withSelfRel());
 	}
-*/
+
+	/**
+	 * Convenience method to wrap a {@link CollectionModel} in a Spring HATEOAS
+	 * {@link EmbeddedWrapper}. This ensures that any empty collections are
+	 * represented as <code>[]</code> in the response (instead of null).
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public <C> CollectionModel<C> wrapCollection(CollectionModel<C> collectionModel, Class<C> type) {
+		if (!collectionModel.getContent().isEmpty()) { return collectionModel; }
+		return (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(type)), collectionModel.getLinks());
+	}
 
 }

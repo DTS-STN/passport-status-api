@@ -41,5 +41,8 @@ CREATE TABLE passport_status (
 	CONSTRAINT pk_passport_status PRIMARY KEY (id)
 );
 
-CREATE INDEX ix_esrf_search ON passport_status(date_of_birth, email, first_name, last_name);
-CREATE INDEX ix_passport_status_search ON passport_status(date_of_birth, file_number, first_name, last_name);
+CREATE INDEX ix_date_of_birth ON passport_status(date_of_birth);
+CREATE INDEX ix_email ON passport_status(email);
+CREATE INDEX ix_file_number ON passport_status(file_number);
+CREATE INDEX ix_first_name ON passport_status(first_name);
+CREATE INDEX ix_last_name ON passport_status(last_name);

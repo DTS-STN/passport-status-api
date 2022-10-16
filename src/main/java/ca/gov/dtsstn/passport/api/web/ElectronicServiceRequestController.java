@@ -5,7 +5,6 @@ import java.util.Map;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -69,15 +68,15 @@ public class ElectronicServiceRequestController {
 	public void create(@RequestBody @Validated ElectronicServiceRequestModel electronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", electronicServiceRequest);
 
-		final var fileNumbers = passportStatusService.search(mapper.toDomain(electronicServiceRequest), Pageable.unpaged()).map(PassportStatus::getFileNumber);
-		log.debug("Found {} file numbers for email address [{}]", fileNumbers.getSize(), electronicServiceRequest.getEmail());
+		final var fileNumbers = passportStatusService.emailSearch(electronicServiceRequest.getDateOfBirth(), electronicServiceRequest.getEmail(), electronicServiceRequest.getFirstName(), electronicServiceRequest.getLastName()).stream().map(PassportStatus::getFileNumber).toList();
+		log.debug("Found {} file numbers for email address [{}]", fileNumbers.size(), electronicServiceRequest.getEmail());
 
-		if (fileNumbers.getSize() != fileNumbers.stream().distinct().count()) {
+		if (fileNumbers.size() > 1) {
 			log.warn("Search query returned non-unique file numbers: {}", electronicServiceRequest);
 			throw new NonUniqueResourceException("Search query returned non-unique file numbers");
 		}
 
-		fileNumbers.get().findFirst().ifPresent(fileNumber -> {
+		fileNumbers.stream().findFirst().ifPresent(fileNumber -> {
 			final var email = electronicServiceRequest.getEmail();
 			final var templateId = applicationProperties.gcnotify().fileNumberNotification().templateId();
 			final var parameters = Map.of("esrf", fileNumber);

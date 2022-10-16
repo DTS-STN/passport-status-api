@@ -45,7 +45,7 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 		Assert.hasText(passportStatus.getId(), "passportStatus.id is required; it must not be blank or null");
 
 		final var searchQueryTemplate = "?dateOfBirth={dateOfBirth}&fileNumber={fileNumber}&firstName={firstName}&lastName={lastName}";
-		final var searchMethod = methodOn(PassportStatusController.class).search(null, null, true);
+		final var searchMethod = methodOn(PassportStatusController.class).search(null, true);
 		final var searchLink = linkTo(searchMethod).slash(searchQueryTemplate).withRel("search").expand(passportStatus.getDateOfBirth(), passportStatus.getFileNumber(), passportStatus.getFirstName(), passportStatus.getLastName());
 
 		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink); // NOSONAR
