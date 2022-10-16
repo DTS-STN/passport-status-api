@@ -18,7 +18,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.hateoas.server.core.EmbeddedWrappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,8 +67,6 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
-	private final EmbeddedWrappers embeddedWrappers = new EmbeddedWrappers(false);
-
 	private final JmsTemplate jms;
 
 	private final PassportStatusModelAssembler assembler;
@@ -97,7 +94,6 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	public void create(Authentication authentication, @JsonView({ PassportStatusModel.Views.POST.class }) @RequestBody @Validated PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "false", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
-
 		jms.convertAndSend("passport-statuses", passportStatus);
 	}
 

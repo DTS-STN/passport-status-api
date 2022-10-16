@@ -2,7 +2,6 @@ package ca.gov.dtsstn.passport.api.web;
 
 import java.util.Map;
 
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
-import ca.gov.dtsstn.passport.api.web.mapper.ElectronicServiceRequestModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.ElectronicServiceRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
@@ -41,8 +39,6 @@ public class ElectronicServiceRequestController {
 	private static final Logger log = LoggerFactory.getLogger(ElectronicServiceRequestController.class);
 
 	private final ApplicationProperties applicationProperties;
-
-	private final ElectronicServiceRequestModelMapper mapper = Mappers.getMapper(ElectronicServiceRequestModelMapper.class);
 
 	private final NotificationService notificationService;
 

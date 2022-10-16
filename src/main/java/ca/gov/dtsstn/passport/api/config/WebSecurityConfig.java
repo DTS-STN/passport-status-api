@@ -62,6 +62,8 @@ public class WebSecurityConfig {
 	}
 
 	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
+		log.info("Configuring Spring Security");
+
 		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
@@ -97,6 +99,7 @@ public class WebSecurityConfig {
 	}
 
 	@Bean WebSecurityCustomizer webSecurityCustomizer() {
+		log.debug("Adding /h2-console/** to Spring Security ignore list");
 		return web -> web.ignoring().antMatchers("/h2-console/**");
 	}
 

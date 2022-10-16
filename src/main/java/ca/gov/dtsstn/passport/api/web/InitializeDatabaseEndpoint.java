@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -21,8 +20,7 @@ import ca.gov.dtsstn.passport.api.data.init.DatabaseInitializer;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-@Endpoint(id = "init-data")
-@ConfigurationProperties("application.endpoint.init-data")
+@Endpoint(id = "initdata")
 public class InitializeDatabaseEndpoint {
 
 	private static final Logger log = LoggerFactory.getLogger(InitializeDatabaseEndpoint.class);
