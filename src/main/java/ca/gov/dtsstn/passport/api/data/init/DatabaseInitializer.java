@@ -2,10 +2,13 @@ package ca.gov.dtsstn.passport.api.data.init;
 
 import java.text.Normalizer;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -51,18 +54,21 @@ public class DatabaseInitializer {
 		final var stopWatch = StopWatch.create();
 
 		log.info("Deleting all passport statuses");
-		passportStatusRepository.deleteAll();
+		passportStatusRepository.deleteAllInBatch();
 
 		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		passportStatusRepository.saveAll(Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).toList());
+		final var randomPassportStatuses = Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).toList();
+		partition(randomPassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
 		log.info("Fake random data created in {}ms", stopWatch.getTime());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		passportStatusRepository.saveAll(Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).toList());
+		final var duplicatePassportStatuses = Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).toList();
+		partition(duplicatePassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 
+		// TODO :: GjB :: use properties for these
 		log.info("Generating passport team fake passport statuses");
 		stopWatch.reset(); stopWatch.start();
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca"));
@@ -73,6 +79,11 @@ public class DatabaseInitializer {
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca"));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", LocalDate.of(2000, 01, 01), "stephane.viau@hrsdc-rhdcc.gc.ca"));
 		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
+	}
+
+	protected <T> List<List<T>> partition(List<T> passportStatuses, int size) {
+		final var counter = new AtomicInteger();
+		return List.copyOf(passportStatuses.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values());
 	}
 
 	protected PassportStatusEntity generateRandomPassportStatus() {
