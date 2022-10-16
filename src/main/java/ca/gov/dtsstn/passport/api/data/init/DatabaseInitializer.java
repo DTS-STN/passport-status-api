@@ -85,15 +85,16 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generateRandomPassportStatus() {
+		final var fileNumber = generateFileNumber();
 		final var firstName = generateFirstName();
 		final var lastName = generateLastName();
 
 		return new PassportStatusEntityBuilder()
-			.id(generateId())
-			.applicationRegisterSid(generateApplicationRegisterSid())
+			.id(generateId(fileNumber, firstName, lastName))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
 			.dateOfBirth(generateDateOfBirth())
 			.email(generateEmail(firstName, lastName))
-			.fileNumber(generateFileNumber())
+			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(generateStatus())
@@ -101,25 +102,31 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generateDuplicatePassportStatus() {
+		final var fileNumber = "DUPE0000";
+		final var firstName = "DUPE0000";
+		final var lastName = "DUPE0000";
+
 		return new PassportStatusEntityBuilder()
-			.id(generateId())
-			.applicationRegisterSid(generateApplicationRegisterSid())
+			.id(generateId(fileNumber, firstName, lastName))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.email("dupe0000.dupe0000@example.com")
-			.fileNumber("DUPE0000") // NOSONAR
-			.firstName("DUPE0000")   // NOSONAR
-			.lastName("DUPE0000")     // NOSONAR
+			.fileNumber(fileNumber) // NOSONAR
+			.firstName(firstName)   // NOSONAR
+			.lastName(lastName)     // NOSONAR
 			.status(generateStatus())
 			.build();
 	}
 
 	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email) {
+		final var fileNumber = generateFileNumber();
+
 		final var passportStatus = new PassportStatusEntityBuilder()
-			.id(generateId())
-			.applicationRegisterSid(generateApplicationRegisterSid())
+			.id(generateId(fileNumber, firstName, lastName))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
 			.dateOfBirth(dateOfBirth)
 			.email(email)
-			.fileNumber(generateFileNumber())
+			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(generateStatus())
@@ -129,8 +136,8 @@ public class DatabaseInitializer {
 		return passportStatus;
 	}
 
-	protected String generateApplicationRegisterSid() {
-		return generateId().toLowerCase();
+	protected String generateApplicationRegisterSid(String fileNumber, String firstName, String lastName) {
+		return UUID.nameUUIDFromBytes(("applicationRegisterSid" + fileNumber + firstName + lastName).getBytes()).toString();
 	}
 
 	protected LocalDate generateDateOfBirth() {
@@ -149,8 +156,8 @@ public class DatabaseInitializer {
 		return faker.name().firstName();
 	}
 
-	protected String generateId() {
-		return UUID.nameUUIDFromBytes(faker.random().nextRandomBytes(24)).toString();
+	protected String generateId(String fileNumber, String firstName, String lastName) {
+		return UUID.nameUUIDFromBytes(("id" + fileNumber + firstName + lastName).getBytes()).toString();
 	}
 
 	protected String generateLastName() {
