@@ -87,9 +87,9 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generateRandomPassportStatus() {
-		final var fileNumber = generateFileNumber();
 		final var firstName = generateFirstName();
 		final var lastName = generateLastName();
+		final var fileNumber = generateFileNumber(firstName, lastName);
 
 		return new PassportStatusEntityBuilder()
 			.id(generateId(fileNumber, firstName, lastName))
@@ -104,24 +104,24 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generateDuplicatePassportStatus() {
-		final var fileNumber = "DUPE0000";
-		final var firstName = "DUPE0000";
-		final var lastName = "DUPE0000";
+		final var firstName = "DUPE0000"; // NOSONAR
+		final var lastName = "DUPE0000";  // NOSONAR
+		final var fileNumber = generateFileNumber(firstName, lastName);
 
 		return new PassportStatusEntityBuilder()
 			.id(generateId(fileNumber, firstName, lastName))
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.email("dupe0000.dupe0000@example.com")
-			.fileNumber(fileNumber) // NOSONAR
-			.firstName(firstName)   // NOSONAR
-			.lastName(lastName)     // NOSONAR
+			.fileNumber(fileNumber)
+			.firstName(firstName)
+			.lastName(lastName)
 			.status(generateStatus())
 			.build();
 	}
 
 	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email) {
-		final var fileNumber = generateFileNumber();
+		final var fileNumber = generateFileNumber(firstName, lastName);
 
 		final var passportStatus = new PassportStatusEntityBuilder()
 			.id(generateId(fileNumber, firstName, lastName))
@@ -150,8 +150,8 @@ public class DatabaseInitializer {
 		return stripDiacritics(firstName + "." + lastName + "@example.com").toLowerCase();
 	}
 
-	protected String generateFileNumber() {
-		return faker.random().hex(8);
+	protected String generateFileNumber(String firstName, String lastName) {
+		return UUID.nameUUIDFromBytes(("fileNumber" + firstName + lastName).getBytes()).toString().substring(0, 8).toUpperCase();
 	}
 
 	protected String generateFirstName() {
