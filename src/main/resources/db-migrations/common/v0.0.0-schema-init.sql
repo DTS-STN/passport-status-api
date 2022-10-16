@@ -1,3 +1,22 @@
+CREATE TABLE email_request (
+	id VARCHAR(64) NOT NULL,
+
+	date_of_birth DATE NOT NULL,
+	email VARCHAR(256) NOT NULL,
+	file_number VARCHAR(32) NOT NULL,
+	first_name VARCHAR(64) NOT NULL,
+	last_name VARCHAR(64) NOT NULL,
+	status VARCHAR(32) NOT NULL,
+
+	-- audit fields
+	created_by VARCHAR(64) NOT NULL,
+	created_date TIMESTAMP NOT NULL,
+	last_modified_by VARCHAR(64) NULL,
+	last_modified_date TIMESTAMP NULL,
+
+	CONSTRAINT pk_email_request PRIMARY KEY (id)
+);
+
 CREATE TABLE http_request (
 	id VARCHAR(64) NOT NULL,
 
