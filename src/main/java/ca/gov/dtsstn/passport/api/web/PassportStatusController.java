@@ -58,6 +58,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
+@Validated
 @RestController
 @RequestMapping({ "/api/v1/passport-statuses" })
 @Tag(name = "Passport Statuses", description = "Passport Status API")

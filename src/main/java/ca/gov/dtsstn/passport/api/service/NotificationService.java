@@ -63,7 +63,7 @@ public class NotificationService {
 		final var notificationReceipt = restTemplate.postForObject(gcNotifyProperties.baseUrl(), request, NotificationReceipt.class);
 		log.debug("Notification sent to email [{}] using template [{}]", email, templateId);
 
-		final var notificationSentEventBuilder = ImmutableNotificationSentEvent.builder();
+		final var notificationSentEventBuilder = ImmutableNotificationSentEvent.builder().templateId(templateId);
 		Optional.ofNullable(email).ifPresent(notificationSentEventBuilder::email);
 		Optional.ofNullable(personalization).ifPresent(notificationSentEventBuilder::parameters);
 		eventPublisher.publishEvent(notificationSentEventBuilder.build());

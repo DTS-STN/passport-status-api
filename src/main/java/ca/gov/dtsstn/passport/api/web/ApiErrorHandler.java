@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionFailedException;
@@ -14,8 +16,11 @@ import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
@@ -49,6 +54,13 @@ public class ApiErrorHandler {
 		return ResponseEntity.badRequest().body(errorModel);
 	}
 
+	@ExceptionHandler({ ConstraintViolationException.class })
+	public ResponseEntity<BadRequestErrorModel> handleConstraintViolationException(ConstraintViolationException ex) {
+		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
+		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
+	}
+
 	@ExceptionHandler({ ConversionFailedException.class })
 	public ResponseEntity<BadRequestErrorModel> handleConversionFailedException(ConversionFailedException ex) {
 		final var details = List.of("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName());
@@ -56,8 +68,29 @@ public class ApiErrorHandler {
 		return ResponseEntity.badRequest().body(error);
 	}
 
-	@ExceptionHandler({ HttpMessageNotReadableException.class })
+	@ExceptionHandler({ HttpMediaTypeNotSupportedException.class })
+	public ResponseEntity<BadRequestErrorModel> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
+		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
+	}
+
+	@ExceptionHandler({ HttpMessageNotReadableException.class, })
 	public ResponseEntity<BadRequestErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
+		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
+	}
+
+	@ExceptionHandler({ MethodArgumentTypeMismatchException.class })
+	public ResponseEntity<BadRequestErrorModel> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
+		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
+	}
+
+	@ExceptionHandler({ MissingServletRequestParameterException.class })
+	public ResponseEntity<BadRequestErrorModel> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
 		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
 		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
 		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
