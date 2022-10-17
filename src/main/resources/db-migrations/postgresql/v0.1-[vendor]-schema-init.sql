@@ -9,6 +9,9 @@ AS $func$ SELECT unaccent($1) $func$;
 DROP INDEX ix_email;
 CREATE INDEX ix_email ON passport_status(lower(email));
 
+DROP INDEX ix_file_number;
+CREATE INDEX ix_file_number ON passport_status(lower(file_number));
+
 DROP INDEX ix_first_name;
 CREATE INDEX ix_first_name ON passport_status(lower(remove_diacritics(first_name)));
 
