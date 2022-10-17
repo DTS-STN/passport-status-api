@@ -57,19 +57,19 @@ public class ApiErrorHandler {
 
 	@ExceptionHandler({ HttpMessageNotReadableException.class })
 	public ResponseEntity<BadRequestErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build(); // NOSONAR
+		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build();
 		return ResponseEntity.badRequest().body(error);
 	}
 
 	@ExceptionHandler({ NonUniqueResourceException.class })
 	public ResponseEntity<UnprocessableEntityErrorModel> handleNonUniqueResourceException(NonUniqueResourceException ex) {
-		final var error = ImmutableUnprocessableEntityErrorModel.builder().details(ex.getMessage()).build(); // NOSONAR
+		final var error = ImmutableUnprocessableEntityErrorModel.builder().details(ex.getMessage()).build();
 		return ResponseEntity.unprocessableEntity().body(error);
 	}
 
 	@ExceptionHandler({ ResourceNotFoundException.class })
 	public ResponseEntity<ResourceNotFoundErrorModel> handleResourceNotFoundException(ResourceNotFoundException ex) {
-		final var error = ImmutableResourceNotFoundErrorModel.builder().details(ex.getMessage()).build(); // NOSONAR
+		final var error = ImmutableResourceNotFoundErrorModel.builder().details(ex.getMessage()).build();
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 
@@ -88,9 +88,9 @@ public class ApiErrorHandler {
 	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
 		return ImmutableFieldValidationErrorModel.builder()
-			.code(fieldError.getCode())              // NOSONAR
+			.code(fieldError.getCode())
 			.field(fieldError.getField())
-			.message(fieldError.getDefaultMessage()) // NOSONAR
+			.message(fieldError.getDefaultMessage())
 			.build();
 	}
 

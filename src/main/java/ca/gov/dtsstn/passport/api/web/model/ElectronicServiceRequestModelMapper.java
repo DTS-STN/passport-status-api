@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
@@ -11,6 +12,7 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 @Mapper
 public interface ElectronicServiceRequestModelMapper {
 
+	@Nullable
 	@Mapping(target = "applicationRegisterSid", ignore = true)
 	@Mapping(target = "createdBy", ignore = true)
 	@Mapping(target = "createdDate", ignore = true)
@@ -19,6 +21,6 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "status", ignore = true)
-	PassportStatus toDomain(ElectronicServiceRequestModel electronicServiceRequest);
+	PassportStatus toDomain(@Nullable ElectronicServiceRequestModel electronicServiceRequest);
 
 }

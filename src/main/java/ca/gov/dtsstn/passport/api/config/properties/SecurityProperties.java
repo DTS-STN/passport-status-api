@@ -49,23 +49,23 @@ public record SecurityProperties(
 
 		public String toString() {
 			return Stream.of(
-					Optional.ofNullable(defaultSrc).map(value -> String.format("default-src %s;", value)),
-					Optional.ofNullable(childSrc).map(value -> String.format("child-src %s;", value)),
-					Optional.ofNullable(connectSrc).map(value -> String.format("connect-src %s;", value)),
-					Optional.ofNullable(fontSrc).map(value -> String.format("font-src %s;", value)),
-					Optional.ofNullable(frameSrc).map(value -> String.format("frame-src %s;", value)),
-					Optional.ofNullable(imgSrc).map(value -> String.format("img-src %s;", value)),
-					Optional.ofNullable(manifestSrc).map(value -> String.format("manifest-src %s;", value)),
-					Optional.ofNullable(mediaSrc).map(value -> String.format("media-src %s;", value)),
-					Optional.ofNullable(objectSrc).map(value -> String.format("object-src %s;", value)),
-					Optional.ofNullable(prefetchSrc).map(value -> String.format("prefetch-src %s;", value)),
-					Optional.ofNullable(scriptSrc).map(value -> String.format("script-src %s;", value)),
-					Optional.ofNullable(scriptSrcElem).map(value -> String.format("script-src-elem %s;", value)),
-					Optional.ofNullable(scriptSrcAttr).map(value -> String.format("script-src-attr %s;", value)),
-					Optional.ofNullable(styleSrc).map(value -> String.format("style-src %s;", value)),
-					Optional.ofNullable(styleSrcElem).map(value -> String.format("style-src-elem %s;", value)),
-					Optional.ofNullable(styleSrcAttr).map(value -> String.format("style-src-attr %s;", value)),
-					Optional.ofNullable(workerSrc).map(value -> String.format("worker-src %s;", value)))
+					Optional.ofNullable(defaultSrc).map("default-src %s;"::formatted),
+					Optional.ofNullable(childSrc).map("child-src %s;"::formatted),
+					Optional.ofNullable(connectSrc).map("connect-src %s;"::formatted),
+					Optional.ofNullable(fontSrc).map("font-src %s;"::formatted),
+					Optional.ofNullable(frameSrc).map("frame-src %s;"::formatted),
+					Optional.ofNullable(imgSrc).map("img-src %s;"::formatted),
+					Optional.ofNullable(manifestSrc).map("manifest-src %s;"::formatted),
+					Optional.ofNullable(mediaSrc).map("media-src %s;"::formatted),
+					Optional.ofNullable(objectSrc).map("object-src %s;"::formatted),
+					Optional.ofNullable(prefetchSrc).map("prefetch-src %s;"::formatted),
+					Optional.ofNullable(scriptSrc).map("script-src %s;"::formatted),
+					Optional.ofNullable(scriptSrcElem).map("script-src-elem %s;"::formatted),
+					Optional.ofNullable(scriptSrcAttr).map("script-src-attr %s;"::formatted),
+					Optional.ofNullable(styleSrc).map("style-src %s;"::formatted),
+					Optional.ofNullable(styleSrcElem).map("style-src-elem %s;"::formatted),
+					Optional.ofNullable(styleSrcAttr).map("style-src-attr %s;"::formatted),
+					Optional.ofNullable(workerSrc).map("worker-src %s;"::formatted))
 				.filter(Optional::isPresent).map(Optional::get)
 				.collect(Collectors.joining(" "));
 		}

@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.web.model;
 
 import org.mapstruct.Mapper;
+import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
@@ -10,8 +11,10 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 @Mapper
 public interface PassportStatusModelMapper {
 
-	PassportStatus toDomain(PassportStatusModel passportStatus);
+	@Nullable
+	PassportStatus toDomain(@Nullable PassportStatusModel passportStatus);
 
-	PassportStatusModel fromDomain(PassportStatus passportStatus);
+	@Nullable
+	PassportStatusModel fromDomain(@Nullable PassportStatus passportStatus);
 
 }

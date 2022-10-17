@@ -1,5 +1,5 @@
 application:
-  gc-notify:
+  gcnotify:
     api-key: gcntfy-myproject-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
   security:
     oauth:

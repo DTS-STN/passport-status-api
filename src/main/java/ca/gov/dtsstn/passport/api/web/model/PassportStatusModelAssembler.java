@@ -44,7 +44,7 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 
 		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, firstName, lastName, true)).withRel("search");
 
-		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink); // NOSONAR
+		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink);
 	}
 
 }

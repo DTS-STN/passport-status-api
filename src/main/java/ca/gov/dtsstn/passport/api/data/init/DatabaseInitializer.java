@@ -104,15 +104,16 @@ public class DatabaseInitializer {
 	}
 
 	protected PassportStatusEntity generateDuplicatePassportStatus() {
-		final var fileNumber = "DUPE0000"; // NOSONAR
-		final var firstName = "DUPE0000";  // NOSONAR
-		final var lastName = "DUPE0000";   // NOSONAR
+		final var dupeString = "DUPE0000";
+		final var fileNumber = dupeString;
+		final var firstName = dupeString;
+		final var lastName = dupeString;
 
 		return new PassportStatusEntityBuilder()
 			.id(generateId(fileNumber, firstName, lastName))
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
-			.email("dupe0000.dupe0000@example.com")
+			.email("%s.%s@example.com".formatted(dupeString, dupeString).toLowerCase())
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)

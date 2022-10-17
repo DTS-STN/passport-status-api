@@ -53,10 +53,9 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
 	@Override
 	public void add(HttpTrace httpTrace) {
+		Assert.notNull(httpTrace, "httpTrace is required; it must not be null");
 		inMemoryHttpTraceRepository.add(httpTrace);
-		Optional.ofNullable(httpTrace)
-			.map(httpTraceMapper::toEntity)
-			.ifPresent(httpRequestRepository::save);
+		Optional.ofNullable(httpTraceMapper.toEntity(httpTrace)).ifPresent(httpRequestRepository::save);
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 	}
 
 	@Mapper
-	static abstract class HttpTraceMapper {
+	abstract static class HttpTraceMapper {
 
 		protected final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -92,11 +91,15 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 		@Mapping(target = "lastModifiedDate", ignore = true)
 		public abstract HttpRequestEntity toEntity(@Nullable HttpTrace httpTrace);
 
-		public String toString(Map<String, List<String>> headers) throws JsonProcessingException {
+		@Nullable
+		public String toString(@Nullable Map<String, List<String>> headers) throws JsonProcessingException {
+			if (headers == null) { return null; }
 			return objectMapper.writeValueAsString(headers);
 		}
 
-		public String toString(URI uri) {
+		@Nullable
+		public String toString(@Nullable URI uri) {
+			if (uri == null) { return null; }
 			return uri.toString();
 		}
 
