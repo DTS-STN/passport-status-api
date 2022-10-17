@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.web;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,14 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.gov.dtsstn.passport.api.config.properties.ApplicationProperties;
 import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
-import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
+import ca.gov.dtsstn.passport.api.web.model.BadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.ElectronicServiceRequestModel;
-import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.InternalServerErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,20 +34,16 @@ public class ElectronicServiceRequestController {
 
 	private static final Logger log = LoggerFactory.getLogger(ElectronicServiceRequestController.class);
 
-	private final ApplicationProperties applicationProperties;
-
 	private final NotificationService notificationService;
 
 	private final PassportStatusService passportStatusService;
 
-	public ElectronicServiceRequestController(ApplicationProperties applicationProperties, NotificationService notificationService, PassportStatusService passportStatusService) {
+	public ElectronicServiceRequestController(NotificationService notificationService, PassportStatusService passportStatusService) {
 		log.info("Creating 'electronicServiceRequestController' bean");
 
-		Assert.notNull(applicationProperties, "applicationProperties is required; it must not be null");
 		Assert.notNull(notificationService, "notificationService is required; it must not be null");
 		Assert.notNull(passportStatusService, "passportStatusService is required; it must not be null");
 
-		this.applicationProperties = applicationProperties;
 		this.notificationService = notificationService;
 		this.passportStatusService = passportStatusService;
 	}
@@ -64,20 +56,15 @@ public class ElectronicServiceRequestController {
 	public void create(@RequestBody @Validated ElectronicServiceRequestModel electronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", electronicServiceRequest);
 
-		final var fileNumbers = passportStatusService.emailSearch(electronicServiceRequest.getDateOfBirth(), electronicServiceRequest.getEmail(), electronicServiceRequest.getFirstName(), electronicServiceRequest.getLastName()).stream().map(PassportStatus::getFileNumber).toList();
-		log.debug("Found {} file numbers for email address [{}]", fileNumbers.size(), electronicServiceRequest.getEmail());
+		final var passportStatuses = passportStatusService.emailSearch(electronicServiceRequest.getDateOfBirth(), electronicServiceRequest.getEmail(), electronicServiceRequest.getFirstName(), electronicServiceRequest.getLastName());
+		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), electronicServiceRequest.getEmail());
 
-		if (fileNumbers.size() > 1) {
+		if (passportStatuses.size() > 1) {
 			log.warn("Search query returned non-unique file numbers: {}", electronicServiceRequest);
 			throw new NonUniqueResourceException("Search query returned non-unique file numbers");
 		}
 
-		fileNumbers.stream().findFirst().ifPresent(fileNumber -> {
-			final var email = electronicServiceRequest.getEmail();
-			final var templateId = applicationProperties.gcnotify().fileNumberNotification().templateId();
-			final var parameters = Map.of("esrf", fileNumber);
-			notificationService.send(email, templateId, parameters);
-		});
+		passportStatuses.stream().findFirst().ifPresent(notificationService::sendFileNumberNotification);
 	}
 
 }

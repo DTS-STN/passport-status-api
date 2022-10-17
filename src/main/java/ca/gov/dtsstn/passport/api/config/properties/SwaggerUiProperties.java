@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -17,11 +18,11 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("application.swagger-ui")
 public record SwaggerUiProperties(
 	@NotBlank String applicationName,
-	SwaggerUiProperties.AuthenticationProperties authentication,
+	@NestedConfigurationProperty SwaggerUiProperties.AuthenticationProperties authentication,
 	@NotBlank String contactName,
 	@NotNull @URL String contactUrl,
 	@NotBlank String description,
-	List<SwaggerUiProperties.Server> servers,
+	@NestedConfigurationProperty List<SwaggerUiProperties.Server> servers,
 	@NotNull @URL String tosUrl
 ) {
 
@@ -30,8 +31,8 @@ public record SwaggerUiProperties(
 	}
 
 	public record AuthenticationProperties(
-		AuthenticationProperties.HttpProperties http,
-		AuthenticationProperties.OAuthProperties oauth
+		@NestedConfigurationProperty AuthenticationProperties.HttpProperties http,
+		@NestedConfigurationProperty AuthenticationProperties.OAuthProperties oauth
 	) {
 
 		public record HttpProperties(

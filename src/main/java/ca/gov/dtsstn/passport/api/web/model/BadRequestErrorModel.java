@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model.error;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 import java.time.Instant;

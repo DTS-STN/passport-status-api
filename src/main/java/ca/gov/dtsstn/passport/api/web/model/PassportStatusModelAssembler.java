@@ -1,7 +1,9 @@
-package ca.gov.dtsstn.passport.api.web.assembler;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import java.util.Optional;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -11,8 +13,6 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
-import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 
 /**
  * A Spring {@link RepresentationModelAssembler} to add HATEOAS metadata to a {@link PassportStatusModel}.
@@ -46,7 +46,8 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 
 		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, firstName, lastName, true)).withRel("search");
 
-		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink); // NOSONAR
+		final var passportStatusId = Optional.ofNullable(passportStatus.getId()).orElseThrow();
+		return createModelWithId(passportStatusId, passportStatus).add(searchLink);
 	}
 
 }

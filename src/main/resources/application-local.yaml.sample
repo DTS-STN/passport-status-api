@@ -3,11 +3,13 @@
 # Sample application-local.yaml file...
 #
 # Copy this file to application-local.yaml and update the values as required.
+#
 #######################################################################################################################
 
 logging:
   level:
-    '[ca.gov.dtsstn.passport.api]': debug
+    '[ca.gov.dtsstn.passport.api]': trace
+    '[org.springframework.security]': debug
 
 spring:
   artemis:

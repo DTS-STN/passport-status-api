@@ -69,7 +69,7 @@ public class SpringDocConfig {
 	}
 
 	protected String getApplicationVersion(GitProperties gitProperties) {
-		return String.format("v%s+%s", gitProperties.get("build.version"), gitProperties.getShortCommitId());
+		return "v%s+%s".formatted(gitProperties.get("build.version"), gitProperties.getShortCommitId());
 	}
 
 }

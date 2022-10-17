@@ -41,7 +41,7 @@ public class ChangelogEndpoint {
 	}
 
 	@ReadOperation
-	public ResponseEntity<?> getChangelog(@Nullable Integer size, @Nullable Boolean simple) throws IOException { // NOSONAR
+	public ResponseEntity<?> getChangelog(@Nullable Integer size, @Nullable Boolean simple) throws IOException { // NOSONAR (wildcard generic)
 		final var gitLogs = List.of(objectMapper.readValue(new ClassPathResource(changelogPath).getInputStream(), GitLog[].class));
 		final var maxSize = (size != null) ? size : Integer.MAX_VALUE;
 		return Boolean.TRUE.equals(simple) ? handleSimpleResponse(gitLogs, maxSize) : handleFullResponse(gitLogs, maxSize);
@@ -64,7 +64,7 @@ public class ChangelogEndpoint {
 
 	@SuppressWarnings({ "serial" })
 	@JsonIgnoreProperties({ "tags" })
-	public static final class GitLog implements Serializable { // NOSONAR
+	public static final class GitLog implements Serializable {
 
 		public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss XX";
 
@@ -130,8 +130,9 @@ public class ChangelogEndpoint {
 
 		@Override
 		public String toString() {
-			return String.format("%s    %s %s (%s)", date, id.substring(0, 8), message, authorName);
+			return "%s    %s %s (%s)".formatted(date, id.substring(0, 8), message, authorName);
 		}
+
 	}
 
 }

@@ -13,11 +13,11 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatusMapper;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusReadEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusUpdatedEvent;
-import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
 /**
  * Service class to handle {@link PassportStatus} interactions.
@@ -41,8 +41,8 @@ public class PassportStatusService {
 	}
 
 	public PassportStatus create(PassportStatus passportStatus) {
-		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");                  // NOSONAR
-		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance"); // NOSONAR
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
+		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance");
 		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
@@ -58,7 +58,7 @@ public class PassportStatusService {
 	public PassportStatus update(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.notNull(passportStatus.getId(), "passportStatus.id must not be null when updating existing instance");
-		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow(); // NOSONAR
+		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow();
 		final var updatedPassportStatus = mapper.fromEntity(repository.save(mapper.update(passportStatus, originalPassportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusUpdatedEvent.of(mapper.fromEntity(originalPassportStatus), updatedPassportStatus));
 		return updatedPassportStatus;

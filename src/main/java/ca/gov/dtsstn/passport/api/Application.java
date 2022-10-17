@@ -2,13 +2,11 @@ package ca.gov.dtsstn.passport.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 
 import ca.gov.dtsstn.passport.api.config.properties.ApplicationProperties;
 
@@ -21,8 +19,6 @@ public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-	@Autowired Environment environment;
-
 	/**
 	 * The application entry point. This is where it all begins.
 	 */
@@ -34,7 +30,8 @@ public class Application {
 	 * An {@link EventListener} that prints some useful startup information.
 	 */
 	@EventListener({ ApplicationReadyEvent.class })
-	protected void handleApplicationReadyEvent() {
+	protected void handleApplicationReadyEvent(ApplicationReadyEvent event) {
+		final var environment = event.getApplicationContext().getEnvironment();
 		final var applicationName = environment.getProperty("spring.application.name", "application");
 		final var serverPort = environment.getProperty("server.port", "8080");
 		final var contextPath = environment.getProperty("server.servlet.context-path", "/");

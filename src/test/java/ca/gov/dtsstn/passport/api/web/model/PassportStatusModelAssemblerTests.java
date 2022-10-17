@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.assembler;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

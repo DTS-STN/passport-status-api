@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import ca.gov.dtsstn.passport.api.config.properties.GcNotifyProperties;
 import ca.gov.dtsstn.passport.api.service.domain.NotificationReceipt;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.event.ImmutableNotificationSentEvent;
 import io.micrometer.core.annotation.Timed;
 
@@ -49,20 +49,23 @@ public class NotificationService {
 	}
 
 	@Timed
-	public NotificationReceipt send(String emailAddress, String templateId, @Nullable Map<String, String> parameters) {
-		log.trace("Request to send notificationl emailAddress=[{}], templateId=[{}], parameters=[{}]", emailAddress, templateId, parameters);
+	public NotificationReceipt sendFileNumberNotification(PassportStatus passportStatus) {
+		Assert.notNull(passportStatus, "passportStatus is requird; it must not be null");
+		Assert.hasText(passportStatus.getEmail(), "email is required; it must not be blank or null");
 
-		Assert.hasText(emailAddress, "emailAddress is required; it must not be blank or null");
-		Assert.hasText(templateId, "templateId is required, it must not be blank or null");
+		final var email = passportStatus.getEmail();
+		final var templateId = gcNotifyProperties.fileNumberNotification().templateId();
+		final var personalization = Map.of("esrf", passportStatus.getFileNumber());
 
-		final var personalization = Optional.ofNullable(parameters).orElse(Map.of());
-		final var request = Map.of("email_address", emailAddress, "template_id", templateId, "personalisation", personalization);
+		log.trace("Request to send fileNumber notification email=[{}], parameters=[{}]", email, personalization);
 
+		final var request = Map.of("email_address", email, "template_id", templateId, "personalisation", personalization);
 		final var notificationReceipt = restTemplate.postForObject(gcNotifyProperties.baseUrl(), request, NotificationReceipt.class);
-		log.debug("Notification sent to email [{}] using template [{}]", emailAddress, templateId);
+		log.debug("Notification sent to email [{}] using template [{}]", email, templateId);
 
-		final var notificationSentEventBuilder = ImmutableNotificationSentEvent.builder().email(emailAddress).templateId(templateId);
-		Optional.ofNullable(parameters).ifPresent(notificationSentEventBuilder::parameters);
+		final var notificationSentEventBuilder = ImmutableNotificationSentEvent.builder().templateId(templateId);
+		Optional.ofNullable(email).ifPresent(notificationSentEventBuilder::email);
+		Optional.ofNullable(personalization).ifPresent(notificationSentEventBuilder::parameters);
 		eventPublisher.publishEvent(notificationSentEventBuilder.build());
 
 		return notificationReceipt;

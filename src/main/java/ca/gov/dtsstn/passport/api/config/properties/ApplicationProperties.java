@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("application")
 @EnableConfigurationProperties({ GcNotifyProperties.class, SecurityProperties.class, SwaggerUiProperties.class })
 public record ApplicationProperties(
-	GcNotifyProperties gcnotify,
-	SecurityProperties security,
-	SwaggerUiProperties swaggerUi
+	@NestedConfigurationProperty GcNotifyProperties gcnotify,
+	@NestedConfigurationProperty SecurityProperties security,
+	@NestedConfigurationProperty SwaggerUiProperties swaggerUi
 ) {}
