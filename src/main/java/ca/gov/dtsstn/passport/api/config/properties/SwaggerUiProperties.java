@@ -18,11 +18,11 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("application.swagger-ui")
 public record SwaggerUiProperties(
 	@NotBlank String applicationName,
-	@NestedConfigurationProperty @NotNull SwaggerUiProperties.AuthenticationProperties authentication,
+	@NestedConfigurationProperty SwaggerUiProperties.AuthenticationProperties authentication,
 	@NotBlank String contactName,
 	@NotNull @URL String contactUrl,
 	@NotBlank String description,
-	@NestedConfigurationProperty @NotNull List<SwaggerUiProperties.Server> servers,
+	@NestedConfigurationProperty List<SwaggerUiProperties.Server> servers,
 	@NotNull @URL String tosUrl
 ) {
 
@@ -31,8 +31,8 @@ public record SwaggerUiProperties(
 	}
 
 	public record AuthenticationProperties(
-		@NestedConfigurationProperty @NotNull AuthenticationProperties.HttpProperties http,
-		@NestedConfigurationProperty @NotNull AuthenticationProperties.OAuthProperties oauth
+		@NestedConfigurationProperty AuthenticationProperties.HttpProperties http,
+		@NestedConfigurationProperty AuthenticationProperties.OAuthProperties oauth
 	) {
 
 		public record HttpProperties(

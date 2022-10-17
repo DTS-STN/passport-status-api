@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.Optional;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -20,7 +19,7 @@ public record GcNotifyProperties(
 	@NotBlank String apiKey,
 	@NotBlank String baseUrl,
 	@Nullable Duration connectTimeout,
-	@NestedConfigurationProperty @NotNull GcNotifyProperties.FileNumberNotificationProperties fileNumberNotification,
+	@NestedConfigurationProperty GcNotifyProperties.FileNumberNotificationProperties fileNumberNotification,
 	@Nullable Duration readTimeout
 ) {
 

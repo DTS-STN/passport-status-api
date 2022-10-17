@@ -20,9 +20,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties("application.security")
 public record SecurityProperties(
-	@NestedConfigurationProperty @NotNull SecurityProperties.ContentSecurityPolicyProperties contentSecurityPolicy,
-	@NestedConfigurationProperty @NotNull SecurityProperties.CorsProperties cors,
-	@NestedConfigurationProperty @NotNull SecurityProperties.OAuthProperties oauth
+	@NestedConfigurationProperty SecurityProperties.ContentSecurityPolicyProperties contentSecurityPolicy,
+	@NestedConfigurationProperty SecurityProperties.CorsProperties cors,
+	@NestedConfigurationProperty SecurityProperties.OAuthProperties oauth
 ) {
 
 	/**
@@ -74,10 +74,10 @@ public record SecurityProperties(
 	}
 
 	public record CorsProperties(
-		@Nullable List<String> allowedHeaders,
-		@Nullable List<String> allowedMethods,
-		@Nullable List<String> allowedOrigins,
-		@Nullable List<String> exposedHeaders
+		List<String> allowedHeaders,
+		List<String> allowedMethods,
+		List<String> allowedOrigins,
+		List<String> exposedHeaders
 	) {
 
 		public List<String> allowedHeaders() {
