@@ -41,7 +41,7 @@ public class ChangelogEndpoint {
 	}
 
 	@ReadOperation
-	public ResponseEntity<?> getChangelog(@Nullable Integer size, @Nullable Boolean simple) throws IOException {
+	public ResponseEntity<?> getChangelog(@Nullable Integer size, @Nullable Boolean simple) throws IOException { // NOSONAR (wildcard generic)
 		final var gitLogs = List.of(objectMapper.readValue(new ClassPathResource(changelogPath).getInputStream(), GitLog[].class));
 		final var maxSize = (size != null) ? size : Integer.MAX_VALUE;
 		return Boolean.TRUE.equals(simple) ? handleSimpleResponse(gitLogs, maxSize) : handleFullResponse(gitLogs, maxSize);
