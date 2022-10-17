@@ -1,6 +1,6 @@
 CREATE EXTENSION unaccent;
 
-CREATE OR REPLACE FUNCTION remove_diacritics(text)
+CREATE FUNCTION remove_diacritics(text)
   RETURNS text
   LANGUAGE sql
   IMMUTABLE PARALLEL SAFE STRICT
