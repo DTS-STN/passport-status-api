@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model.error;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -11,34 +11,37 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST model representing an HTTP 422 Unprocessable Entity response.
+ * REST model representing an HTTP 500 Internal Server Error response
  *
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
- */
+*/
 @Immutable
-@Schema(name = "UnprocessableEntityError")
-public interface UnprocessableEntityErrorModel extends Serializable {
+@Schema(name = "InternalServerError")
+public interface InternalServerErrorModel extends Serializable {
 
 	@Default
-	@Schema(example = "422")
+	@Schema(example = "500")
 	default int getStatusCode() {
-		return 422;
+		return 500;
 	}
 
-	@Schema(example = "Search query returned non-unique results")
+	@Schema(example = "00000000-0000-0000-000000000000")
+	String getCorrelationId();
+
+	@Schema(example = "An unexpected error has occurred.")
 	String getDetails();
 
 	@Default
-	@Schema(example = "API-0422")
+	@Schema(example = "API-0500")
 	default String getErrorCode() {
-		return "API-0422";
+		return "API-0500";
 	}
 
 	@Default
-	@Schema(example = "Unprocessable entity")
+	@Schema(example = "Internal server error")
 	default String getMessage() {
-		return "Unprocessable entity";
+		return "Internal server error";
 	}
 
 	@Default
