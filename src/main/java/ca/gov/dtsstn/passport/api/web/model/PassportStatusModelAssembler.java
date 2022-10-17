@@ -3,6 +3,8 @@ package ca.gov.dtsstn.passport.api.web.model;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.Optional;
+
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -44,7 +46,8 @@ public class PassportStatusModelAssembler extends AbstractModelAssembler<Passpor
 
 		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, firstName, lastName, true)).withRel("search");
 
-		return createModelWithId(passportStatus.getId(), passportStatus).add(searchLink);
+		final var passportStatusId = Optional.ofNullable(passportStatus.getId()).orElseThrow();
+		return createModelWithId(passportStatusId, passportStatus).add(searchLink);
 	}
 
 }

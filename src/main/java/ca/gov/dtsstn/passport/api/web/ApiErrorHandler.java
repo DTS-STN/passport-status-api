@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -57,20 +58,23 @@ public class ApiErrorHandler {
 
 	@ExceptionHandler({ HttpMessageNotReadableException.class })
 	public ResponseEntity<BadRequestErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-		final var error = ImmutableBadRequestErrorModel.builder().message(ex.getMessage()).build();
-		return ResponseEntity.badRequest().body(error);
+		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
+		return ResponseEntity.badRequest().body(badRequestErrorBuilder.build());
 	}
 
 	@ExceptionHandler({ NonUniqueResourceException.class })
 	public ResponseEntity<UnprocessableEntityErrorModel> handleNonUniqueResourceException(NonUniqueResourceException ex) {
-		final var error = ImmutableUnprocessableEntityErrorModel.builder().details(ex.getMessage()).build();
-		return ResponseEntity.unprocessableEntity().body(error);
+		final var unprocessableEntityErrorBuilder = ImmutableUnprocessableEntityErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(unprocessableEntityErrorBuilder::details);
+		return ResponseEntity.unprocessableEntity().body(unprocessableEntityErrorBuilder.build());
 	}
 
 	@ExceptionHandler({ ResourceNotFoundException.class })
 	public ResponseEntity<ResourceNotFoundErrorModel> handleResourceNotFoundException(ResourceNotFoundException ex) {
-		final var error = ImmutableResourceNotFoundErrorModel.builder().details(ex.getMessage()).build();
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+		final var resourceNotFoundErrorBuilder = ImmutableResourceNotFoundErrorModel.builder();
+		Optional.ofNullable(ex.getMessage()).ifPresent(resourceNotFoundErrorBuilder::details);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(resourceNotFoundErrorBuilder.build());
 	}
 
 	@ExceptionHandler({ Exception.class })
@@ -87,11 +91,11 @@ public class ApiErrorHandler {
 
 	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {
 		Assert.notNull(fieldError, "fieldError is required; it must not be null");
-		return ImmutableFieldValidationErrorModel.builder()
-			.code(fieldError.getCode())
-			.field(fieldError.getField())
-			.message(fieldError.getDefaultMessage())
-			.build();
+		final var fieldValidationErrorBuilder = ImmutableFieldValidationErrorModel.builder();
+		Optional.ofNullable(fieldError.getCode()).ifPresent(fieldValidationErrorBuilder::code);
+		Optional.ofNullable(fieldError.getField()).ifPresent(fieldValidationErrorBuilder::field);
+		Optional.ofNullable(fieldError.getDefaultMessage()).ifPresent(fieldValidationErrorBuilder::message);
+		return fieldValidationErrorBuilder.build();
 	}
 
 }
