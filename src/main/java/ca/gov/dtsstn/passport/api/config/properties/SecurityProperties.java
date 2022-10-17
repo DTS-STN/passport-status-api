@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,9 +20,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties("application.security")
 public record SecurityProperties(
-	SecurityProperties.ContentSecurityPolicyProperties contentSecurityPolicy,
-	SecurityProperties.CorsProperties cors,
-	SecurityProperties.OAuthProperties oauth
+	@NestedConfigurationProperty @NotNull SecurityProperties.ContentSecurityPolicyProperties contentSecurityPolicy,
+	@NestedConfigurationProperty @NotNull SecurityProperties.CorsProperties cors,
+	@NestedConfigurationProperty @NotNull SecurityProperties.OAuthProperties oauth
 ) {
 
 	/**

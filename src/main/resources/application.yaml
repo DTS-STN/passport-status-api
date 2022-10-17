@@ -114,6 +114,12 @@ spring:
   datasource:
     generate-unique-name: false
     url: jdbc:h2:mem:testdb;COLLATION=ENGLISH STRENGTH PRIMARY;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+    hikari: # see https://github.com/brettwooldridge/HikariCP#frequently-used
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 10
   devtools:
     livereload:
       enabled: false
