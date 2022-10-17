@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.assembler;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -11,8 +11,6 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
-import ca.gov.dtsstn.passport.api.web.mapper.PassportStatusModelMapper;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 
 /**
  * A Spring {@link RepresentationModelAssembler} to add HATEOAS metadata to a {@link PassportStatusModel}.

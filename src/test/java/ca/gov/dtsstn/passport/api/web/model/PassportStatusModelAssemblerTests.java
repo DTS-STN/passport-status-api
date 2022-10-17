@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.assembler;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,6 +11,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusModelAssembler;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

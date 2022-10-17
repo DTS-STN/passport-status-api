@@ -13,11 +13,11 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatusMapper;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusReadEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusUpdatedEvent;
-import ca.gov.dtsstn.passport.api.service.mapper.PassportStatusMapper;
 
 /**
  * Service class to handle {@link PassportStatus} interactions.

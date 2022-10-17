@@ -1,9 +1,8 @@
-package ca.gov.dtsstn.passport.api.web.mapper;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import org.mapstruct.Mapper;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

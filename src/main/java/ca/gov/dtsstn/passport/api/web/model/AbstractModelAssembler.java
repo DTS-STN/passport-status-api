@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.assembler;
+package ca.gov.dtsstn.passport.api.web.model;
 
 import java.util.List;
 
