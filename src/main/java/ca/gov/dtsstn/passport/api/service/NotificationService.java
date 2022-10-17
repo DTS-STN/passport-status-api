@@ -57,7 +57,7 @@ public class NotificationService {
 		final var templateId = gcNotifyProperties.fileNumberNotification().templateId();
 		final var personalization = Map.of("esrf", passportStatus.getFileNumber());
 
-		log.trace("Request to send fileNumber notificationl email=[{}], parameters=[{}]", email, personalization);
+		log.trace("Request to send fileNumber notification email=[{}], parameters=[{}]", email, personalization);
 
 		final var request = Map.of("email_address", email, "template_id", templateId, "personalisation", personalization);
 		final var notificationReceipt = restTemplate.postForObject(gcNotifyProperties.baseUrl(), request, NotificationReceipt.class);
