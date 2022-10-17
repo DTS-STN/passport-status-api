@@ -38,6 +38,14 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 	 * Convenience method to wrap a {@link CollectionModel} in a Spring HATEOAS
 	 * {@link EmbeddedWrapper}. This ensures that any empty collections are
 	 * represented as <code>[]</code> in the response (instead of null).
+	 * <p>
+	 * Note that this method severely abuses Java type erasure to allow controllers to return
+	 * {@code CollectionModel<MyModel>} when in fact they could potentially be returning
+	 * {@code CollectionModel<EmbeddedWrapper>}, which this method returns if the incoming collection is empty.
+	 * <p>
+	 * If there is a better way to handle this than abusing type erasure, I could not find it.
+	 *
+	 * TODO :: GjB :: try to make this work without type erasure.
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public <C> CollectionModel<C> wrapCollection(CollectionModel<C> collectionModel, Class<C> type) {
