@@ -60,11 +60,14 @@ public class SpringDocConfig {
 							.scopes(new Scopes().addString(swaggerUiProperties.authentication().oauth().clientId() + "/.default", "Default scope"))
 							.tokenUrl(swaggerUiProperties.authentication().oauth().tokenUrl()))));
 
-			swaggerUiProperties.servers().stream()
-				.map(server -> new Server()
+			if (false) {
+				// TODO :: GjB :: disabling because something's broken
+				swaggerUiProperties.servers().stream()
+					.map(server -> new Server()
 					.description(server.description())
 					.url(server.url()))
-				.forEach(openApi::addServersItem);
+					.forEach(openApi::addServersItem);
+			}
 		};
 	}
 
