@@ -15,7 +15,6 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
-import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -59,15 +58,6 @@ public class SpringDocConfig {
 							.refreshUrl(swaggerUiProperties.authentication().oauth().tokenUrl())
 							.scopes(new Scopes().addString(swaggerUiProperties.authentication().oauth().clientId() + "/.default", "Default scope"))
 							.tokenUrl(swaggerUiProperties.authentication().oauth().tokenUrl()))));
-
-			if (false) {
-				// TODO :: GjB :: disabling because something's broken
-				swaggerUiProperties.servers().stream()
-					.map(server -> new Server()
-					.description(server.description())
-					.url(server.url()))
-					.forEach(openApi::addServersItem);
-			}
 		};
 	}
 
