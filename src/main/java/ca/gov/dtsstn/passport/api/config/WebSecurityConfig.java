@@ -73,7 +73,6 @@ public class WebSecurityConfig {
 			.exceptionHandling()
 				.accessDeniedHandler(authenticationErrorController).and()
 			.headers()
-				.cacheControl().disable()
 				.contentSecurityPolicy(applicationProperties.security().contentSecurityPolicy().toString()).and()
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and().and()

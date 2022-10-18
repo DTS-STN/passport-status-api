@@ -88,8 +88,6 @@ application:
   endpoint:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
-  etag-header-filter:
-    write-weak-etag: true             # whether the ETag value written to the response should be weak, as per RFC 7232
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
   security:

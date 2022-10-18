@@ -166,8 +166,6 @@ application:
   endpoint:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
-  etag-header-filter:
-    write-weak-etag: true             # whether the ETag value written to the response should be weak, as per RFC 7232
   gcnotify:
     api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
     base-url: https://api.notification.canada.ca/v2/notifications/email
