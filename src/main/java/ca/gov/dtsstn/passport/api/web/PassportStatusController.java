@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +127,10 @@ public class PassportStatusController {
 		return assembler.toModel(service.readAll(pageable));
 	}
 
+	/*
+	 * Note: @Parameter(required = true) lets Swagger render correctly
+	 *       @RequestParam(required = false) lets JSR validation handle the validation (instead of Spring's web binder)
+	 */
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
 	@JsonView(PassportStatusModel.Views.GET.class)
@@ -136,20 +141,21 @@ public class PassportStatusController {
 	public CollectionModel<PassportStatusModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")
+			@PastOrPresent(message = "dateOfBirth must be a date in the past")
 			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
-			@RequestParam LocalDate dateOfBirth,
+			@RequestParam(required = false) LocalDate dateOfBirth,
 
 			@NotBlank(message = "fileNumber must not be null or blank")
 			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
-			@RequestParam String fileNumber,
+			@RequestParam(required = false) String fileNumber,
 
 			@NotBlank(message = "firstName must not be null or blank")
 			@Parameter(description = "The first name of the passport applicant.", example = "John", required = true)
-			@RequestParam String firstName,
+			@RequestParam(required = false)  String firstName,
 
 			@NotBlank(message = "lastName must not be null or blank")
 			@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
-			@RequestParam String lastName,
+			@RequestParam(required = false) String lastName,
 
 			@Parameter(description = "If the query should return a single unique result.", required = false)
 			@RequestParam(defaultValue = "true") boolean unique) {
