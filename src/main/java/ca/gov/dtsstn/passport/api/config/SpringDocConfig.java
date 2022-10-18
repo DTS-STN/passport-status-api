@@ -25,9 +25,9 @@ public class SpringDocConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
 
-	public static final String HTTP = "JSON Web Token";
+	public static final String HTTP = "JSON-Web-Token";
 
-	public static final String OAUTH = "Azure Active Directory";
+	public static final String OAUTH = "Azure-Active-Directory";
 
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties, SwaggerUiProperties swaggerUiProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
