@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Immutable
 @Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableNotificationReceipt.class)
-public interface NotificationReceipt extends Serializable {
+public interface NotificationReceipt extends AbstractDomainObject {
 
 	@JsonProperty("content")
 	NotificationReceiptContent getContent();

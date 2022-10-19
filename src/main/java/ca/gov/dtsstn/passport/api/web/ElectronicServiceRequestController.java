@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
-import ca.gov.dtsstn.passport.api.web.model.ElectronicServiceRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.ElectronicServiceCreateRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.InternalServerErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,7 +53,7 @@ public class ElectronicServiceRequestController {
 	@Operation(summary = "Create a new electronic service request.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
-	public void create(@RequestBody @Validated ElectronicServiceRequestModel electronicServiceRequest) {
+	public void create(@RequestBody @Validated ElectronicServiceCreateRequestModel electronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", electronicServiceRequest);
 
 		final var passportStatuses = passportStatusService.emailSearch(electronicServiceRequest.getDateOfBirth(), electronicServiceRequest.getEmail(), electronicServiceRequest.getFirstName(), electronicServiceRequest.getLastName());
