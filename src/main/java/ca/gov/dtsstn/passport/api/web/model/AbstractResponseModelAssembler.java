@@ -56,8 +56,7 @@ public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObj
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public <C> CollectionModel<C> wrapCollection(CollectionModel<C> collectionModel, Class<C> type) {
-		final var embeddedWrapper = collectionModel.getContent().isEmpty() ? embeddedWrappers.emptyCollectionOf(type) : embeddedWrappers.wrap(collectionModel);
-		return (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrapper), collectionModel.getLinks());
+		return collectionModel.getContent().isEmpty() ? (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(type)), collectionModel.getLinks()) : collectionModel;
 	}
 
 }
