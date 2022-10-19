@@ -7,6 +7,9 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.hateoas.RepresentationModel;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -19,15 +22,19 @@ public class AbstractResponseModel<T extends AbstractResponseModel<? extends T>>
 	@Schema(description = "The internal unique ID of the resource.", example = "00000000-0000-0000-0000-000000000000")
 	protected String id;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The creator of the resource.", example = "Passport Status API")
 	protected String createdBy;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The creation timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	protected Instant createdDate;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The last modifier of the resource.", example = "Passport Status API")
 	protected String lastModifiedBy;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The last modification timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	protected Instant lastModifiedDate;
 

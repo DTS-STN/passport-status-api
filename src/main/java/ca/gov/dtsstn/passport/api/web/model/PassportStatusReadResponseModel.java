@@ -6,6 +6,9 @@ import java.util.Objects;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.core.Relation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -17,21 +20,27 @@ public class PassportStatusReadResponseModel extends AbstractResponseModel<Passp
 
 	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "An externally generated natural key that uniquely identifies a passport status in the system.", example = "ABCD1234")
 	private String applicationRegisterSid;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01")
 	private LocalDate dateOfBirth;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The email address of the passport applicant.", example = "user@example.com")
 	private String email;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The electronic service request file number.", example = "ABCD1234")
 	private String fileNumber;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The first name of the passport applicant.", example = "John")
 	private String firstName;
 
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@Schema(description = "The last name of the passport applicant.", example = "Doe")
 	private String lastName;
 
