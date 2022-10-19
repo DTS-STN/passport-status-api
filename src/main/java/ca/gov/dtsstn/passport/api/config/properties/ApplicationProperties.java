@@ -12,9 +12,15 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConstructorBinding
 @ConfigurationProperties("application")
-@EnableConfigurationProperties({ GcNotifyProperties.class, SecurityProperties.class, SwaggerUiProperties.class })
+@EnableConfigurationProperties({
+	GcNotifyProperties.class,
+	JmsProperties.class,
+	SecurityProperties.class,
+	SwaggerUiProperties.class
+})
 public record ApplicationProperties(
 	@NestedConfigurationProperty GcNotifyProperties gcnotify,
+	@NestedConfigurationProperty JmsProperties jms,
 	@NestedConfigurationProperty SecurityProperties security,
 	@NestedConfigurationProperty SwaggerUiProperties swaggerUi
 ) {}
