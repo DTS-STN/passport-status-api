@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.service.domain;
 
-import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
 
 import org.immutables.value.Value.Immutable;
@@ -19,24 +17,9 @@ import org.springframework.lang.Nullable;
  */
 @Immutable
 @Style(validationMethod = ValidationMethod.NONE)
-public interface PassportStatus extends Serializable {
+public interface PassportStatus extends AbstractDomainObject {
 
 	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
-
-	@Nullable
-	String getId();
-
-	@Nullable
-	String getCreatedBy();
-
-	@Nullable
-	Instant getCreatedDate();
-
-	@Nullable
-	String getLastModifiedBy();
-
-	@Nullable
-	Instant getLastModifiedDate();
 
 	@Nullable
 	String getApplicationRegisterSid();

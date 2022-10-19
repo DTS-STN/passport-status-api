@@ -6,26 +6,37 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.EmbeddedWrapper;
 import org.springframework.hateoas.server.core.EmbeddedWrappers;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.service.domain.AbstractDomainObject;
+
 /**
+ * A base model assembler that can automate creation of resources and guarantee that a self link is always added.
+ *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>> extends RepresentationModelAssemblerSupport<T, D> {
+public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObject, D extends AbstractResponseModel<?>> extends RepresentationModelAssemblerSupport<T, D> {
 
 	protected final EmbeddedWrappers embeddedWrappers = new EmbeddedWrappers(false);
 
 	protected final PagedResourcesAssembler<T> pagedResourcesAssembler;
 
-	protected AbstractModelAssembler(Class<?> controllerClass, Class<D> resourceType, PagedResourcesAssembler<T> pagedResourcesAssembler) {
+	protected AbstractResponseModelAssembler(Class<?> controllerClass, Class<D> resourceType, PagedResourcesAssembler<T> pagedResourcesAssembler) {
 		super(controllerClass, resourceType);
 
 		Assert.notNull(pagedResourcesAssembler, "pagedResourcesAssembler is required; it must not be null");
 		this.pagedResourcesAssembler = pagedResourcesAssembler;
+	}
+
+	@Override
+	protected abstract D instantiateModel(T entity);
+
+	@Override
+	public D toModel(T entity) {
+		return createModelWithId(entity.getId(), entity); // NOSONAR (nullable value)
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -42,15 +53,11 @@ public abstract class AbstractModelAssembler<T, D extends RepresentationModel<?>
 	 * Note that this method severely abuses Java type erasure to allow controllers to return
 	 * {@code CollectionModel<MyModel>} when in fact they could potentially be returning
 	 * {@code CollectionModel<EmbeddedWrapper>}, which this method returns if the incoming collection is empty.
-	 * <p>
-	 * If there is a better way to handle this than abusing type erasure, I could not find it.
-	 *
-	 * TODO :: GjB :: try to make this work without type erasure.
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public <C> CollectionModel<C> wrapCollection(CollectionModel<C> collectionModel, Class<C> type) {
-		if (!collectionModel.getContent().isEmpty()) { return collectionModel; }
-		return (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(type)), collectionModel.getLinks());
+		final var embeddedWrapper = collectionModel.getContent().isEmpty() ? embeddedWrappers.emptyCollectionOf(type) : embeddedWrappers.wrap(collectionModel);
+		return (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrapper), collectionModel.getLinks());
 	}
 
 }

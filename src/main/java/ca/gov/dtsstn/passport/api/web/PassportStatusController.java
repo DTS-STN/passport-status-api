@@ -33,15 +33,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusModelAssembler;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusReadResponseModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusReadResponseModelAssembler;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AuthenticationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
@@ -70,16 +69,16 @@ public class PassportStatusController {
 
 	private final JmsTemplate jms;
 
-	private final PassportStatusModelAssembler assembler;
+	private final PassportStatusReadResponseModelAssembler passportStatusReadResponseModelAssembler;
 
 	private final PassportStatusService service;
 
-	public PassportStatusController(PassportStatusModelAssembler assembler, JmsTemplate jms, PassportStatusService service) {
-		Assert.notNull(assembler, "assembler is required; it must not be null");
+	public PassportStatusController(JmsTemplate jms, PassportStatusReadResponseModelAssembler passportStatusReadResponseModelAssembler, PassportStatusService service) {
 		Assert.notNull(jms, "jms is required; it must not be null");
+		Assert.notNull(passportStatusReadResponseModelAssembler, "passportStatusReadResponseModelAssembler is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
-		this.assembler = assembler;
 		this.jms = jms;
+		this.passportStatusReadResponseModelAssembler = passportStatusReadResponseModelAssembler;
 		this.service = service;
 	}
 
@@ -93,7 +92,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @JsonView({ PassportStatusModel.Views.POST.class }) @RequestBody @Validated PassportStatusModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
+	public void create(Authentication authentication, @RequestBody @Validated PassportStatusCreateRequestModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
 		jms.convertAndSend("passport-statuses", passportStatus);
 	}
@@ -101,7 +100,6 @@ public class PassportStatusController {
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
 	@Authorities.PassportStatusRead
-	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
@@ -109,22 +107,21 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
-	public PassportStatusModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
+	public PassportStatusReadResponseModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
+		return service.read(id).map(passportStatusReadResponseModelAssembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
 	@Authorities.PassportStatusReadAll
-	@JsonView(PassportStatusModel.Views.GET.class)
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public PagedModel<PassportStatusModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
-		return assembler.toModel(service.readAll(pageable));
+	public PagedModel<PassportStatusReadResponseModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
+		return passportStatusReadResponseModelAssembler.toModel(service.readAll(pageable));
 	}
 
 	/*
@@ -133,12 +130,11 @@ public class PassportStatusController {
 	 */
 	@GetMapping({ "/_search" })
 	@ResponseStatus(code = HttpStatus.OK)
-	@JsonView(PassportStatusModel.Views.GET.class)
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public CollectionModel<PassportStatusModel> search(
+	public CollectionModel<PassportStatusReadResponseModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")
 			@PastOrPresent(message = "dateOfBirth must be a date in the past")
@@ -167,9 +163,9 @@ public class PassportStatusController {
 		}
 
 		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, firstName, lastName, unique)).withSelfRel();
-		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
+		final var collection = passportStatusReadResponseModelAssembler.toCollectionModel(passportStatuses).add(selfLink);
 
-		return assembler.wrapCollection(collection, PassportStatusModel.class);
+		return passportStatusReadResponseModelAssembler.wrapCollection(collection, PassportStatusReadResponseModel.class);
 	}
 
 }
