@@ -8,6 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModel;
 
 /**
  * MapStruct mapper that maps {@link PassportStatus} instances to {@link PassportStatusDocument} instances (and vice versa).
@@ -23,6 +24,14 @@ public interface PassportStatusMapper {
 
 	@Nullable
 	PassportStatus fromEntity(@Nullable PassportStatusEntity passportStatus);
+
+	@Nullable
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdBy", ignore = true)
+	@Mapping(target = "createdDate", ignore = true)
+	@Mapping(target = "lastModifiedBy", ignore = true)
+	@Mapping(target = "lastModifiedDate", ignore = true)
+	PassportStatus fromCreateRequestModel(@Nullable PassportStatusCreateRequestModel passportStatusCreateRequestModel);
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "createdBy", ignore = true)

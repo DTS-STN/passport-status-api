@@ -173,6 +173,9 @@ application:
       template-id: 5768860b-6953-4e41-9f56-4e508f4fa9f3
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
+  jms:
+    destination:
+      passport-status: passport-statuses
   security:
     content-security-policy:
       default-src: "'self'"

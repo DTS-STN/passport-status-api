@@ -20,7 +20,6 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
+import ca.gov.dtsstn.passport.api.service.PassportStatusJmsService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
@@ -67,18 +67,20 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
-	private final JmsTemplate jms;
+	private final PassportStatusJmsService passportStatusJmsService;
 
 	private final PassportStatusReadResponseModelAssembler passportStatusReadResponseModelAssembler;
 
 	private final PassportStatusService service;
 
-	public PassportStatusController(JmsTemplate jms, PassportStatusReadResponseModelAssembler passportStatusReadResponseModelAssembler, PassportStatusService service) {
-		Assert.notNull(jms, "jms is required; it must not be null");
-		Assert.notNull(passportStatusReadResponseModelAssembler, "passportStatusReadResponseModelAssembler is required; it must not be null");
+	public PassportStatusController(PassportStatusJmsService passportStatusJmsService,
+			PassportStatusReadResponseModelAssembler passportStatusReadResponseModelAssembler,
+			PassportStatusService service) {
+		Assert.notNull(passportStatusReadResponseModelAssembler, "assembler is required; it must not be null");
+		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
-		this.jms = jms;
 		this.passportStatusReadResponseModelAssembler = passportStatusReadResponseModelAssembler;
+		this.passportStatusJmsService = passportStatusJmsService;
 		this.service = service;
 	}
 
@@ -92,9 +94,9 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public void create(Authentication authentication, @RequestBody @Validated PassportStatusCreateRequestModel passportStatus, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
+	public void create(Authentication authentication, @RequestBody @Validated PassportStatusCreateRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
-		jms.convertAndSend("passport-statuses", passportStatus);
+		passportStatusJmsService.send(passportStatusCreateRequestModel);
 	}
 
 	@GetMapping({ "/{id}" })
