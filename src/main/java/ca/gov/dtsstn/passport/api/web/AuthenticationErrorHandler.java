@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ca.gov.dtsstn.passport.api.web.model.ImmutableAccessDeniedErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableAuthenticationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAccessDeniedErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorModel;
 
 /**
  * This class functions as both a {@code RestControllerAdvice}, as well as a

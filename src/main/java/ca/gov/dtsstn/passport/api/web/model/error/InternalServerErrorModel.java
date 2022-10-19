@@ -1,45 +1,47 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.error;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Parameter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST model representing an HTTP 401 Unauthorized response
+ * REST model representing an HTTP 500 Internal Server Error response
  *
+ * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
- */
+*/
 @Immutable
-@Schema(name = "AuthenticationError")
-public interface AuthenticationErrorModel extends Serializable {
+@Schema(name = "InternalServerError")
+public interface InternalServerErrorModel extends Serializable {
 
 	@Default
-	@Schema(example = "401")
+	@Schema(example = "500")
 	default int getStatusCode() {
-		return 401;
+		return 500;
 	}
 
-	@Parameter
-	@Schema(example = "Unauthorized.")
+	@Schema(example = "00000000-0000-0000-000000000000")
+	String getCorrelationId();
+
+	@Schema(example = "An unexpected error has occurred.")
 	String getDetails();
 
 	@Default
-	@Schema(example = "API-0401")
+	@Schema(example = "API-0500")
 	default String getErrorCode() {
-		return "API-0401";
+		return "API-0500";
 	}
 
 	@Default
-	@Schema(example = "Unauthorized")
+	@Schema(example = "Internal server error")
 	default String getMessage() {
-		return "Unauthorized";
+		return "Internal server error";
 	}
 
 	@Default

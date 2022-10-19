@@ -28,12 +28,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
-import ca.gov.dtsstn.passport.api.web.model.BadRequestErrorModel.FieldValidationErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableBadRequestErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableFieldValidationErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableInternalServerErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableResourceNotFoundErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableUnprocessableEntityErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableBadRequestErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableInternalServerErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableResourceNotFoundErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.error.ImmutableUnprocessableEntityErrorModel;
 
 /**
  * API global error handler.
