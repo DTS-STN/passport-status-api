@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.jms.support.JmsHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.config.properties.JmsProperties;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatusMapper;
+import ca.gov.dtsstn.passport.api.service.exception.PassportStatusJmsException;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModel;
 
 /**
@@ -46,22 +48,24 @@ public class PassportStatusJmsService {
 		this.passportStatusService = passportStatusService;
 	}
 
-	public void send(PassportStatusCreateRequestModel passportStatusCreateRequestModel) {
+	public String send(PassportStatusCreateRequestModel passportStatusCreateRequestModel) {
 		Assert.notNull(passportStatusCreateRequestModel, "passportStatusCreateRequestModel is required; it must not be null");
+
 		final var message = new AtomicReference<Message>();
 		final var destination = jmsProperties.destination().passportStatusDestination();
-
-		jmsTemplate.convertAndSend(destination, passportStatusCreateRequestModel,
-			messagePostProcessor -> {
-				message.set(messagePostProcessor);
-				return messagePostProcessor;
-			});
+		final MessagePostProcessor postProcessor = messagePostProcessor -> {
+			message.set(messagePostProcessor);
+			return messagePostProcessor;
+		};
 
 		try {
+			jmsTemplate.convertAndSend(destination, passportStatusCreateRequestModel, postProcessor);
 			final var messageId = message.get().getJMSMessageID();
-			log.debug("Sending passport status to {}; MessageId='{}';", destination, messageId);
+			log.debug("Sending passport status to {}; MessageId='{}'", destination, messageId);
+			return messageId;
 		} catch (JMSException jmsException) {
-			log.error("Fails to get the message ID while sending passport status to {};", destination, jmsException);
+			final var errorMessage = String.format("Fails to send passport status message to %s", destination);
+			throw new PassportStatusJmsException(errorMessage, jmsException);
 		}
 	}
 
