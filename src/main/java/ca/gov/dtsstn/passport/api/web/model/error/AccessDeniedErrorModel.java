@@ -1,44 +1,45 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.error;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Parameter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST model representing an HTTP 422 Unprocessable Entity response.
+ * REST model representing an HTTP 403 Forbidden response
  *
- * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "UnprocessableEntityError")
-public interface UnprocessableEntityErrorModel extends Serializable {
+@Schema(name = "AccessDeniedError")
+public interface AccessDeniedErrorModel extends Serializable {
 
 	@Default
-	@Schema(example = "422")
+	@Schema(example = "403")
 	default int getStatusCode() {
-		return 422;
+		return 403;
 	}
 
-	@Schema(example = "Search query returned non-unique results")
+	@Parameter
+	@Schema(example = "Forbidden.")
 	String getDetails();
 
 	@Default
-	@Schema(example = "API-0422")
+	@Schema(example = "API-0403")
 	default String getErrorCode() {
-		return "API-0422";
+		return "API-0403";
 	}
 
 	@Default
-	@Schema(example = "Unprocessable entity")
+	@Schema(example = "Forbidden")
 	default String getMessage() {
-		return "Unprocessable entity";
+		return "Forbidden";
 	}
 
 	@Default
