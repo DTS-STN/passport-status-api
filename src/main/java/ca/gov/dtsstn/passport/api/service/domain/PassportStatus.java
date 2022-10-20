@@ -7,6 +7,8 @@ import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.lang.Nullable;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * Domain object that represents a passport application status.
  * <p>
@@ -17,6 +19,7 @@ import org.springframework.lang.Nullable;
  */
 @Immutable
 @Style(validationMethod = ValidationMethod.NONE)
+@JsonDeserialize(as = ImmutablePassportStatus.class)
 public interface PassportStatus extends AbstractDomainObject {
 
 	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
