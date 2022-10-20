@@ -83,8 +83,8 @@ public class PassportStatusController {
 	}
 
 	@PostMapping({ "" })
-	@Authorities.PassportStatusWriteAll
 	@ResponseStatus(HttpStatus.ACCEPTED)
+	@Authorities.HasPassportStatusWriteAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Create a new passport status.")
@@ -99,7 +99,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
-	@Authorities.PassportStatusRead
+	@Authorities.HasPassportStatusRead
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
@@ -113,7 +113,7 @@ public class PassportStatusController {
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
-	@Authorities.PassportStatusReadAll
+	@Authorities.HasPassportStatusReadAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
