@@ -10,6 +10,9 @@ import org.springframework.jms.support.converter.MessageType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
+ */
 @Configuration
 public class JmsConfig {
 
