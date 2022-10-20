@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
@@ -39,6 +40,7 @@ import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusReadResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.PassportStatusReadResponseModelAssembler;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
@@ -66,6 +68,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
+
+	private final PassportStatusCreateRequestModelMapper passportStatusCreateRequestModelMapper = Mappers.getMapper(PassportStatusCreateRequestModelMapper.class);
 
 	private final PassportStatusJmsService passportStatusJmsService;
 
@@ -96,7 +100,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	public void create(Authentication authentication, @RequestBody @Validated PassportStatusCreateRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
-		passportStatusJmsService.send(passportStatusCreateRequestModel);
+		passportStatusJmsService.send(passportStatusCreateRequestModelMapper.toDomain(passportStatusCreateRequestModel));
 	}
 
 	@GetMapping({ "/{id}" })

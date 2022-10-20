@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -17,9 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.config.properties.JmsProperties;
-import ca.gov.dtsstn.passport.api.service.domain.PassportStatusMapper;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.exception.PassportStatusJmsException;
-import ca.gov.dtsstn.passport.api.web.model.PassportStatusCreateRequestModel;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
@@ -32,8 +30,6 @@ public class PassportStatusJmsService {
 	private final JmsProperties jmsProperties;
 
 	private final JmsTemplate jmsTemplate;
-
-	private final PassportStatusMapper passportStatusMapper = Mappers.getMapper(PassportStatusMapper.class);
 
 	private final PassportStatusService passportStatusService;
 
@@ -48,8 +44,8 @@ public class PassportStatusJmsService {
 		this.passportStatusService = passportStatusService;
 	}
 
-	public String send(PassportStatusCreateRequestModel passportStatusCreateRequestModel) {
-		Assert.notNull(passportStatusCreateRequestModel, "passportStatusCreateRequestModel is required; it must not be null");
+	public String send(PassportStatus passportStatus) {
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 
 		final var message = new AtomicReference<Message>();
 		final var destination = jmsProperties.destination().passportStatusDestination();
@@ -59,7 +55,7 @@ public class PassportStatusJmsService {
 		};
 
 		try {
-			jmsTemplate.convertAndSend(destination, passportStatusCreateRequestModel, postProcessor);
+			jmsTemplate.convertAndSend(destination, passportStatus, postProcessor);
 			final var messageId = message.get().getJMSMessageID();
 			log.debug("Sending passport status to {}; MessageId='{}'", destination, messageId);
 			return messageId;
@@ -70,12 +66,12 @@ public class PassportStatusJmsService {
 	}
 
 	@JmsListener(destination = "${application.jms.destination.passport-status}")
-	public void receive(PassportStatusCreateRequestModel passportStatusCreateRequestModel,
+	public void receive(PassportStatus passportStatus,
 			@Header(JmsHeaders.MESSAGE_ID) String messageId,
 			@Header(JmsHeaders.DESTINATION) String destination) {
-		Assert.notNull(passportStatusCreateRequestModel, "passportStatusCreateRequestModel is required; it must not be null");
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		log.debug("Receive passport status from {}; MessageId='{}';", destination, messageId);
-		passportStatusService.create(passportStatusMapper.fromCreateRequestModel(passportStatusCreateRequestModel));
+		passportStatusService.create(passportStatus);
 	}
 
 }
