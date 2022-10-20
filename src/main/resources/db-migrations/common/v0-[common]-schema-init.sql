@@ -4,8 +4,8 @@ CREATE TABLE email_request (
 	date_of_birth DATE NOT NULL,
 	email VARCHAR(256) NOT NULL,
 	file_number VARCHAR(32) NOT NULL,
-	first_name VARCHAR(64) NOT NULL,
-	last_name VARCHAR(64) NOT NULL,
+	first_name VARCHAR(128) NOT NULL,
+	last_name VARCHAR(128) NOT NULL,
 	status VARCHAR(32) NOT NULL,
 
 	-- audit fields
@@ -47,8 +47,8 @@ CREATE TABLE passport_status (
 	date_of_birth DATE NOT NULL,
 	email VARCHAR(256) NOT NULL,
 	file_number VARCHAR(32) NOT NULL,
-	first_name VARCHAR(64) NOT NULL,
-	last_name VARCHAR(64) NOT NULL,
+	first_name VARCHAR(128) NOT NULL,
+	last_name VARCHAR(128) NOT NULL,
 	status VARCHAR(32) NOT NULL,
 
 	-- audit fields
