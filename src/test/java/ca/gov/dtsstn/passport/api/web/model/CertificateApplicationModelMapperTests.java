@@ -20,9 +20,9 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @ExtendWith({ MockitoExtension.class })
-public class CreateCertificateApplicationRequestModelMapperTests {
+public class CertificateApplicationModelMapperTests {
 
-	CreateCertificateApplicationRequestModelMapper mapper = Mappers.getMapper(CreateCertificateApplicationRequestModelMapper.class);
+	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
 	@Test
 	void testFindApplicationRegisterSid_null() {
@@ -36,11 +36,11 @@ public class CreateCertificateApplicationRequestModelMapperTests {
 
 		assertThat(mapper.findApplicationRegisterSid(List.of())).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CreateCertificateApplicationRequestModelMapper.FILE_NUMBER);
+		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER);
 		certificateApplicationIdentification.setIdentificationId("🎸");
 		assertThat(mapper.findApplicationRegisterSid(List.of(certificateApplicationIdentification))).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CreateCertificateApplicationRequestModelMapper.APPLICATION_REGISTER_SID);
+		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID);
 		certificateApplicationIdentification.setIdentificationId(applicationRegisterSid);
 		assertThat(mapper.findApplicationRegisterSid(List.of(certificateApplicationIdentification))).isEqualTo(applicationRegisterSid);
 	}
@@ -79,11 +79,11 @@ public class CreateCertificateApplicationRequestModelMapperTests {
 
 		assertThat(mapper.findFileNumber(List.of())).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CreateCertificateApplicationRequestModelMapper.APPLICATION_REGISTER_SID);
+		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID);
 		certificateApplicationIdentification.setIdentificationId("🎸");
 		assertThat(mapper.findFileNumber(List.of(certificateApplicationIdentification))).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CreateCertificateApplicationRequestModelMapper.FILE_NUMBER);
+		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER);
 		certificateApplicationIdentification.setIdentificationId(fileNumber);
 		assertThat(mapper.findFileNumber(List.of(certificateApplicationIdentification))).isEqualTo(fileNumber);
 	}

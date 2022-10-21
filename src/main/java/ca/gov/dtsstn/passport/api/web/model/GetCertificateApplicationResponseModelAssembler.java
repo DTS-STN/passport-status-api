@@ -3,6 +3,8 @@ package ca.gov.dtsstn.passport.api.web.model;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.Optional;
+
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Component;
@@ -14,16 +16,16 @@ import ca.gov.dtsstn.passport.api.web.PassportStatusController;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-public class PassportStatusReadResponseModelAssembler extends AbstractResponseModelAssembler<PassportStatus, PassportStatusReadResponseModel> {
+public class GetCertificateApplicationResponseModelAssembler extends AbstractResponseModelAssembler<PassportStatus, GetCertificateApplicationResponseModel> {
 
-	protected final PassportStatusReadResponseModelMapper mapper = Mappers.getMapper(PassportStatusReadResponseModelMapper.class);
+	protected final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
-	public PassportStatusReadResponseModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler) {
-		super(PassportStatusController.class, PassportStatusReadResponseModel.class, pagedResourcesAssembler);
+	public GetCertificateApplicationResponseModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler) {
+		super(PassportStatusController.class, GetCertificateApplicationResponseModel.class, pagedResourcesAssembler);
 	}
 
 	@Override
-	protected PassportStatusReadResponseModel instantiateModel(PassportStatus passportStatus) {
+	protected GetCertificateApplicationResponseModel instantiateModel(PassportStatus passportStatus) {
 		final var dateOfBirth = passportStatus.getDateOfBirth();
 		final var fileNumber = passportStatus.getFileNumber();
 		final var firstName = passportStatus.getFirstName();
@@ -31,7 +33,9 @@ public class PassportStatusReadResponseModelAssembler extends AbstractResponseMo
 
 		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, firstName, lastName, true)).withRel("search");
 
-		return mapper.fromDomain(passportStatus).add(searchLink);
+		return Optional.ofNullable(passportStatus)
+			.map(mapper::toModel).orElseThrow()
+			.add(searchLink);
 	}
 
 }

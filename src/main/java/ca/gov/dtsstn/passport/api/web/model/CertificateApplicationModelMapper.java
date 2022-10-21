@@ -1,7 +1,11 @@
 package ca.gov.dtsstn.passport.api.web.model;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -13,12 +17,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus.Status;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper
-public interface CreateCertificateApplicationRequestModelMapper {
+public interface CertificateApplicationModelMapper {
 
 	public static final String APPLICATION_REGISTER_SID = "Application Register SID";
 
@@ -46,6 +51,16 @@ public interface CreateCertificateApplicationRequestModelMapper {
 	@Mapping(target = "status", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatus" })
 	PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
+	@Nullable
+	@Mapping(target = "add", ignore = true) // fixes a weird vscode/eclipse & mapstruct bug quirk/bug 💩
+	@Mapping(target = "certificateApplication.certificateApplicationApplicant.birthDate.date", source = "dateOfBirth")
+	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", source = "email")
+	@Mapping(target = "certificateApplication.certificateApplicationIdentifications", source = "passportStatus", qualifiedByName = { "getCertificateApplicationIdentifications" })
+	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
+	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "lastName")
+	@Mapping(target = "certificateApplication.certificateApplicationStatus", source = "status", qualifiedByName = { "toStatus" })
+	GetCertificateApplicationResponseModel toModel(@Nullable PassportStatus passportStatus);
+
 	/**
 	 * Map a {@link CertificateApplicationApplicantModel} to a {@link PassportStatus.Status}. Returns {@code null} if
 	 * {@code certificateApplicationStatusModel} is null or the status cannot be found.
@@ -60,6 +75,30 @@ public interface CreateCertificateApplicationRequestModelMapper {
 	}
 
 	/**
+	 * Map a {@link PassportStatus.Status} to a {@link CertificateApplicationStatusModel}. Returns {@code null} if
+	 * {@code passportStatus} is null or the status cannot be found.
+	 */
+	@Nullable
+	@Named("toStatus")
+	default CertificateApplicationStatusModel toStatus(@Nullable PassportStatus.Status passportStatus) {
+		final Function<PassportStatus.Status, String> toStatusCode = status -> statusMap.entrySet().stream()
+			.filter(entry -> entry.getValue().equals(status))
+			.map(Entry<String, Status>::getKey)
+			.findFirst().orElse(null);
+
+		final Function<String, CertificateApplicationStatusModel> toCertificateApplicationStatusModel = string -> {
+			final var casm = new CertificateApplicationStatusModel();
+			casm.setStatusCode(string);
+			return casm;
+		};
+
+		return Optional.ofNullable(passportStatus)
+			.map(toStatusCode)
+			.map(toCertificateApplicationStatusModel)
+			.orElse(null);
+	}
+
+	/**
 	 * Finds the application registration SID element within {@code certificateApplicationIdentifications}. Returns null
 	 * if not found or {@code certificateApplicationIdentifications} is null.
 	 */
@@ -67,6 +106,37 @@ public interface CreateCertificateApplicationRequestModelMapper {
 	@Named("findApplicationRegisterSid")
 	default String findApplicationRegisterSid(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
 		return findCertificateApplicationIdentification(certificateApplicationIdentifications, APPLICATION_REGISTER_SID);
+	}
+
+	@Nullable
+	@Named("getCertificateApplicationIdentifications")
+	default List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications(@Nullable PassportStatus passportStatus) {
+		if (passportStatus == null) { return null; }
+
+		final var applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid()).map(x -> {
+			final var certificateApplicationIdentificationModel = new CertificateApplicationIdentificationModel();
+			certificateApplicationIdentificationModel.setIdentificationCategoryText(APPLICATION_REGISTER_SID);
+			certificateApplicationIdentificationModel.setIdentificationId(passportStatus.getApplicationRegisterSid());
+			return certificateApplicationIdentificationModel;
+		}).orElse(null);
+
+		final var fileNumber = Optional.ofNullable(passportStatus.getFileNumber()).map(x -> {
+			final var certificateApplicationIdentificationModel = new CertificateApplicationIdentificationModel();
+			certificateApplicationIdentificationModel.setIdentificationCategoryText(FILE_NUMBER);
+			certificateApplicationIdentificationModel.setIdentificationId(passportStatus.getFileNumber());
+			return certificateApplicationIdentificationModel;
+		}).orElse(null);
+
+		return Stream.of(applicationRegisterSid, fileNumber).filter(Objects::nonNull).toList();
+	}
+
+	@Nullable
+	@Named("getPersonGivenNames")
+	default List<String> getPersonGivenNames(@Nullable PassportStatus passportStatus) {
+		return Optional.ofNullable(passportStatus)
+			.map(PassportStatus::getFirstName)
+			.map(List::of)
+			.orElse(List.of());
 	}
 
 	/**
