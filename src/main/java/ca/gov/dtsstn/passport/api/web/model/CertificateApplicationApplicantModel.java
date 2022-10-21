@@ -15,41 +15,41 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "CertificateApplicationApplicant")
-public class CertificateApplicationApplicant implements Serializable {
+public class CertificateApplicationApplicantModel implements Serializable {
 
 	@JsonProperty("BirthDate")
 	@NotNull(message = "BirthDate is required; it must not be null")
-	private BirthDate birthDate;
+	private BirthDateModel birthDate;
 
 	@JsonProperty("PersonName")
 	@NotNull(message = "PersonName is required; it must not be null")
-	private PersonName personName;
+	private PersonNameModel personName;
 
 	@JsonProperty("PersonContactInformation")
 	@NotNull(message = "PersonContactInformation is required; it must not be null")
-	private PersonContactInformation personContactInformation;
+	private PersonContactInformationModel personContactInformation;
 
-	public BirthDate getBirthDate() {
+	public BirthDateModel getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(BirthDate birthDate) {
+	public void setBirthDate(BirthDateModel birthDate) {
 		this.birthDate = birthDate;
 	}
 
-	public PersonName getPersonName() {
+	public PersonNameModel getPersonName() {
 		return personName;
 	}
 
-	public void setPersonName(PersonName personName) {
+	public void setPersonName(PersonNameModel personName) {
 		this.personName = personName;
 	}
 
-	public PersonContactInformation getPersonContactInformation() {
+	public PersonContactInformationModel getPersonContactInformation() {
 		return personContactInformation;
 	}
 
-	public void setPersonContactInformation(PersonContactInformation personContactInformation) {
+	public void setPersonContactInformation(PersonContactInformationModel personContactInformation) {
 		this.personContactInformation = personContactInformation;
 	}
 

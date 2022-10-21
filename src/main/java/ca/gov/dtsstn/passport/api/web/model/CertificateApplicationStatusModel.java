@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "CertificateApplicationStatus")
-public class CertificateApplicationStatus implements Serializable {
+public class CertificateApplicationStatusModel implements Serializable {
 
 	@JsonProperty("StatusCode")
 	@NotBlank(message = "StatusCode is required; it must not null or blank")

@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "PersonName")
-public class PersonName implements Serializable {
+public class PersonNameModel implements Serializable {
 
 	@JsonProperty("PersonGivenName")
 	@NotNull(message = "PersonGivenName is required; it must not be null")

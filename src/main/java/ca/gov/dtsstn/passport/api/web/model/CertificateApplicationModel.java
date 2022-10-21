@@ -17,56 +17,56 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "CertificateApplication")
-public class CertificateApplication implements Serializable {
+public class CertificateApplicationModel implements Serializable {
 
 	@JsonProperty("CertificateApplicationApplicant")
 	@NotNull(message = "CertificateApplicationApplicant is required; it must not be null")
-	private CertificateApplicationApplicant certificateApplicationApplicant;
+	private CertificateApplicationApplicantModel certificateApplicationApplicant;
 
 	@JsonProperty("CertificateApplicationDate")
 	@NotNull(message = "CertificateApplicationDate is required; it must not be null")
-	private CertificateApplicationDate certificateApplicationDate;
+	private CertificateApplicationDateModel certificateApplicationDate;
 
 	@JsonProperty("CertificateApplicationIdentification")
 	@NotNull(message = "CertificateApplicationIdentification is required; it must not be null")
 	@Size(min = 2, max = 2, message = "CertificateApplicationIdentification must be an array with the exactly [IdentificationCategoryText='Application Register SID'] and [IdentificationCategoryText='File Number']")
 	@Schema(example = "[{\"IdentificationCategoryText\": \"Application Register SID\", \"IdentificationID\": \"ABCD1234\" },{ \"IdentificationCategoryText\": \"File Number\", \"IdentificationID\": \"ABCD1234\" }]")
-	private List<CertificateApplicationIdentification> certificateApplicationIdentifications;
+	private List<CertificateApplicationIdentificationModel> certificateApplicationIdentifications;
 
 	@JsonProperty("CertificateApplicationStatus")
 	@NotNull(message = "CertificateApplicationStatus is required; it must not be null")
-	private CertificateApplicationStatus certificateApplicationStatus;
+	private CertificateApplicationStatusModel certificateApplicationStatus;
 
-	public CertificateApplicationApplicant getCertificateApplicationApplicant() {
+	public CertificateApplicationApplicantModel getCertificateApplicationApplicant() {
 		return certificateApplicationApplicant;
 	}
 
-	public void setCertificateApplicationApplicant(CertificateApplicationApplicant certificateApplicationApplicant) {
+	public void setCertificateApplicationApplicant(CertificateApplicationApplicantModel certificateApplicationApplicant) {
 		this.certificateApplicationApplicant = certificateApplicationApplicant;
 	}
 
-	public CertificateApplicationDate getCertificateApplicationDate() {
+	public CertificateApplicationDateModel getCertificateApplicationDate() {
 		return certificateApplicationDate;
 	}
 
-	public void setCertificateApplicationDate(CertificateApplicationDate certificateApplicationDate) {
+	public void setCertificateApplicationDate(CertificateApplicationDateModel certificateApplicationDate) {
 		this.certificateApplicationDate = certificateApplicationDate;
 	}
 
-	public List<CertificateApplicationIdentification> getCertificateApplicationIdentifications() {
+	public List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications() {
 		return certificateApplicationIdentifications;
 	}
 
 	public void setCertificateApplicationIdentifications(
-			List<CertificateApplicationIdentification> certificateApplicationIdentifications) {
+			List<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
 		this.certificateApplicationIdentifications = certificateApplicationIdentifications;
 	}
 
-	public CertificateApplicationStatus getCertificateApplicationStatus() {
+	public CertificateApplicationStatusModel getCertificateApplicationStatus() {
 		return certificateApplicationStatus;
 	}
 
-	public void setCertificateApplicationStatus(CertificateApplicationStatus certificateApplicationStatus) {
+	public void setCertificateApplicationStatus(CertificateApplicationStatusModel certificateApplicationStatus) {
 		this.certificateApplicationStatus = certificateApplicationStatus;
 	}
 

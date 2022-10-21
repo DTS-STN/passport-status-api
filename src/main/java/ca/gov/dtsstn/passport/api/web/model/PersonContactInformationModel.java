@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "PersonContactInformation")
-public class PersonContactInformation implements Serializable {
+public class PersonContactInformationModel implements Serializable {
 
 	@JsonProperty("ContactEmailID")
 	@Email(message = "ContactEmailID must be a valid email address")

@@ -15,17 +15,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "CreateCertificateApplicationRequest")
-public class CreateCertificateApplicationRequest implements Serializable {
+public class CreateCertificateApplicationRequestModel implements Serializable {
 
 	@JsonProperty("CertificateApplication")
 	@NotNull(message = "CertificateApplication is required; it must not be null")
-	private CertificateApplication certificateApplication;
+	private CertificateApplicationModel certificateApplication;
 
-	public CertificateApplication getCertificateApplication() {
+	public CertificateApplicationModel getCertificateApplication() {
 		return certificateApplication;
 	}
 
-	public void setCertificateApplication(CertificateApplication certificateApplication) {
+	public void setCertificateApplication(CertificateApplicationModel certificateApplication) {
 		this.certificateApplication = certificateApplication;
 	}
 

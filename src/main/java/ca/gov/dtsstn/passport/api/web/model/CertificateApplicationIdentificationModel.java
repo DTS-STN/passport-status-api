@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "CertificateApplicationIdentification")
-public class CertificateApplicationIdentification implements Serializable {
+public class CertificateApplicationIdentificationModel implements Serializable {
 
 	@JsonProperty("IdentificationCategoryText")
 	@NotNull(message = "IdentificationCategoryText is required; it must not be null")
