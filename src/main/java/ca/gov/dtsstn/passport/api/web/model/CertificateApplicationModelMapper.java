@@ -25,10 +25,6 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus.Status;
 @Mapper
 public interface CertificateApplicationModelMapper {
 
-	public static final String APPLICATION_REGISTER_SID = "Application Register SID";
-
-	public static final String FILE_NUMBER = "File Number";
-
 	// TODO :: GjB :: remove this once actual code → status mappings are known
 	final Map<String, PassportStatus.Status> statusMap = Map.of(
 		"1", PassportStatus.Status.APPROVED,
@@ -101,7 +97,7 @@ public interface CertificateApplicationModelMapper {
 	@Nullable
 	@Named("findApplicationRegisterSid")
 	default String findApplicationRegisterSid(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
-		return findCertificateApplicationIdentification(certificateApplicationIdentifications, APPLICATION_REGISTER_SID);
+		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT);
 	}
 
 	@Nullable
@@ -111,14 +107,14 @@ public interface CertificateApplicationModelMapper {
 
 		final CertificateApplicationIdentificationModel applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid())
 			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(APPLICATION_REGISTER_SID)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
 				.identificationId(passportStatus.getApplicationRegisterSid())
 				.build())
 			.orElse(null);
 
 		final CertificateApplicationIdentificationModel fileNumber = Optional.ofNullable(passportStatus.getFileNumber())
 			.map(x -> ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(FILE_NUMBER)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
 				.identificationId(passportStatus.getFileNumber())
 				.build())
 			.orElse(null);
@@ -155,7 +151,7 @@ public interface CertificateApplicationModelMapper {
 	@Nullable
 	@Named("findFileNumber")
 	default String findFileNumber(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
-		return findCertificateApplicationIdentification(certificateApplicationIdentifications, FILE_NUMBER);
+		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT);
 	}
 
 	/**

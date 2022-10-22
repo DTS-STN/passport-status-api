@@ -22,6 +22,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutableCertificateApplicationIdentificationModel.class)
 public interface CertificateApplicationIdentificationModel extends Serializable {
 
+	static final String APPLICATION_REGISTER_SID_CATEGORY_TEXT = "Application Register SID";
+
+	static final String FILE_NUMBER_CATEGORY_TEXT = "File Number";
+
 	@JsonProperty("IdentificationCategoryText")
 	@NotNull(message = "IdentificationCategoryText is required; it must not be null")
 	@Schema(description = "A human readable description of the certificate application ID entry.", example = "Application Register SID")

@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
 
@@ -36,13 +37,13 @@ class CertificateApplicationModelMapperTests {
 		assertThat(mapper.findApplicationRegisterSid(List.of())).isNull();
 
 		assertThat(mapper.findApplicationRegisterSid(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
 				.identificationId("🎸")
 				.build())))
 			.isNull();
 
 		assertThat(mapper.findApplicationRegisterSid(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
 				.identificationId(applicationRegisterSid)
 				.build())))
 			.isEqualTo(applicationRegisterSid);
@@ -86,13 +87,13 @@ class CertificateApplicationModelMapperTests {
 		assertThat(mapper.findFileNumber(List.of())).isNull();
 
 		assertThat(mapper.findFileNumber(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
 				.identificationId("🎸")
 				.build())))
 			.isNull();
 
 		assertThat(mapper.findFileNumber(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER)
+				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
 				.identificationId(fileNumber)
 				.build())))
 			.isEqualTo(fileNumber);
@@ -145,6 +146,83 @@ class CertificateApplicationModelMapperTests {
 	}
 
 	@Test
+	void testToModel_null() {
+		assertThat(mapper.toModel(null)).isEqualTo(null);
+	}
+
+	@Test
+	void testToModel_nonnull() {
+		final var applicationRegisterSid = "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf";
+		final var dateOfBirth = LocalDate.of(2004, 12, 8);
+		final var fileNumber = "https://open.spotify.com/track/1fZvEmAmWtsDSUjAgDhddU?";
+		final var email = "user@example.com";
+		final var firstName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
+		final var lastName = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
+		final var status = PassportStatus.Status.APPROVED;
+
+		final var passportStatus = ImmutablePassportStatus.builder()
+			.applicationRegisterSid(applicationRegisterSid)
+			.dateOfBirth(dateOfBirth)
+			.email(email)
+			.fileNumber(fileNumber)
+			.firstName(firstName)
+			.lastName(lastName)
+			.status(status)
+			.build();
+
+		final var getCertificateApplicationRepresentation = mapper.toModel(passportStatus);
+
+		/*
+		 * To future developers: I am sorry for this. This is what NIEM does to your code. 😔
+		 */
+
+		assertThat(getCertificateApplicationRepresentation).isNotNull();
+		assertThat(getCertificateApplicationRepresentation) // check dateOfBirth field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getBirthDate)
+			.extracting(BirthDateModel::getDate)
+			.isEqualTo(dateOfBirth);
+		assertThat(getCertificateApplicationRepresentation) // check applicationRegisterSid field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asList()
+			.contains(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
+				.identificationId(applicationRegisterSid)
+				.build());
+		assertThat(getCertificateApplicationRepresentation) // check email field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getPersonContactInformation)
+			.extracting(PersonContactInformationModel::getContactEmailId)
+			.isEqualTo(email);
+		assertThat(getCertificateApplicationRepresentation) // check fileNumber field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asList()
+			.contains(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
+				.identificationId(fileNumber)
+				.build());
+		assertThat(getCertificateApplicationRepresentation) // check firstName field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getPersonName)
+			.extracting(PersonNameModel::getPersonGivenNames).asList()
+			.contains(firstName);
+		assertThat(getCertificateApplicationRepresentation) // check lastName field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getPersonName)
+			.extracting(PersonNameModel::getPersonSurname)
+			.isEqualTo(lastName);
+		assertThat(getCertificateApplicationRepresentation) // check status field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
+			.extracting(CertificateApplicationStatusModel::getStatusCode)
+			.isNotNull(); // TODO :: GjB :: fix this check when status code mappings are known
+	}
+
+	@Test
 	void testToDomain_null() throws Exception {
 		assertThat(mapper.toDomain(null)).isNull();
 	}
@@ -153,7 +231,7 @@ class CertificateApplicationModelMapperTests {
 	void testToDomain_nonnull() throws Exception {
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
-		// cheating a little here.. 😳
+		// cheating a little here because doing anything with NIEM sucks.. 😳
 		final var createCertificateApplicationRequest = objectMapper.readValue("""
 			{
 			  "CertificateApplication": {
@@ -161,7 +239,7 @@ class CertificateApplicationModelMapperTests {
 			      "BirthDate": { "Date": "2000-01-01" },
 			      "PersonContactInformation": { "ContactEmailID": "user@example.com" },
 			      "PersonName": {
-			        "PersonGivenName": ["John"],
+			        "PersonGivenName": [ "John" ],
 			        "PersonSurName": "Doe"
 			      }
 			    },
