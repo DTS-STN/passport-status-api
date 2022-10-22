@@ -15,6 +15,8 @@ import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -23,7 +25,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Immutable
 @Schema(name = "ElectronicServiceCreateRequest")
 @Style(validationMethod = ValidationMethod.NONE)
-public interface ElectronicServiceCreateRequestModel extends Serializable {
+@JsonDeserialize(as = ImmutableCreateElectronicServiceRequestModel.class)
+public interface CreateElectronicServiceRequestModel extends Serializable {
 
 	@DateTimeFormat(iso = ISO.DATE)
 	@NotNull(message = "dateOfBirth is required; it must not be null")

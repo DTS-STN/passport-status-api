@@ -9,7 +9,7 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper
-public interface ElectronicServiceCreateRequestModelMapper {
+public interface CreateElectronicServiceRequestModelMapper {
 
 	@Mapping(target = "applicationRegisterSid", ignore = true)
 	@Mapping(target = "createdBy", ignore = true)
@@ -19,6 +19,6 @@ public interface ElectronicServiceCreateRequestModelMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "status", ignore = true)
-	PassportStatus toDomain(ElectronicServiceCreateRequestModel model);
+	PassportStatus toDomain(CreateElectronicServiceRequestModel model);
 
 }
