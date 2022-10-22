@@ -19,8 +19,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(name = "GetCertificateApplicationResponseModel")
 @JsonPropertyOrder({ "id", "CertificateApplication", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
-@Relation(collectionRelation = "GetCertificateApplicationResponseModels", itemRelation = "GetCertificateApplicationResponseModel")
-public class GetCertificateApplicationResponseModel extends AbstractResponseModel<GetCertificateApplicationResponseModel> {
+@Relation(collectionRelation = "GetCertificateApplicationResponse", itemRelation = "GetCertificateApplicationResponse")
+public class GetCertificateApplicationRepresentationModel extends AbstractRepresentationModel<GetCertificateApplicationRepresentationModel> {
 
 	@JsonProperty("CertificateApplication")
 	@NotNull(message = "CertificateApplication is required; it must not be null")
@@ -35,7 +35,7 @@ public class GetCertificateApplicationResponseModel extends AbstractResponseMode
 	}
 
 	@Override // Required to fix a weird vscode/eclipse & mapstruct bug (unmapped target property: "add") 💩
-	public GetCertificateApplicationResponseModel add(Link link) { // NOSONAR (do-nothing inherited method)
+	public GetCertificateApplicationRepresentationModel add(Link link) { // NOSONAR (do-nothing inherited method)
 		return super.add(link);
 	}
 
@@ -45,7 +45,7 @@ public class GetCertificateApplicationResponseModel extends AbstractResponseMode
 		if (!super.equals(obj)) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
 
-		final GetCertificateApplicationResponseModel other = (GetCertificateApplicationResponseModel) obj;
+		final GetCertificateApplicationRepresentationModel other = (GetCertificateApplicationRepresentationModel) obj;
 
 		return Objects.equals(certificateApplication, other.certificateApplication);
 	}

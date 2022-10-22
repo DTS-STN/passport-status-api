@@ -18,7 +18,7 @@ import ca.gov.dtsstn.passport.api.service.domain.AbstractDomainObject;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObject, D extends AbstractResponseModel<?>> extends RepresentationModelAssemblerSupport<T, D> {
+public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObject, D extends AbstractRepresentationModel<?>> extends RepresentationModelAssemblerSupport<T, D> {
 
 	protected final EmbeddedWrappers embeddedWrappers = new EmbeddedWrappers(false);
 

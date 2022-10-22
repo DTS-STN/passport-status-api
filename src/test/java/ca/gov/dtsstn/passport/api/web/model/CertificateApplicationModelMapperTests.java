@@ -20,7 +20,7 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @ExtendWith({ MockitoExtension.class })
-public class CertificateApplicationModelMapperTests {
+class CertificateApplicationModelMapperTests {
 
 	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
@@ -31,18 +31,21 @@ public class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testFindApplicationRegisterSid_nonnull() {
-		final var certificateApplicationIdentification = new CertificateApplicationIdentificationModel();
 		final var applicationRegisterSid = "https://open.spotify.com/track/6kiASFX63DwJ7grwKG2HUX";
 
 		assertThat(mapper.findApplicationRegisterSid(List.of())).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER);
-		certificateApplicationIdentification.setIdentificationId("🎸");
-		assertThat(mapper.findApplicationRegisterSid(List.of(certificateApplicationIdentification))).isNull();
+		assertThat(mapper.findApplicationRegisterSid(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER)
+				.identificationId("🎸")
+				.build())))
+			.isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID);
-		certificateApplicationIdentification.setIdentificationId(applicationRegisterSid);
-		assertThat(mapper.findApplicationRegisterSid(List.of(certificateApplicationIdentification))).isEqualTo(applicationRegisterSid);
+		assertThat(mapper.findApplicationRegisterSid(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID)
+				.identificationId(applicationRegisterSid)
+				.build())))
+			.isEqualTo(applicationRegisterSid);
 	}
 
 	@Test
@@ -55,16 +58,20 @@ public class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testFindCertificateApplicationIdentification_nonnull() {
-		final var certificateApplicationIdentification = new CertificateApplicationIdentificationModel();
 		final var identificationCategoryText = "https://open.spotify.com/track/27IRo2rYeizhRMDaNVplNM";
 
-		certificateApplicationIdentification.setIdentificationCategoryText("🎧");
-		certificateApplicationIdentification.setIdentificationId("🎶");
-		assertThat(mapper.findCertificateApplicationIdentification(List.of(certificateApplicationIdentification), identificationCategoryText)).isNull();
+		assertThat(mapper.findCertificateApplicationIdentification(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText("🎧")
+				.identificationId("🎶")
+				.build()), identificationCategoryText))
+			.isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(identificationCategoryText);
-		certificateApplicationIdentification.setIdentificationId("🎼");
-		assertThat(mapper.findCertificateApplicationIdentification(List.of(certificateApplicationIdentification), identificationCategoryText)).isEqualTo("🎼");
+
+		assertThat(mapper.findCertificateApplicationIdentification(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(identificationCategoryText)
+				.identificationId("🎼")
+				.build()), identificationCategoryText))
+			.isEqualTo("🎼");
 	}
 
 	@Test
@@ -74,18 +81,21 @@ public class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testFindFileNumber_nonnull() {
-		final var certificateApplicationIdentification = new CertificateApplicationIdentificationModel();
 		final var fileNumber = "https://open.spotify.com/track/7ovBUU08wGw5jiCcylRlx4";
 
 		assertThat(mapper.findFileNumber(List.of())).isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID);
-		certificateApplicationIdentification.setIdentificationId("🎸");
-		assertThat(mapper.findFileNumber(List.of(certificateApplicationIdentification))).isNull();
+		assertThat(mapper.findFileNumber(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationModelMapper.APPLICATION_REGISTER_SID)
+				.identificationId("🎸")
+				.build())))
+			.isNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER);
-		certificateApplicationIdentification.setIdentificationId(fileNumber);
-		assertThat(mapper.findFileNumber(List.of(certificateApplicationIdentification))).isEqualTo(fileNumber);
+		assertThat(mapper.findFileNumber(List.of(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationModelMapper.FILE_NUMBER)
+				.identificationId(fileNumber)
+				.build())))
+			.isEqualTo(fileNumber);
 	}
 
 	@Test
@@ -106,19 +116,22 @@ public class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testHasIdentificationCategoryText_nonnullIdentificationCategoryText() {
-		final var certificateApplicationIdentification = new CertificateApplicationIdentificationModel();
 		final var identificationCategoryText = "https://open.spotify.com/track/1vNoA9F5ASnlBISFekDmg3";
 
 		final var predicate = mapper.hasIdentificationCategoryText(identificationCategoryText);
 		assertThat(predicate).isNotNull();
 
-		certificateApplicationIdentification.setIdentificationCategoryText(identificationCategoryText);
-		assertThat(predicate.test(certificateApplicationIdentification)).isTrue();
+		assertThat(predicate.test(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(identificationCategoryText)
+				.identificationId("🍺")
+				.build()))
+			.isTrue();
 
-		certificateApplicationIdentification.setIdentificationCategoryText("This will not match...");
-		assertThat(predicate.test(certificateApplicationIdentification)).isFalse();
-
-		assertThat(predicate.test(null)).isFalse();
+		assertThat(predicate.test(ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText("This will not match...")
+				.identificationId("🍺")
+				.build()))
+			.isFalse();
 	}
 
 	@Test

@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-public class AbstractResponseModel<T extends AbstractResponseModel<? extends T>> extends RepresentationModel<T> {
+public class AbstractRepresentationModel<T extends AbstractRepresentationModel<? extends T>> extends RepresentationModel<T> {
 
 	@Schema(description = "The internal unique ID of the resource.", example = "00000000-0000-0000-0000-000000000000")
 	protected String id;
@@ -84,7 +84,7 @@ public class AbstractResponseModel<T extends AbstractResponseModel<? extends T>>
 		if (!super.equals(obj)) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
 
-		final AbstractResponseModel<?> other = (AbstractResponseModel<?>) obj;
+		final AbstractRepresentationModel<?> other = (AbstractRepresentationModel<?>) obj;
 
 		return Objects.equals(this.id, other.id)
 			&& Objects.equals(this.createdBy, other.createdBy)

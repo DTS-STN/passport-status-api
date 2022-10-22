@@ -11,6 +11,8 @@ import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.immutables.value.Value.Style;
+import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
@@ -20,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Schema(name = "ElectronicServiceCreateRequest")
+@Style(validationMethod = ValidationMethod.NONE)
 public class ElectronicServiceCreateRequestModel implements Serializable {
 
 	@DateTimeFormat(iso = ISO.DATE)

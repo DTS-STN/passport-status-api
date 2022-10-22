@@ -41,8 +41,8 @@ import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
-import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationResponseModel;
-import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationResponseModelAssembler;
+import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModelAssembler;
 import ca.gov.dtsstn.passport.api.web.model.error.AccessDeniedErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.AuthenticationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
@@ -69,22 +69,19 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
-	private final CertificateApplicationModelMapper certificateApplicationModelMapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
+	private final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
-	private final GetCertificateApplicationResponseModelAssembler getCertificateApplicationResponseModelAssembler;
+	private final GetCertificateApplicationRepresentationModelAssembler assembler;
 
 	private final PassportStatusJmsService passportStatusJmsService;
 
 	private final PassportStatusService service;
 
-	public PassportStatusController(
-			GetCertificateApplicationResponseModelAssembler getCertificateApplicationResponseModelAssembler,
-			PassportStatusJmsService passportStatusJmsService,
-			PassportStatusService service) {
-		Assert.notNull(getCertificateApplicationResponseModelAssembler, "getCertificateApplicationResponseModelAssembler is required; it must not be null");
+	public PassportStatusController(GetCertificateApplicationRepresentationModelAssembler assembler, PassportStatusJmsService passportStatusJmsService, PassportStatusService service) {
+		Assert.notNull(assembler, "assembler is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
-		this.getCertificateApplicationResponseModelAssembler = getCertificateApplicationResponseModelAssembler;
+		this.assembler = assembler;
 		this.passportStatusJmsService = passportStatusJmsService;
 		this.service = service;
 	}
@@ -101,7 +98,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	public void create(Authentication authentication, @RequestBody @Validated CreateCertificateApplicationRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
-		passportStatusJmsService.send(certificateApplicationModelMapper.toDomain(passportStatusCreateRequestModel));
+		passportStatusJmsService.send(mapper.toDomain(passportStatusCreateRequestModel));
 	}
 
 	@GetMapping({ "/{id}" })
@@ -114,8 +111,8 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
 	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(implementation = ResourceNotFoundErrorModel.class)) })
-	public GetCertificateApplicationResponseModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(getCertificateApplicationResponseModelAssembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
+	public GetCertificateApplicationRepresentationModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
+		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
 	}
 
 	@GetMapping({ "" })
@@ -127,8 +124,8 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(implementation = AuthenticationErrorModel.class)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(implementation = AccessDeniedErrorModel.class)) })
-	public PagedModel<GetCertificateApplicationResponseModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
-		return getCertificateApplicationResponseModelAssembler.toModel(service.readAll(pageable));
+	public PagedModel<GetCertificateApplicationRepresentationModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
+		return assembler.toModel(service.readAll(pageable));
 	}
 
 	/*
@@ -141,7 +138,7 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(implementation = UnprocessableEntityErrorModel.class)) })
-	public CollectionModel<GetCertificateApplicationResponseModel> search(
+	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")
 			@PastOrPresent(message = "dateOfBirth must be a date in the past")
@@ -170,9 +167,9 @@ public class PassportStatusController {
 		}
 
 		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, firstName, lastName, unique)).withSelfRel();
-		final var collection = getCertificateApplicationResponseModelAssembler.toCollectionModel(passportStatuses).add(selfLink);
+		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
 
-		return getCertificateApplicationResponseModelAssembler.wrapCollection(collection, GetCertificateApplicationResponseModel.class);
+		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}
 
 }

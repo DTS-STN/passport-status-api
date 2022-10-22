@@ -59,7 +59,7 @@ public interface CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "lastName")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus", source = "status", qualifiedByName = { "toStatus" })
-	GetCertificateApplicationResponseModel toModel(@Nullable PassportStatus passportStatus);
+	GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
 
 	/**
 	 * Map a {@link CertificateApplicationApplicantModel} to a {@link PassportStatus.Status}. Returns {@code null} if
@@ -86,15 +86,11 @@ public interface CertificateApplicationModelMapper {
 			.map(Entry<String, Status>::getKey)
 			.findFirst().orElse(null);
 
-		final Function<String, CertificateApplicationStatusModel> toCertificateApplicationStatusModel = string -> {
-			final var casm = new CertificateApplicationStatusModel();
-			casm.setStatusCode(string);
-			return casm;
-		};
-
 		return Optional.ofNullable(passportStatus)
 			.map(toStatusCode)
-			.map(toCertificateApplicationStatusModel)
+			.map(statusCode -> ImmutableCertificateApplicationStatusModel.builder()
+				.statusCode(statusCode)
+				.build())
 			.orElse(null);
 	}
 
@@ -113,19 +109,19 @@ public interface CertificateApplicationModelMapper {
 	default List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications(@Nullable PassportStatus passportStatus) {
 		if (passportStatus == null) { return null; }
 
-		final var applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid()).map(x -> {
-			final var certificateApplicationIdentificationModel = new CertificateApplicationIdentificationModel();
-			certificateApplicationIdentificationModel.setIdentificationCategoryText(APPLICATION_REGISTER_SID);
-			certificateApplicationIdentificationModel.setIdentificationId(passportStatus.getApplicationRegisterSid());
-			return certificateApplicationIdentificationModel;
-		}).orElse(null);
+		final CertificateApplicationIdentificationModel applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid())
+			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(APPLICATION_REGISTER_SID)
+				.identificationId(passportStatus.getApplicationRegisterSid())
+				.build())
+			.orElse(null);
 
-		final var fileNumber = Optional.ofNullable(passportStatus.getFileNumber()).map(x -> {
-			final var certificateApplicationIdentificationModel = new CertificateApplicationIdentificationModel();
-			certificateApplicationIdentificationModel.setIdentificationCategoryText(FILE_NUMBER);
-			certificateApplicationIdentificationModel.setIdentificationId(passportStatus.getFileNumber());
-			return certificateApplicationIdentificationModel;
-		}).orElse(null);
+		final CertificateApplicationIdentificationModel fileNumber = Optional.ofNullable(passportStatus.getFileNumber())
+			.map(x -> ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(FILE_NUMBER)
+				.identificationId(passportStatus.getFileNumber())
+				.build())
+			.orElse(null);
 
 		return Stream.of(applicationRegisterSid, fileNumber).filter(Objects::nonNull).toList();
 	}

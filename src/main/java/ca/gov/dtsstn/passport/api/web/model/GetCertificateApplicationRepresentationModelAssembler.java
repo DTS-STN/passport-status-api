@@ -16,16 +16,16 @@ import ca.gov.dtsstn.passport.api.web.PassportStatusController;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-public class GetCertificateApplicationResponseModelAssembler extends AbstractResponseModelAssembler<PassportStatus, GetCertificateApplicationResponseModel> {
+public class GetCertificateApplicationRepresentationModelAssembler extends AbstractResponseModelAssembler<PassportStatus, GetCertificateApplicationRepresentationModel> {
 
 	protected final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
-	public GetCertificateApplicationResponseModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler) {
-		super(PassportStatusController.class, GetCertificateApplicationResponseModel.class, pagedResourcesAssembler);
+	public GetCertificateApplicationRepresentationModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler) {
+		super(PassportStatusController.class, GetCertificateApplicationRepresentationModel.class, pagedResourcesAssembler);
 	}
 
 	@Override
-	protected GetCertificateApplicationResponseModel instantiateModel(PassportStatus passportStatus) {
+	protected GetCertificateApplicationRepresentationModel instantiateModel(PassportStatus passportStatus) {
 		final var dateOfBirth = passportStatus.getDateOfBirth();
 		final var fileNumber = passportStatus.getFileNumber();
 		final var firstName = passportStatus.getFirstName();

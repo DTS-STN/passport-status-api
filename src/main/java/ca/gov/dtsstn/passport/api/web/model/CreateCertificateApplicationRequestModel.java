@@ -4,34 +4,26 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Style;
+import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
+@Immutable
+@Style(validationMethod = ValidationMethod.NONE)
 @Schema(name = "CreateCertificateApplicationRequest")
-public class CreateCertificateApplicationRequestModel implements Serializable {
+@JsonDeserialize(as = ImmutableCreateCertificateApplicationRequestModel.class)
+public interface CreateCertificateApplicationRequestModel extends Serializable {
 
 	@JsonProperty("CertificateApplication")
 	@NotNull(message = "CertificateApplication is required; it must not be null")
-	private CertificateApplicationModel certificateApplication;
-
-	public CertificateApplicationModel getCertificateApplication() {
-		return certificateApplication;
-	}
-
-	public void setCertificateApplication(CertificateApplicationModel certificateApplication) {
-		this.certificateApplication = certificateApplication;
-	}
-
-	@Override
-	public String toString() {
-		return ReflectionToStringBuilder.toString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
-	}
+	CertificateApplicationModel getCertificateApplication();
 
 }
