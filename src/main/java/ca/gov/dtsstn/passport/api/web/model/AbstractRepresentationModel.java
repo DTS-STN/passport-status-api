@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -38,50 +39,55 @@ public class AbstractRepresentationModel<T extends AbstractRepresentationModel<?
 	@Schema(description = "The last modification timestamp of the resource in ISO-8601 format.", example = "2000-01-01T00:00:00.000Z")
 	protected Instant lastModifiedDate;
 
+	@Nullable
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(@Nullable String id) {
 		this.id = id;
 	}
 
+	@Nullable
 	public String getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(String createdBy) {
+	public void setCreatedBy(@Nullable String createdBy) {
 		this.createdBy = createdBy;
 	}
 
+	@Nullable
 	public Instant getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Instant createdDate) {
+	public void setCreatedDate(@Nullable Instant createdDate) {
 		this.createdDate = createdDate;
 	}
 
+	@Nullable
 	public String getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 
-	public void setLastModifiedBy(String lastModifiedBy) {
+	public void setLastModifiedBy(@Nullable String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
+	@Nullable
 	public Instant getLastModifiedDate() {
 		return lastModifiedDate;
 	}
 
-	public void setLastModifiedDate(Instant lastModifiedDate) {
+	public void setLastModifiedDate(@Nullable Instant lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) { return true; }
-		if (!super.equals(obj)) { return false; }
+		if (obj == null || !super.equals(obj)) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
 
 		final AbstractRepresentationModel<?> other = (AbstractRepresentationModel<?>) obj;

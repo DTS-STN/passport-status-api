@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.core.Relation;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -26,11 +27,12 @@ public class GetCertificateApplicationRepresentationModel extends AbstractRepres
 	@NotNull(message = "CertificateApplication is required; it must not be null")
 	private CertificateApplicationModel certificateApplication;
 
+	@Nullable
 	public CertificateApplicationModel getCertificateApplication() {
 		return certificateApplication;
 	}
 
-	public void setCertificateApplication(CertificateApplicationModel certificateApplication) {
+	public void setCertificateApplication(@Nullable CertificateApplicationModel certificateApplication) {
 		this.certificateApplication = certificateApplication;
 	}
 
@@ -40,9 +42,9 @@ public class GetCertificateApplicationRepresentationModel extends AbstractRepres
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) { return true; }
-		if (!super.equals(obj)) { return false; }
+		if (obj == null || !super.equals(obj)) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
 
 		final GetCertificateApplicationRepresentationModel other = (GetCertificateApplicationRepresentationModel) obj;

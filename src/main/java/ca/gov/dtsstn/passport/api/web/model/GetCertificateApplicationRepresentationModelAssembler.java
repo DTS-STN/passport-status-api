@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
@@ -26,6 +27,8 @@ public class GetCertificateApplicationRepresentationModelAssembler extends Abstr
 
 	@Override
 	protected GetCertificateApplicationRepresentationModel instantiateModel(PassportStatus passportStatus) {
+		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
+
 		final var dateOfBirth = passportStatus.getDateOfBirth();
 		final var fileNumber = passportStatus.getFileNumber();
 		final var firstName = passportStatus.getFirstName();

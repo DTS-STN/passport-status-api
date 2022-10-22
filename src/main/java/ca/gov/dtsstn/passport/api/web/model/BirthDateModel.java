@@ -7,8 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Style;
-import org.immutables.value.Value.Style.ValidationMethod;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -20,10 +19,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "BirthDate")
-@Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableBirthDateModel.class)
 public interface BirthDateModel extends Serializable {
 
+	@Nullable
 	@JsonProperty("Date")
 	@PastOrPresent(message = "Date must be in the past")
 	@NotNull(message = "Date is required; it must not be null")

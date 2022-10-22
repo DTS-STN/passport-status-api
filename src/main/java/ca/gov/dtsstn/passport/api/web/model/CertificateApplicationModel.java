@@ -7,12 +7,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Style;
-import org.immutables.value.Value.Style.ValidationMethod;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -20,24 +21,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "CertificateApplication")
-@Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableCertificateApplicationModel.class)
 public interface CertificateApplicationModel extends Serializable {
 
+
+	@Nullable
 	@JsonProperty("CertificateApplicationApplicant")
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@NotNull(message = "CertificateApplicationApplicant is required; it must not be null")
 	CertificateApplicationApplicantModel getCertificateApplicationApplicant();
 
+	@Nullable
 	@JsonProperty("CertificateApplicationDate")
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@NotNull(message = "CertificateApplicationDate is required; it must not be null")
 	CertificateApplicationDateModel getCertificateApplicationDate();
 
+	@Nullable
+	@JsonView({ Authorities.AuthenticatedView.class })
 	@JsonProperty("CertificateApplicationIdentification")
 	@NotNull(message = "CertificateApplicationIdentification is required; it must not be null")
 	@Size(min = 2, max = 2, message = "CertificateApplicationIdentification must be an array with the exactly [IdentificationCategoryText='Application Register SID'] and [IdentificationCategoryText='File Number']")
 	@Schema(example = "[{\"IdentificationCategoryText\": \"Application Register SID\", \"IdentificationID\": \"ABCD1234\" },{ \"IdentificationCategoryText\": \"File Number\", \"IdentificationID\": \"ABCD1234\" }]")
 	List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications();
 
+	@Nullable
 	@JsonProperty("CertificateApplicationStatus")
 	@NotNull(message = "CertificateApplicationStatus is required; it must not be null")
 	CertificateApplicationStatusModel getCertificateApplicationStatus();
