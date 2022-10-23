@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAccessDeniedErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableAuthenticationErrorModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
 
 /**
  * This class functions as both a {@code RestControllerAdvice}, as well as a
@@ -57,7 +59,20 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 	@Override
 	@ExceptionHandler({ AuthenticationException.class })
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-		sendResponse(response, HttpStatus.UNAUTHORIZED, ImmutableAuthenticationErrorModel.of("Access to this resource is denied: bad credentials."));
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0401")
+					.issueDetails("The request lacks valid authentication credentials for the requested resource.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("401")
+					.statusDescriptionText("Unauthorized")
+					.build())
+				.build())
+			.build();
+
+		sendResponse(response, HttpStatus.UNAUTHORIZED, body);
 	}
 
 	@Override
@@ -70,7 +85,20 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 			throw new AuthenticationCredentialsNotFoundException(accessDeniedException.getMessage());
 		}
 
-		sendResponse(response, HttpStatus.FORBIDDEN, ImmutableAccessDeniedErrorModel.of("Access to this resource is denied: forbidden by security policies."));
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0403")
+					.issueDetails("The server understands the request but refuses to authorize it.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("403")
+					.statusDescriptionText("Forbidden")
+					.build())
+				.build())
+			.build();
+
+		sendResponse(response, HttpStatus.FORBIDDEN, body);
 	}
 
 	protected void sendResponse(HttpServletResponse response, HttpStatus httpStatus, Object body) throws IOException {

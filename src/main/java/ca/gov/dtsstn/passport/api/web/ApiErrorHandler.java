@@ -28,12 +28,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableBadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableInternalServerErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableResourceNotFoundErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableUnprocessableEntityErrorModel;
 
 /**
  * API global error handler.
@@ -71,9 +72,20 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var resourceNotFoundErrorBuilder = ImmutableResourceNotFoundErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(resourceNotFoundErrorBuilder::details);
-		return super.handleExceptionInternal(ex, resourceNotFoundErrorBuilder.build(), headers, status, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0404")
+					.issueDetails("The requested resource was not found or the user does not have access to the resource.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("404")
+					.statusDescriptionText("Not found")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@Override
@@ -109,25 +121,61 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ NonUniqueResourceException.class })
 	public ResponseEntity<Object> handleNonUniqueResourceException(NonUniqueResourceException ex, WebRequest request) {
-		final var unprocessableEntityErrorBuilder = ImmutableUnprocessableEntityErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(unprocessableEntityErrorBuilder::details);
-		return super.handleExceptionInternal(ex, unprocessableEntityErrorBuilder.build(), new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0422")
+					.issueDetails("Search query returned non-unique results.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("422")
+					.statusDescriptionText("Unprocessable entity")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
 	}
 
 	@ExceptionHandler({ ResourceNotFoundException.class })
 	public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-		final var resourceNotFoundErrorBuilder = ImmutableResourceNotFoundErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(resourceNotFoundErrorBuilder::details);
-		return super.handleExceptionInternal(ex, resourceNotFoundErrorBuilder.build(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0404")
+					.issueDetails("The requested resource was not found or the user does not have access to the resource.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("404")
+					.statusDescriptionText("Not found")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
 		final var correlationId = generateCorrelationId();
+
 		log.error("[correlationId: {}] Request processing failed; nested exception is {}: {}", correlationId, ex.getClass().getName(), ex.getMessage(), ex);
-		final var internalServerErrorBuilder = ImmutableInternalServerErrorModel.builder().correlationId(correlationId);
-		Optional.ofNullable(ex.getMessage()).ifPresent(internalServerErrorBuilder::details);
-		return super.handleExceptionInternal(ex, internalServerErrorBuilder.build(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+
+		final var body = ImmutableErrorResponseModel.builder()
+			.correlationId(correlationId)
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0500")
+					.issueDetails("An unexpected error has occurred.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("500")
+					.statusDescriptionText("Internal server error")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
 	protected String generateCorrelationId() {
