@@ -45,7 +45,7 @@ public class SpringDocConfig {
 				.addSecuritySchemes(HTTP, new SecurityScheme()
 					.type(Type.HTTP)
 					.description(swaggerUiProperties.authentication().http().description())
-					.scheme("Bearer")
+					.scheme("bearer")
 					.bearerFormat("JWT"));
 
 			openApi.getComponents()
