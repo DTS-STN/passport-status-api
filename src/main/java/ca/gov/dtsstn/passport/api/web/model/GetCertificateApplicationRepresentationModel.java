@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@Schema(name = "GetCertificateApplicationResponseModel")
+@Schema(name = "GetCertificateApplicationRepresentation")
 @JsonPropertyOrder({ "id", "CertificateApplication", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" })
 @Relation(collectionRelation = "GetCertificateApplicationResponse", itemRelation = "GetCertificateApplicationResponse")
 public class GetCertificateApplicationRepresentationModel extends AbstractRepresentationModel<GetCertificateApplicationRepresentationModel> {

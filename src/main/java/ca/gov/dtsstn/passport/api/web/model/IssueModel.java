@@ -9,10 +9,13 @@ import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Schema(name = "Issue")
 @Style(validationMethod = ValidationMethod.NONE)
 public interface IssueModel extends Serializable {
 

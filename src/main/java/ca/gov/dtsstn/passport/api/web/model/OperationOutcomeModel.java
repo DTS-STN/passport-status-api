@@ -11,10 +11,13 @@ import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Schema(name = "OperationOutcome")
 @Style(validationMethod = ValidationMethod.NONE)
 public interface OperationOutcomeModel extends Serializable {
 
@@ -23,11 +26,11 @@ public interface OperationOutcomeModel extends Serializable {
 
 	@Default
 	@JsonProperty("OperationOutcome")
-	default OperationOutcomeDate getOperationOutcomeDate() {
+	default OperationOutcomeDateModel getOperationOutcomeDate() {
 		return ImmutableOperationOutcomeDate.builder().dateTime(Instant.now()).build();
 	}
 
 	@JsonProperty("OperationOutcomeStatus")
-	OperationOutcomeStatus getOperationOutcomeStatus();
+	OperationOutcomeStatusModel getOperationOutcomeStatus();
 
 }
