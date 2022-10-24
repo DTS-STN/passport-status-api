@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.config;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -56,12 +58,7 @@ public class SpringDocConfig {
 
 	@Autowired ObjectMapper objectMapper;
 
-	/**
-	 * @param environment
-	 * @param gitProperties
-	 * @param swaggerUiProperties
-	 * @return
-	 */
+	@SuppressWarnings({ "rawtypes" })
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties, SwaggerUiProperties swaggerUiProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
 
@@ -97,30 +94,22 @@ public class SpringDocConfig {
 			 * Customize the error responses to match what the API will actually return...
 			 */
 
-			final var accessDeniedErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			accessDeniedErrorSchema.schema.example(generateErrorExample("API-0403", "The server understands the request but refuses to authorize it.", "403", "Forbidden"));
-			final var authenticationErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			authenticationErrorSchema.schema.example(generateErrorExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", "401", "Unauthorized"));
-			final var badRequestErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			badRequestErrorSchema.schema.example(generateErrorExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
-			final var internalServerErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			internalServerErrorSchema.schema.example(generateErrorExample("API-0500", "An unexpected error has occurred.", "500", "Internal server error"));
-			final var resourceNotFoundErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			resourceNotFoundErrorSchema.schema.example(generateErrorExample("API-0404", "The requested resource was not found or the user does not have access to the resource.", "404", "Not found"));
-			final var unprocessableEntityErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-			unprocessableEntityErrorSchema.schema.example(generateErrorExample("API-0422", "The server understands the request, but is unable to process it.", "422", "Unprocessable entity"));
-
-			openApi.getComponents().getSchemas().put(SchemaRefs.ACCESS_DENIED_ERROR, accessDeniedErrorSchema.schema);
-			openApi.getComponents().getSchemas().put(SchemaRefs.AUTHENTICATION_ERROR, authenticationErrorSchema.schema);
-			openApi.getComponents().getSchemas().put(SchemaRefs.BAD_REQUEST_ERROR, badRequestErrorSchema.schema);
-			openApi.getComponents().getSchemas().put(SchemaRefs.INTERNAL_SERVER_ERROR, internalServerErrorSchema.schema);
-			openApi.getComponents().getSchemas().put(SchemaRefs.RESOURCE_NOT_FOUND_ERROR, resourceNotFoundErrorSchema.schema);
-			openApi.getComponents().getSchemas().put(SchemaRefs.UNPROCESSABLE_ENTITY_ERROR, unprocessableEntityErrorSchema.schema);
+			final Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+			addErrorSchema(schemas, SchemaRefs.ACCESS_DENIED_ERROR, "API-0403", "The server understands the request but refuses to authorize it.", null, "403", "Forbidden");
+			addErrorSchema(schemas, SchemaRefs.AUTHENTICATION_ERROR, "API-0401", "The request lacks valid authentication credentials for the requested resource.", null, "401", "Unauthorized");
+			addErrorSchema(schemas, SchemaRefs.BAD_REQUEST_ERROR, "API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request");
+			addErrorSchema(schemas, SchemaRefs.INTERNAL_SERVER_ERROR, "API-0500", "An unexpected error has occurred.", null, "500", "Internal server error");
+			addErrorSchema(schemas, SchemaRefs.RESOURCE_NOT_FOUND_ERROR, "API-0404", "The requested resource was not found or the user does not have access to the resource.", null, "404", "Not found");
+			addErrorSchema(schemas, SchemaRefs.UNPROCESSABLE_ENTITY_ERROR, "API-0422", "The server understands the request, but is unable to process it.", null, "422", "Unprocessable entity");
 		};
 	}
 
-	protected String generateErrorExample(String issueCode, String issueDetails, String statusCode, String statusDescriptionText) {
-		return generateErrorExample(issueCode, issueDetails, null, statusCode, statusDescriptionText);
+	@SuppressWarnings({ "rawtypes" })
+	protected void addErrorSchema(Map<String, Schema> schemas, String schemaName, String issueCode, String issueDetails, String issueReferenceExpression, String statusCode, String statusDescriptionText) {
+		final var errorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+		errorSchema.referencedSchemas.forEach(schemas::put);
+		errorSchema.schema.example(generateErrorExample(issueCode, issueDetails, issueReferenceExpression, statusCode, statusDescriptionText));
+		schemas.put(schemaName, errorSchema.schema);
 	}
 
 	protected String generateErrorExample(String issueCode, String issueDetails, String issueReferenceExpression, String statusCode, String statusDescriptionText) {
