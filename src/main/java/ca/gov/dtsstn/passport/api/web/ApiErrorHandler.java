@@ -52,7 +52,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
 				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
 					.statusCode("400")
-					.statusDescriptionText("Bad request")
+					.statusDescriptionText("Bad request") // NOSONAR (repeated string)
 					.build())
 				.build())
 			.build();
@@ -65,7 +65,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
-					.issueCode("API-0400")
+					.issueCode("API-0400") // NOSONAR (repeated string)
 					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
 					.build())
 				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()

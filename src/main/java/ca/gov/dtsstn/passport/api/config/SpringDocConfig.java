@@ -36,13 +36,16 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 @Configuration
 public class SpringDocConfig {
 
-	public interface ExampleRefs {
-		static final String ACCESS_DENIED_ERROR = "AccessDeniedError";
-		static final String AUTHENTICATION_ERROR = "AuthenticationError";
-		static final String BAD_REQUEST_ERROR = "BadRequestError";
-		static final String INTERNAL_SERVER_ERROR = "InternalServerError";
-		static final String RESOURCE_NOT_FOUND_ERROR = "ResourceNotFoundError";
-		static final String UNPROCESSABLE_ENTITY_ERROR = "UnprocessableEntityError";
+	public final class ExampleRefs {
+
+		private ExampleRefs() { /* constants class */ }
+
+		public static final String ACCESS_DENIED_ERROR = "AccessDeniedError";
+		public static final String AUTHENTICATION_ERROR = "AuthenticationError";
+		public static final String BAD_REQUEST_ERROR = "BadRequestError";
+		public static final String INTERNAL_SERVER_ERROR = "InternalServerError";
+		public static final String RESOURCE_NOT_FOUND_ERROR = "ResourceNotFoundError";
+		public static final String UNPROCESSABLE_ENTITY_ERROR = "UnprocessableEntityError";
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
@@ -53,7 +56,6 @@ public class SpringDocConfig {
 
 	@Autowired ObjectMapper objectMapper;
 
-	@SuppressWarnings({ "rawtypes" })
 	@Bean OpenApiCustomiser openApiCustomizer(Environment environment, GitProperties gitProperties, SwaggerUiProperties swaggerUiProperties) {
 		log.info("Creating 'openApiCustomizer' bean");
 
