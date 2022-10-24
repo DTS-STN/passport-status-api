@@ -16,13 +16,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
+import ca.gov.dtsstn.passport.api.web.model.ErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeDate;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -95,25 +97,25 @@ public class SpringDocConfig {
 			 * Customize the error responses to match what the API will actually return...
 			 */
 
-			final var accessDeniedErrorSchema = new ObjectSchema().name(SchemaRefs.ACCESS_DENIED_ERROR)
-				.example(generateErrorExample("API-0403", "The server understands the request but refuses to authorize it.", "403", "Forbidden"));
-			final var authenticationErrorSchema = new ObjectSchema().name(SchemaRefs.AUTHENTICATION_ERROR)
-				.example(generateErrorExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", "401", "Unauthorized"));
-			final var badRequestErrorSchema = new ObjectSchema().name(SchemaRefs.BAD_REQUEST_ERROR)
-				.example(generateErrorExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
-			final var internalServerErrorSchema = new ObjectSchema().name(SchemaRefs.INTERNAL_SERVER_ERROR)
-				.example(generateErrorExample("API-0500", "An unexpected error has occurred.", "500", "Internal server error"));
-			final var resourceNotFoundErrorSchema = new ObjectSchema().name(SchemaRefs.RESOURCE_NOT_FOUND_ERROR)
-				.example(generateErrorExample("API-0404", "The requested resource was not found or the user does not have access to the resource.", "404", "Not found"));
-			final var unprocessableEntityErrorSchema = new ObjectSchema().name(SchemaRefs.UNPROCESSABLE_ENTITY_ERROR)
-				.example(generateErrorExample("API-0422", "The server understands the request, but is unable to process it.", "422", "Unprocessable entity"));
+			final var accessDeniedErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			accessDeniedErrorSchema.schema.example(generateErrorExample("API-0403", "The server understands the request but refuses to authorize it.", "403", "Forbidden"));
+			final var authenticationErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			authenticationErrorSchema.schema.example(generateErrorExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", "401", "Unauthorized"));
+			final var badRequestErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			badRequestErrorSchema.schema.example(generateErrorExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
+			final var internalServerErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			internalServerErrorSchema.schema.example(generateErrorExample("API-0500", "An unexpected error has occurred.", "500", "Internal server error"));
+			final var resourceNotFoundErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			resourceNotFoundErrorSchema.schema.example(generateErrorExample("API-0404", "The requested resource was not found or the user does not have access to the resource.", "404", "Not found"));
+			final var unprocessableEntityErrorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
+			unprocessableEntityErrorSchema.schema.example(generateErrorExample("API-0422", "The server understands the request, but is unable to process it.", "422", "Unprocessable entity"));
 
-			openApi.getComponents().getSchemas().put(accessDeniedErrorSchema.getName(), accessDeniedErrorSchema);
-			openApi.getComponents().getSchemas().put(authenticationErrorSchema.getName(), authenticationErrorSchema);
-			openApi.getComponents().getSchemas().put(badRequestErrorSchema.getName(), badRequestErrorSchema);
-			openApi.getComponents().getSchemas().put(internalServerErrorSchema.getName(), internalServerErrorSchema);
-			openApi.getComponents().getSchemas().put(resourceNotFoundErrorSchema.getName(), resourceNotFoundErrorSchema);
-			openApi.getComponents().getSchemas().put(unprocessableEntityErrorSchema.getName(), unprocessableEntityErrorSchema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.ACCESS_DENIED_ERROR, accessDeniedErrorSchema.schema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.AUTHENTICATION_ERROR, authenticationErrorSchema.schema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.BAD_REQUEST_ERROR, badRequestErrorSchema.schema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.INTERNAL_SERVER_ERROR, internalServerErrorSchema.schema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.RESOURCE_NOT_FOUND_ERROR, resourceNotFoundErrorSchema.schema);
+			openApi.getComponents().getSchemas().put(SchemaRefs.UNPROCESSABLE_ENTITY_ERROR, unprocessableEntityErrorSchema.schema);
 		};
 	}
 

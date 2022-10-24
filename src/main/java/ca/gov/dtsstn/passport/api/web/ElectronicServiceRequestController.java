@@ -16,7 +16,6 @@ import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
-import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +51,7 @@ public class ElectronicServiceRequestController {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@Operation(summary = "Create a new electronic service request.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
-	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
+	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(ref = SchemaRefs.BAD_REQUEST_ERROR)) })
 	public void create(@RequestBody @Validated CreateElectronicServiceRequestModel createElectronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", createElectronicServiceRequest);
 

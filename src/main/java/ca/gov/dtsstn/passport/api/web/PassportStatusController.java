@@ -44,7 +44,6 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModelAssembler;
-import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,7 +59,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping({ "/api/v1/passport-statuses" })
 @Tag(name = "Passport Statuses", description = "Passport Status API")
-@ApiResponse(responseCode = "500", description = "Internal server error.", content = { @Content(schema = @Schema(ref = SchemaRefs.INTERNAL_SERVER_ERROR)) })
+@ApiResponse(responseCode = "500", description = "Internal server error.", content = { @Content(schema = @Schema(name = "foobarbaz", ref = SchemaRefs.INTERNAL_SERVER_ERROR)) })
 public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
@@ -89,7 +88,7 @@ public class PassportStatusController {
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Create a new passport status.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
-	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class)) })
+	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(ref = SchemaRefs.BAD_REQUEST_ERROR)) })
 	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(ref = SchemaRefs.AUTHENTICATION_ERROR)) })
 	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(ref = SchemaRefs.ACCESS_DENIED_ERROR)) })
 	public void create(Authentication authentication, @RequestBody @Validated CreateCertificateApplicationRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
@@ -132,7 +131,7 @@ public class PassportStatusController {
 	@ResponseStatus(code = HttpStatus.OK)
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
-	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(implementation = BadRequestErrorModel.class))} )
+	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(ref = SchemaRefs.BAD_REQUEST_ERROR))} )
 	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(ref = SchemaRefs.UNPROCESSABLE_ENTITY_ERROR)) })
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
