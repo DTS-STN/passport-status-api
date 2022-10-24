@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
-import ca.gov.dtsstn.passport.api.config.SpringDocConfig.SchemaRefs;
 import ca.gov.dtsstn.passport.api.service.PassportStatusJmsService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
@@ -46,8 +45,6 @@ import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentat
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModelAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,9 +54,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @Validated
 @RestController
+@ApiResponses.InternalServerError
 @RequestMapping({ "/api/v1/passport-statuses" })
 @Tag(name = "Passport Statuses", description = "Passport Status API")
-@ApiResponse(responseCode = "500", description = "Internal server error.", content = { @Content(schema = @Schema(name = "foobarbaz", ref = SchemaRefs.INTERNAL_SERVER_ERROR)) })
 public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
@@ -82,15 +79,15 @@ public class PassportStatusController {
 	}
 
 	@PostMapping({ "" })
+	@ApiResponses.BadRequestError
+	@ApiResponses.AccessDeniedError
+	@ApiResponses.AuthenticationError
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	@Authorities.HasPassportStatusWriteAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Create a new passport status.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
-	@ApiResponse(responseCode = "400", description = "Returned if the server cannot or will not process the request due to something that is perceived to be a client error.", content = { @Content(schema = @Schema(ref = SchemaRefs.BAD_REQUEST_ERROR)) })
-	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(ref = SchemaRefs.AUTHENTICATION_ERROR)) })
-	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(ref = SchemaRefs.ACCESS_DENIED_ERROR)) })
 	public void create(Authentication authentication, @RequestBody @Validated CreateCertificateApplicationRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
 		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
 		passportStatusJmsService.send(mapper.toDomain(passportStatusCreateRequestModel));
@@ -98,27 +95,27 @@ public class PassportStatusController {
 
 	@GetMapping({ "/{id}" })
 	@ResponseStatus(HttpStatus.OK)
+	@ApiResponses.AccessDeniedError
+	@ApiResponses.AuthenticationError
+	@ApiResponses.ResourceNotFoundError
 	@Authorities.HasPassportStatusRead
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
-	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(ref = SchemaRefs.AUTHENTICATION_ERROR)) })
-	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(ref = SchemaRefs.ACCESS_DENIED_ERROR)) })
-	@ApiResponse(responseCode = "404", description = "Returned if the passport status was not found or the user does not have access to the resource.", content = { @Content(schema = @Schema(ref = SchemaRefs.RESOURCE_NOT_FOUND_ERROR)) })
 	public GetCertificateApplicationRepresentationModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[" + id + "]"));
+		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[%s]".formatted(id)));
 	}
 
 	@GetMapping({ "" })
 	@ResponseStatus(HttpStatus.OK)
+	@ApiResponses.AccessDeniedError
+	@ApiResponses.AuthenticationError
 	@Authorities.HasPassportStatusReadAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
-	@ApiResponse(responseCode = "401", description = "Returned if the request lacks valid authentication credentials for the requested resource.", content = { @Content(schema = @Schema(ref = SchemaRefs.AUTHENTICATION_ERROR)) })
-	@ApiResponse(responseCode = "403", description = "Returned if the the server understands the request but refuses to authorize it.", content = { @Content(schema = @Schema(ref = SchemaRefs.ACCESS_DENIED_ERROR)) })
 	public PagedModel<GetCertificateApplicationRepresentationModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
 		return assembler.toModel(service.readAll(pageable));
 	}
@@ -128,11 +125,11 @@ public class PassportStatusController {
 	 *       @RequestParam(required = false) lets JSR validation handle the validation (instead of Spring's web binder)
 	 */
 	@GetMapping({ "/_search" })
+	@ApiResponses.BadRequestError
 	@ResponseStatus(code = HttpStatus.OK)
+	@ApiResponses.UnprocessableEntityError
 	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
-	@ApiResponse(responseCode = "400", description = "Returned if any of the request parameters are not valid.", content = { @Content(schema = @Schema(ref = SchemaRefs.BAD_REQUEST_ERROR))} )
-	@ApiResponse(responseCode = "422", description = "Returned if uniqueness was requested but the search query returned non-unique results.", content = { @Content(schema = @Schema(ref = SchemaRefs.UNPROCESSABLE_ENTITY_ERROR)) })
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")

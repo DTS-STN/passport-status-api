@@ -2,7 +2,6 @@ package ca.gov.dtsstn.passport.api.config;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,21 +11,19 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
-import ca.gov.dtsstn.passport.api.web.model.ErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeDate;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
-import io.swagger.v3.core.converter.AnnotatedType;
-import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -39,15 +36,13 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 @Configuration
 public class SpringDocConfig {
 
-	public interface SchemaRefs {
-
+	public interface ExampleRefs {
 		static final String ACCESS_DENIED_ERROR = "AccessDeniedError";
 		static final String AUTHENTICATION_ERROR = "AuthenticationError";
 		static final String BAD_REQUEST_ERROR = "BadRequestError";
 		static final String INTERNAL_SERVER_ERROR = "InternalServerError";
 		static final String RESOURCE_NOT_FOUND_ERROR = "ResourceNotFoundError";
 		static final String UNPROCESSABLE_ENTITY_ERROR = "UnprocessableEntityError";
-
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(SpringDocConfig.class);
@@ -94,30 +89,21 @@ public class SpringDocConfig {
 			 * Customize the error responses to match what the API will actually return...
 			 */
 
-			final Map<String, Schema> schemas = openApi.getComponents().getSchemas();
-			addErrorSchema(schemas, SchemaRefs.ACCESS_DENIED_ERROR, "API-0403", "The server understands the request but refuses to authorize it.", null, "403", "Forbidden");
-			addErrorSchema(schemas, SchemaRefs.AUTHENTICATION_ERROR, "API-0401", "The request lacks valid authentication credentials for the requested resource.", null, "401", "Unauthorized");
-			addErrorSchema(schemas, SchemaRefs.BAD_REQUEST_ERROR, "API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request");
-			addErrorSchema(schemas, SchemaRefs.INTERNAL_SERVER_ERROR, "API-0500", "An unexpected error has occurred.", null, "500", "Internal server error");
-			addErrorSchema(schemas, SchemaRefs.RESOURCE_NOT_FOUND_ERROR, "API-0404", "The requested resource was not found or the user does not have access to the resource.", null, "404", "Not found");
-			addErrorSchema(schemas, SchemaRefs.UNPROCESSABLE_ENTITY_ERROR, "API-0422", "The server understands the request, but is unable to process it.", null, "422", "Unprocessable entity");
+			openApi.getComponents().addExamples(ExampleRefs.ACCESS_DENIED_ERROR, generateExample("API-0403", "The server understands the request but refuses to authorize it.", null, "403", "Forbidden"));
+			openApi.getComponents().addExamples(ExampleRefs.AUTHENTICATION_ERROR, generateExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", null, "401", "Unauthorized"));
+			openApi.getComponents().addExamples(ExampleRefs.BAD_REQUEST_ERROR, generateExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
+			openApi.getComponents().addExamples(ExampleRefs.INTERNAL_SERVER_ERROR, generateExample("API-0500", "An unexpected error has occurred.", null, "500", "Internal server error"));
+			openApi.getComponents().addExamples(ExampleRefs.RESOURCE_NOT_FOUND_ERROR, generateExample("API-0404", "The requested resource was not found or the user does not have access to the resource.", null, "404", "Not found"));
+			openApi.getComponents().addExamples(ExampleRefs.UNPROCESSABLE_ENTITY_ERROR, generateExample("API-0422", "The server understands the request, but is unable to process it.", null, "422", "Unprocessable entity"));
 		};
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	protected void addErrorSchema(Map<String, Schema> schemas, String schemaName, String issueCode, String issueDetails, String issueReferenceExpression, String statusCode, String statusDescriptionText) {
-		final var errorSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(ErrorResponseModel.class));
-		errorSchema.referencedSchemas.forEach(schemas::put);
-		errorSchema.schema.example(generateErrorExample(issueCode, issueDetails, issueReferenceExpression, statusCode, statusDescriptionText));
-		schemas.put(schemaName, errorSchema.schema);
-	}
-
-	protected String generateErrorExample(String issueCode, String issueDetails, String issueReferenceExpression, String statusCode, String statusDescriptionText) {
+	protected Example generateExample(String issueCode, String issueDetails, @Nullable String issueReferenceExpression, String statusCode, String statusDescriptionText) {
 		try {
 			final var dateTime = LocalDate.of(2000, 01, 01).atStartOfDay().toInstant(ZoneOffset.UTC);
 			final var issueSeverityCode = "error";
 
-			return objectMapper.writeValueAsString(ImmutableErrorResponseModel.builder()
+			return new Example().value(objectMapper.writeValueAsString(ImmutableErrorResponseModel.builder()
 				.operationOutcome(ImmutableOperationOutcomeModel.builder()
 					.addIssues(ImmutableIssueModel.builder()
 						.issueCode(issueCode)
@@ -133,7 +119,7 @@ public class SpringDocConfig {
 						.statusDescriptionText(statusDescriptionText)
 						.build())
 					.build())
-				.build());
+				.build()));
 		}
 		catch (final JsonProcessingException jsonProcessingException) {
 			throw new RuntimeException(jsonProcessingException); // NOSONAR (use custom exception)

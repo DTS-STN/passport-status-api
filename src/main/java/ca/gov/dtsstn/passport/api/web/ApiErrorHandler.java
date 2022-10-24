@@ -33,8 +33,6 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
 import ca.gov.dtsstn.passport.api.web.model.IssueModel;
-import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
 
 /**
  * API global error handler.
@@ -264,15 +262,6 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		Optional.ofNullable(fieldError.getField()).ifPresent(issueBuilder::issueReferenceExpression);
 
 		return issueBuilder.build();
-	}
-
-	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {
-		Assert.notNull(fieldError, "fieldError is required; it must not be null");
-		final var fieldValidationErrorBuilder = ImmutableFieldValidationErrorModel.builder();
-		Optional.ofNullable(fieldError.getCode()).ifPresent(fieldValidationErrorBuilder::code);
-		Optional.ofNullable(fieldError.getField()).ifPresent(fieldValidationErrorBuilder::field);
-		Optional.ofNullable(fieldError.getDefaultMessage()).ifPresent(fieldValidationErrorBuilder::message);
-		return fieldValidationErrorBuilder.build();
 	}
 
 }
