@@ -39,6 +39,7 @@ public class SpringDocConfig {
 
 		static final String ACCESS_DENIED_ERROR = "AccessDeniedError";
 		static final String AUTHENTICATION_ERROR = "AuthenticationError";
+		static final String BAD_REQUEST_ERROR = "BadRequestError";
 		static final String INTERNAL_SERVER_ERROR = "InternalServerError";
 		static final String RESOURCE_NOT_FOUND_ERROR = "ResourceNotFoundError";
 		static final String UNPROCESSABLE_ENTITY_ERROR = "UnprocessableEntityError";
@@ -98,6 +99,8 @@ public class SpringDocConfig {
 				.example(generateErrorExample("API-0403", "The server understands the request but refuses to authorize it.", "403", "Forbidden"));
 			final var authenticationErrorSchema = new ObjectSchema().name(SchemaRefs.AUTHENTICATION_ERROR)
 				.example(generateErrorExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", "401", "Unauthorized"));
+			final var badRequestErrorSchema = new ObjectSchema().name(SchemaRefs.BAD_REQUEST_ERROR)
+				.example(generateErrorExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
 			final var internalServerErrorSchema = new ObjectSchema().name(SchemaRefs.INTERNAL_SERVER_ERROR)
 				.example(generateErrorExample("API-0500", "An unexpected error has occurred.", "500", "Internal server error"));
 			final var resourceNotFoundErrorSchema = new ObjectSchema().name(SchemaRefs.RESOURCE_NOT_FOUND_ERROR)
@@ -107,6 +110,7 @@ public class SpringDocConfig {
 
 			openApi.getComponents().getSchemas().put(accessDeniedErrorSchema.getName(), accessDeniedErrorSchema);
 			openApi.getComponents().getSchemas().put(authenticationErrorSchema.getName(), authenticationErrorSchema);
+			openApi.getComponents().getSchemas().put(badRequestErrorSchema.getName(), badRequestErrorSchema);
 			openApi.getComponents().getSchemas().put(internalServerErrorSchema.getName(), internalServerErrorSchema);
 			openApi.getComponents().getSchemas().put(resourceNotFoundErrorSchema.getName(), resourceNotFoundErrorSchema);
 			openApi.getComponents().getSchemas().put(unprocessableEntityErrorSchema.getName(), unprocessableEntityErrorSchema);
@@ -114,6 +118,10 @@ public class SpringDocConfig {
 	}
 
 	protected String generateErrorExample(String issueCode, String issueDetails, String statusCode, String statusDescriptionText) {
+		return generateErrorExample(issueCode, issueDetails, null, statusCode, statusDescriptionText);
+	}
+
+	protected String generateErrorExample(String issueCode, String issueDetails, String issueReferenceExpression, String statusCode, String statusDescriptionText) {
 		try {
 			final var dateTime = LocalDate.of(2000, 01, 01).atStartOfDay().toInstant(ZoneOffset.UTC);
 			final var issueSeverityCode = "error";
@@ -123,6 +131,7 @@ public class SpringDocConfig {
 					.addIssues(ImmutableIssueModel.builder()
 						.issueCode(issueCode)
 						.issueDetails(issueDetails)
+						.issueReferenceExpression(issueReferenceExpression)
 						.issueSeverityCode(issueSeverityCode)
 						.build())
 					.operationOutcomeDate(ImmutableOperationOutcomeDate.builder()

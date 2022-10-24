@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.immutables.value.Value.Immutable;
@@ -20,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutableCreateCertificateApplicationRequestModel.class)
 public interface CreateCertificateApplicationRequestModel extends Serializable {
 
+	@Valid
 	@Nullable
 	@JsonProperty("CertificateApplication")
 	@NotNull(message = "CertificateApplication is required; it must not be null")

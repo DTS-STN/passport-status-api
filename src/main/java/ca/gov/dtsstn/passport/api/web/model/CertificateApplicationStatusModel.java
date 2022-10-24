@@ -24,7 +24,7 @@ public interface CertificateApplicationStatusModel extends Serializable {
 	@Nullable
 	@JsonProperty("StatusCode")
 	@NotBlank(message = "StatusCode is required; it must not null or blank")
-	@Schema(description = "The certificate application status code.", example = "000")
+	@Schema(description = "The certificate application status code.", example = "1")
 	String getStatusCode();
 
 }

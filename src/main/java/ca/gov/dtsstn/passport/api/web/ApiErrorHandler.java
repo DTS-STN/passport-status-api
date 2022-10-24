@@ -1,6 +1,5 @@
 package ca.gov.dtsstn.passport.api.web;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,14 +14,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -32,8 +32,8 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
+import ca.gov.dtsstn.passport.api.web.model.IssueModel;
 import ca.gov.dtsstn.passport.api.web.model.error.BadRequestErrorModel.FieldValidationErrorModel;
-import ca.gov.dtsstn.passport.api.web.model.error.ImmutableBadRequestErrorModel;
 import ca.gov.dtsstn.passport.api.web.model.error.ImmutableFieldValidationErrorModel;
 
 /**
@@ -49,25 +49,50 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList();
-		final var validationErrors = ex.getFieldErrors().stream().map(this::toValidationError).toList();
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder().details(details).fieldValidationErrors(validationErrors);
-		return handleExceptionInternal(ex, badRequestErrorBuilder.build(), headers, status, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
-		return super.handleExceptionInternal(ex, badRequestErrorBuilder.build(), headers, status, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0400")
+					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var details = ex.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList();
-		final var validationErrors = ex.getFieldErrors().stream().map(this::toValidationError).toList();
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder().details(details).fieldValidationErrors(validationErrors);
-		return handleExceptionInternal(ex, badRequestErrorBuilder.build(), headers, status, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@Override
@@ -90,33 +115,78 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	@Override
 	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
-		return super.handleExceptionInternal(ex, badRequestErrorBuilder.build(), headers, status, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0400")
+					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@Override
 	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		final var message = "Invalid value for %s: %s".formatted(ex.getPropertyName(), ex.getValue());
-		final var fieldValidationErrorBuilder = ImmutableFieldValidationErrorModel.builder().code("InvalidFormat").message(message);
-		Optional.ofNullable(ex.getPropertyName()).ifPresent(fieldValidationErrorBuilder::field);
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder().details(List.of(message)).fieldValidationErrors(List.of(fieldValidationErrorBuilder.build()));
-		return super.handleExceptionInternal(ex, badRequestErrorBuilder.build(), headers, status, request);
+		final var fieldName = ClassUtils.isAssignableValue(MethodArgumentTypeMismatchException.class, ex)
+			? ((MethodArgumentTypeMismatchException) ex).getName() : ex.getPropertyName();
+
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueDetails("Invalid value for %s: %s".formatted(fieldName, ex.getValue()))
+					.issueReferenceExpression(fieldName)
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
 	@ExceptionHandler({ ConstraintViolationException.class })
 	public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder();
-		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
-		return super.handleExceptionInternal(ex, badRequestErrorBuilder.build(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0400")
+					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler({ ConversionFailedException.class })
 	public ResponseEntity<Object> handleConversionFailedException(ConversionFailedException ex, WebRequest request) {
-		final var details = List.of("Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName());
-		final var badRequestErrorBuilder = ImmutableBadRequestErrorModel.builder().details(details);
-		Optional.ofNullable(ex.getMessage()).ifPresent(badRequestErrorBuilder::message);
-		return super.handleExceptionInternal(ex, badRequestErrorBuilder.build(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+		final var details = "Failed to convert value [" + ex.getValue() + "] to target type " + ex.getTargetType().getName();
+		final var body = ImmutableErrorResponseModel.builder()
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0400")
+					.issueDetails(details) // TODO :: GjB :: generate a better error
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.statusCode("400")
+					.statusDescriptionText("Bad request")
+					.build())
+				.build())
+			.build();
+
+		return super.handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler({ NonUniqueResourceException.class })
@@ -180,6 +250,20 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	protected String generateCorrelationId() {
 		return UUID.randomUUID().toString();
+	}
+
+	protected IssueModel toIssue(FieldError fieldError) {
+		Assert.notNull(fieldError, "fieldError is required; it must not be null");
+		final var issueBuilder = ImmutableIssueModel.builder();
+		Optional.ofNullable(fieldError.getCode()).ifPresent(issueBuilder::issueCode);
+		Optional.ofNullable(fieldError.getDefaultMessage()).ifPresent(issueBuilder::issueDetails);
+
+		// TODO :: GjB :: this renders certificateApplication.certificateApplicationApplicant.personName.personSurname
+		// when it should render $.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]
+		// (I hate NIEM...)
+		Optional.ofNullable(fieldError.getField()).ifPresent(issueBuilder::issueReferenceExpression);
+
+		return issueBuilder.build();
 	}
 
 	protected FieldValidationErrorModel toValidationError(FieldError fieldError) {

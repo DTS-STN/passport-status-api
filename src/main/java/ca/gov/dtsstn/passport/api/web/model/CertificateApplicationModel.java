@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,18 +26,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface CertificateApplicationModel extends Serializable {
 
 
+	@Valid
 	@Nullable
 	@JsonProperty("CertificateApplicationApplicant")
 	@JsonView({ Authorities.AuthenticatedView.class })
 	@NotNull(message = "CertificateApplicationApplicant is required; it must not be null")
 	CertificateApplicationApplicantModel getCertificateApplicationApplicant();
 
+	@Valid
 	@Nullable
 	@JsonProperty("CertificateApplicationDate")
 	@JsonView({ Authorities.AuthenticatedView.class })
 	@NotNull(message = "CertificateApplicationDate is required; it must not be null")
 	CertificateApplicationDateModel getCertificateApplicationDate();
 
+	@Valid
 	@Nullable
 	@JsonView({ Authorities.AuthenticatedView.class })
 	@JsonProperty("CertificateApplicationIdentification")
@@ -45,6 +49,7 @@ public interface CertificateApplicationModel extends Serializable {
 	@Schema(example = "[{\"IdentificationCategoryText\": \"Application Register SID\", \"IdentificationID\": \"ABCD1234\" },{ \"IdentificationCategoryText\": \"File Number\", \"IdentificationID\": \"ABCD1234\" }]")
 	List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications();
 
+	@Valid
 	@Nullable
 	@JsonProperty("CertificateApplicationStatus")
 	@NotNull(message = "CertificateApplicationStatus is required; it must not be null")
