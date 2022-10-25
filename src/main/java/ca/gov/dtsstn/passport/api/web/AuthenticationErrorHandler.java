@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatusModel;
 
 /**
  * This class functions as both a {@code RestControllerAdvice}, as well as a
@@ -65,7 +65,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 					.issueCode("API-0401")
 					.issueDetails("The request lacks valid authentication credentials for the requested resource.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("401")
 					.statusDescriptionText("Unauthorized")
 					.build())
@@ -91,7 +91,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 					.issueCode("API-0403")
 					.issueDetails("The server understands the request but refuses to authorize it.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("403")
 					.statusDescriptionText("Forbidden")
 					.build())

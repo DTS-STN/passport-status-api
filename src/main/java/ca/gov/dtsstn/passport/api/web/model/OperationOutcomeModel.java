@@ -1,13 +1,10 @@
 package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.List;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Style;
-import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "OperationOutcome")
-@Style(validationMethod = ValidationMethod.NONE)
 public interface OperationOutcomeModel extends Serializable {
 
 	@JsonProperty("Issue")
@@ -29,7 +25,7 @@ public interface OperationOutcomeModel extends Serializable {
 	@Schema(required = true)
 	@JsonProperty("OperationOutcome")
 	default OperationOutcomeDateModel getOperationOutcomeDate() {
-		return ImmutableOperationOutcomeDate.builder().dateTime(Instant.now()).build();
+		return ImmutableOperationOutcomeDateModel.builder().build();
 	}
 
 	@Schema(required = true)

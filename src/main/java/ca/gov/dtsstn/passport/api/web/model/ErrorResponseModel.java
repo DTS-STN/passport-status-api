@@ -3,8 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Style;
-import org.immutables.value.Value.Style.ValidationMethod;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,9 +14,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "ErrorResponse")
-@Style(validationMethod = ValidationMethod.NONE)
 public interface ErrorResponseModel extends Serializable {
 
+	@Nullable
 	@Schema(required = false)
 	@JsonProperty("CorrelationID")
 	String getCorrelationId();

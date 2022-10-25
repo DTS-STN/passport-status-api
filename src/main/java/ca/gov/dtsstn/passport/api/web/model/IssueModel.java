@@ -4,8 +4,7 @@ import java.io.Serializable;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
-import org.immutables.value.Value.Style;
-import org.immutables.value.Value.Style.ValidationMethod;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Immutable
 @Schema(name = "Issue")
-@Style(validationMethod = ValidationMethod.NONE)
 public interface IssueModel extends Serializable {
 
 	@Schema(required = true)
@@ -34,6 +32,7 @@ public interface IssueModel extends Serializable {
 		return "error";
 	}
 
+	@Nullable
 	@Schema(required = false)
 	@JsonProperty("IssueReferenceExpression")
 	String getIssueReferenceExpression();

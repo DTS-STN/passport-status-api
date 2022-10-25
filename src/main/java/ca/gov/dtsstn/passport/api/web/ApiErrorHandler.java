@@ -31,7 +31,7 @@ import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.IssueModel;
 
 /**
@@ -50,7 +50,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request") // NOSONAR (repeated string)
 					.build())
@@ -68,7 +68,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0400") // NOSONAR (repeated string)
 					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -83,7 +83,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -101,7 +101,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0404")
 					.issueDetails("The requested resource was not found or the user does not have access to the resource.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("404")
 					.statusDescriptionText("Not found")
 					.build())
@@ -119,7 +119,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0400")
 					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -140,7 +140,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueDetails("Invalid value for %s: %s".formatted(fieldName, ex.getValue()))
 					.issueReferenceExpression(fieldName)
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -158,7 +158,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0400")
 					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -177,7 +177,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0400")
 					.issueDetails(details) // TODO :: GjB :: generate a better error
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
 					.build())
@@ -195,7 +195,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0422")
 					.issueDetails("Search query returned non-unique results.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("422")
 					.statusDescriptionText("Unprocessable entity")
 					.build())
@@ -213,7 +213,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0404")
 					.issueDetails("The requested resource was not found or the user does not have access to the resource.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("404")
 					.statusDescriptionText("Not found")
 					.build())
@@ -236,7 +236,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 					.issueCode("API-0500")
 					.issueDetails("An unexpected error has occurred.")
 					.build())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("500")
 					.statusDescriptionText("Internal server error")
 					.build())

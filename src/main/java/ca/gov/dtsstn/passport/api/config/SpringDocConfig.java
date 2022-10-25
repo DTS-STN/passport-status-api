@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeDate;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeDateModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatus;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatusModel;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.security.OAuthFlow;
@@ -113,10 +113,10 @@ public class SpringDocConfig {
 						.issueReferenceExpression(issueReferenceExpression)
 						.issueSeverityCode(issueSeverityCode)
 						.build())
-					.operationOutcomeDate(ImmutableOperationOutcomeDate.builder()
+					.operationOutcomeDate(ImmutableOperationOutcomeDateModel.builder()
 						.dateTime(dateTime)
 						.build())
-					.operationOutcomeStatus(ImmutableOperationOutcomeStatus.builder()
+					.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 						.statusCode(statusCode)
 						.statusDescriptionText(statusDescriptionText)
 						.build())
