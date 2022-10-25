@@ -11,6 +11,7 @@ import org.immutables.value.Value.Style.ValidationMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import ca.gov.dtsstn.passport.api.web.validation.PassportStatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -24,6 +25,7 @@ public interface CertificateApplicationStatusModel extends Serializable {
 
 
 	@JsonProperty("StatusCode")
+	@PassportStatusCode(message = "StatusCode is invalid or unknown")
 	@NotBlank(message = "StatusCode is required; it must not null or blank")
 	@Schema(description = "The certificate application status code.", example = "1")
 	String getStatusCode();
