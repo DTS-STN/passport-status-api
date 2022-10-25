@@ -255,12 +255,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		final var issueBuilder = ImmutableIssueModel.builder();
 		Optional.ofNullable(fieldError.getCode()).ifPresent(issueBuilder::issueCode);
 		Optional.ofNullable(fieldError.getDefaultMessage()).ifPresent(issueBuilder::issueDetails);
-
-		// TODO :: GjB :: this renders certificateApplication.certificateApplicationApplicant.personName.personSurname
-		// when it should render $.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]
-		// (I hate NIEM...)
-		Optional.ofNullable(fieldError.getField()).ifPresent(issueBuilder::issueReferenceExpression);
-
+		Optional.ofNullable(fieldError.getField()).map(field -> "$." + field).ifPresent(issueBuilder::issueReferenceExpression);
 		return issueBuilder.build();
 	}
 
