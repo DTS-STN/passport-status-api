@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface OperationOutcomeDateModel extends Serializable {
 
 	@Default
+	@Schema(required = true)
 	@JsonProperty("DateTime")
 	default Instant getDateTime() {
 		return Instant.now();

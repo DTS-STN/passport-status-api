@@ -22,14 +22,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface OperationOutcomeModel extends Serializable {
 
 	@JsonProperty("Issue")
+	@Schema(required = true)
 	List<IssueModel> getIssues();
 
 	@Default
+	@Schema(required = true)
 	@JsonProperty("OperationOutcome")
 	default OperationOutcomeDateModel getOperationOutcomeDate() {
 		return ImmutableOperationOutcomeDate.builder().dateTime(Instant.now()).build();
 	}
 
+	@Schema(required = true)
 	@JsonProperty("OperationOutcomeStatus")
 	OperationOutcomeStatusModel getOperationOutcomeStatus();
 

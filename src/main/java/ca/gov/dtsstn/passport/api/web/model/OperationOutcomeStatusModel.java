@@ -18,9 +18,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Style(validationMethod = ValidationMethod.NONE)
 public interface OperationOutcomeStatusModel extends Serializable {
 
+	@Schema(required = true)
 	@JsonProperty("StatusCode")
 	String getStatusCode();
 
+	@Schema(required = true)
 	@JsonProperty("StatusDescriptionText")
 	String getStatusDescriptionText();
 

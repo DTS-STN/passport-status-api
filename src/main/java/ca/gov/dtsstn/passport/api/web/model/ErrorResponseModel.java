@@ -18,9 +18,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Style(validationMethod = ValidationMethod.NONE)
 public interface ErrorResponseModel extends Serializable {
 
+	@Schema(required = false)
 	@JsonProperty("CorrelationID")
 	String getCorrelationId();
 
+	@Schema(required = true)
 	@JsonProperty("OperationOutcome")
 	OperationOutcomeModel getOperationOutcome();
 
