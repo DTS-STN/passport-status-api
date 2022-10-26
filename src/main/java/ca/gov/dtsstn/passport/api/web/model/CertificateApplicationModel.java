@@ -41,15 +41,6 @@ public interface CertificateApplicationModel extends Serializable {
 
 	@Valid
 	@Default
-	@JsonProperty("CertificateApplicationDate")
-	@JsonView({ Authorities.AuthenticatedView.class })
-	@NotNull(message = "CertificateApplicationDate is required; it must not be null")
-	default CertificateApplicationDateModel getCertificateApplicationDate() {
-		return ImmutableCertificateApplicationDateModel.builder().build();
-	}
-
-	@Valid
-	@Default
 	@JsonView({ Authorities.AuthenticatedView.class })
 	@JsonProperty("CertificateApplicationIdentification")
 	@NotNull(message = "CertificateApplicationIdentification is required; it must not be null")

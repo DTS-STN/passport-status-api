@@ -243,7 +243,6 @@ class CertificateApplicationModelMapperTests {
 			        "PersonSurName": "Doe"
 			      }
 			    },
-			    "CertificateApplicationDate": { "Date": "2000-01-01" },
 			    "CertificateApplicationIdentification": [{
 			      "IdentificationCategoryText": "Application Register SID",
 			      "IdentificationID": "ABCD1234"
@@ -251,7 +250,10 @@ class CertificateApplicationModelMapperTests {
 			      "IdentificationCategoryText": "File Number",
 			      "IdentificationID": "ABCD1234"
 			    }],
-			    "CertificateApplicationStatus": { "StatusCode": "1" }
+			    "CertificateApplicationStatus": {
+			      "StatusCode": "1",
+			      "StatusDate": "2000-01-01"
+			    }
 			  }
 			}
 			""", CreateCertificateApplicationRequestModel.class);
