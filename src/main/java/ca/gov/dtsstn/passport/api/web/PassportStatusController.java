@@ -48,6 +48,7 @@ import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentat
 import ca.gov.dtsstn.passport.api.web.validation.Boolean;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -100,7 +101,7 @@ public class PassportStatusController {
 
 			@RequestParam(defaultValue = "true", required = false)
 			@Boolean(message = "async must be one of: 'true', 'false'")
-			@Parameter(description = "If the request should be handled asynchronously.")
+			@Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = { "false", "true" }, defaultValue = "true"))
 			String async) {
 		if (!BooleanUtils.toBoolean(async)) {
 			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
