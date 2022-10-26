@@ -1,3 +1,21 @@
+CREATE TABLE event_log (
+	id VARCHAR(64) NOT NULL,
+
+	description VARCHAR(256) NOT NULL,
+	details VARCHAR(65536) NOT NULL,
+	event_type VARCHAR(32) NOT NULL,
+	actor VARCHAR(128),
+	source VARCHAR(256),
+
+	-- audit fields
+	created_by VARCHAR(64) NOT NULL,
+	created_date TIMESTAMP NOT NULL,
+	last_modified_by VARCHAR(64) NULL,
+	last_modified_date TIMESTAMP NULL,
+
+	CONSTRAINT pk_event_log PRIMARY KEY (id)
+);
+
 CREATE TABLE email_request (
 	id VARCHAR(64) NOT NULL,
 
