@@ -3,15 +3,19 @@ package ca.gov.dtsstn.passport.api.web;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -25,6 +29,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
@@ -60,13 +66,17 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, body, headers, status, request);
 	}
 
+	/**
+	 * A {@link HttpMessageNotReadableException} is thrown the {@link HttpMessageConverter#read(Class, HttpInputMessage)} method fails.
+	 * (ie: when the incoming JSON is malformed)
+	 */
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
 					.issueCode("API-0400") // NOSONAR (repeated string)
-					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
+					.issueDetails(generateIssueDetails(ex))
 					.build())
 				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
@@ -78,6 +88,10 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
+	/**
+	 * A {@link MethodArgumentNotValidException} is thrown when model-level (ie: request body) validation fails.
+	 * (ie: {@code POST} to {@code /api/v1/passport-statuses} with an invalid date of birth in the request body)
+	 */
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
@@ -150,14 +164,15 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 		return super.handleExceptionInternal(ex, body, headers, status, request);
 	}
 
+	/**
+	 * A {@link ConstraintViolationException} is thrown when controller-level validation fails.
+	 * (ie: {@code POST} to {@code /api/v1/passport-statuses?async=pantera} with an async parameter)
+	 */
 	@ExceptionHandler({ ConstraintViolationException.class })
 	public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
-				.addIssues(ImmutableIssueModel.builder()
-					.issueCode("API-0400")
-					.issueDetails(ex.getMessage()) // TODO :: GjB :: generate a better error
-					.build())
+				.addAllIssues(ex.getConstraintViolations().stream().map(this::toIssue).toList())
 				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
 					.statusCode("400")
 					.statusDescriptionText("Bad request")
@@ -248,6 +263,28 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	protected String generateCorrelationId() {
 		return UUID.randomUUID().toString();
+	}
+
+	protected String generateIssueDetails(HttpMessageNotReadableException ex) {
+		final var cause = ex.getMostSpecificCause();
+
+		if (ClassUtils.isAssignableValue(MismatchedInputException.class, cause)) {
+			final var mismatchedInputException = (MismatchedInputException) cause;
+			final var location = mismatchedInputException.getLocation();
+			final var lineNumber = location.getLineNr();
+			final var columnNumber = location.getColumnNr();
+			return "JSON parse error: could not parse incoming JSON; error on line %s, column %s".formatted(lineNumber, columnNumber);
+		}
+
+		return "JSON parse error: could not parse incoming JSON.";
+	}
+
+	protected IssueModel toIssue(ConstraintViolation<?> constraintViolation) {
+		Assert.notNull(constraintViolation, "constraintViolation is required; it must not be null");
+		final var issueBuilder = ImmutableIssueModel.builder();
+		Optional.ofNullable(constraintViolation.getPropertyPath()).map(Path::toString).ifPresent(issueBuilder::issueCode);
+		Optional.ofNullable(constraintViolation.getMessage()).ifPresent(issueBuilder::issueDetails);
+		return issueBuilder.build();
 	}
 
 	protected IssueModel toIssue(FieldError fieldError) {

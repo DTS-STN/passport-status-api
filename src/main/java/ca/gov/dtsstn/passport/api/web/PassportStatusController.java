@@ -6,10 +6,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModelAssembler;
+import ca.gov.dtsstn.passport.api.web.validation.Boolean;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -88,8 +91,21 @@ public class PassportStatusController {
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
 	@Operation(summary = "Create a new passport status.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
-	public void create(Authentication authentication, @RequestBody @Validated CreateCertificateApplicationRequestModel passportStatusCreateRequestModel, @Parameter(description = "If the request should be handled asynchronously.") @RequestParam(defaultValue = "true", required = false) boolean async) {
-		if (!async) { throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true"); }
+	public void create(
+			Authentication authentication,
+
+			@Valid
+			@RequestBody
+			CreateCertificateApplicationRequestModel passportStatusCreateRequestModel,
+
+			@RequestParam(defaultValue = "true", required = false)
+			@Boolean(message = "async must be one of: 'true', 'false'")
+			@Parameter(description = "If the request should be handled asynchronously.")
+			String async) {
+		if (!BooleanUtils.toBoolean(async)) {
+			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
+		}
+
 		passportStatusJmsService.send(mapper.toDomain(passportStatusCreateRequestModel));
 	}
 

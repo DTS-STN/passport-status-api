@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
@@ -25,6 +26,7 @@ public interface PersonContactInformationModel extends Serializable {
 
 	@JsonProperty("ContactEmailID")
 	@Email(message = "ContactEmailID must be a valid email address")
+	@Size(max = 256, message = "ContactEmailID must be 256 characters or less")
 	@Pattern(message = "email must be a valid email address", regexp = "[^@]+@[^@]+\\.[^@]+")
 	@Schema(description = "The email address of the certificate applicant.", example = "user@example.com")
 	String getContactEmailId();
