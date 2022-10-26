@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.web.model;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,6 +61,16 @@ public interface CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "lastName")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus", source = "status", qualifiedByName = { "toStatus" })
 	GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
+
+	/**
+	 * Map an ISO 8601 compliant date string to a {@link LocalDate}.
+	 * Throws a {@link DateTimeParseException} if the string is invalid.
+	 */
+	@Nullable
+	default LocalDate toLocalDate(@Nullable String date) {
+		if (date == null) { return null; }
+		return LocalDate.parse(date);
+	}
 
 	/**
 	 * Map a {@link CertificateApplicationApplicantModel} to a {@link PassportStatus.Status}. Returns {@code null} if

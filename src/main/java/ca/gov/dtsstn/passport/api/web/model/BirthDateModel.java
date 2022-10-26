@@ -3,7 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 
 import org.immutables.value.Value.Immutable;
@@ -25,9 +25,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface BirthDateModel extends Serializable {
 
 	@JsonProperty("Date")
-	@PastOrPresent(message = "Date must be in the past")
-	@NotNull(message = "Date is required; it must not be null")
-	@Schema(description = "The birth date of the certificate applicant in ISO 8601 format.", example = "2000-01-01")
-	LocalDate getDate();
+	@NotBlank(message = "Date is required; it must not be null or blank")
+	@PastOrPresent(message = "Date must be a valid ISO 8601 date format (yyyy-mm-dd) and in the past")
+	@Schema(description = "The birth date of the certificate applicant in ISO 8601 format.", example = "2000-01-01", implementation = LocalDate.class)
+	String getDate();
 
 }
