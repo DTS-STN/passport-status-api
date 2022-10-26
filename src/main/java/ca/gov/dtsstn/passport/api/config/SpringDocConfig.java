@@ -91,21 +91,22 @@ public class SpringDocConfig {
 			 * Customize the error responses to match what the API will actually return...
 			 */
 
-			openApi.getComponents().addExamples(ExampleRefs.ACCESS_DENIED_ERROR, generateExample("API-0403", "The server understands the request but refuses to authorize it.", null, "403", "Forbidden"));
-			openApi.getComponents().addExamples(ExampleRefs.AUTHENTICATION_ERROR, generateExample("API-0401", "The request lacks valid authentication credentials for the requested resource.", null, "401", "Unauthorized"));
-			openApi.getComponents().addExamples(ExampleRefs.BAD_REQUEST_ERROR, generateExample("API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
-			openApi.getComponents().addExamples(ExampleRefs.INTERNAL_SERVER_ERROR, generateExample("API-0500", "An unexpected error has occurred.", null, "500", "Internal server error"));
-			openApi.getComponents().addExamples(ExampleRefs.RESOURCE_NOT_FOUND_ERROR, generateExample("API-0404", "The requested resource was not found or the user does not have access to the resource.", null, "404", "Not found"));
-			openApi.getComponents().addExamples(ExampleRefs.UNPROCESSABLE_ENTITY_ERROR, generateExample("API-0422", "The server understands the request, but is unable to process it.", null, "422", "Unprocessable entity"));
+			openApi.getComponents().addExamples(ExampleRefs.ACCESS_DENIED_ERROR, generateExample(null, "API-0403", "The server understands the request but refuses to authorize it.", null, "403", "Forbidden"));
+			openApi.getComponents().addExamples(ExampleRefs.AUTHENTICATION_ERROR, generateExample(null, "API-0401", "The request lacks valid authentication credentials for the requested resource.", null, "401", "Unauthorized"));
+			openApi.getComponents().addExamples(ExampleRefs.BAD_REQUEST_ERROR, generateExample(null, "API-0400", "The the server cannot or will not process the request due to something that is perceived to be a client error.", "$.CertificateApplication.CertificateApplicationApplicant.PersonName.PersonGivenName[:1]", "400", "Bad request"));
+			openApi.getComponents().addExamples(ExampleRefs.INTERNAL_SERVER_ERROR, generateExample("00000000-0000-0000-0000-000000000000", "API-0500", "An unexpected error has occurred.", null, "500", "Internal server error"));
+			openApi.getComponents().addExamples(ExampleRefs.RESOURCE_NOT_FOUND_ERROR, generateExample(null, "API-0404", "The requested resource was not found or the user does not have access to the resource.", null, "404", "Not found"));
+			openApi.getComponents().addExamples(ExampleRefs.UNPROCESSABLE_ENTITY_ERROR, generateExample(null, "API-0422", "The server understands the request, but is unable to process it.", null, "422", "Unprocessable entity"));
 		};
 	}
 
-	protected Example generateExample(String issueCode, String issueDetails, @Nullable String issueReferenceExpression, String statusCode, String statusDescriptionText) {
+	protected Example generateExample(String correlationId, String issueCode, String issueDetails, @Nullable String issueReferenceExpression, String statusCode, String statusDescriptionText) {
 		try {
 			final var dateTime = LocalDate.of(2000, 01, 01).atStartOfDay().toInstant(ZoneOffset.UTC);
 			final var issueSeverityCode = "error";
 
 			return new Example().value(objectMapper.writeValueAsString(ImmutableErrorResponseModel.builder()
+				.correlationId(correlationId)
 				.operationOutcome(ImmutableOperationOutcomeModel.builder()
 					.addIssues(ImmutableIssueModel.builder()
 						.issueCode(issueCode)
