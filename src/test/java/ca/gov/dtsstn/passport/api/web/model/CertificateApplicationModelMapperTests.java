@@ -159,6 +159,7 @@ class CertificateApplicationModelMapperTests {
 		final var firstName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
 		final var lastName = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
 		final var status = PassportStatus.Status.APPROVED;
+		final var statusDate = LocalDate.of(2000, 01, 01);
 
 		final var passportStatus = ImmutablePassportStatus.builder()
 			.applicationRegisterSid(applicationRegisterSid)
@@ -168,6 +169,7 @@ class CertificateApplicationModelMapperTests {
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(status)
+			.statusDate(statusDate)
 			.build();
 
 		final var getCertificateApplicationRepresentation = mapper.toModel(passportStatus);
@@ -220,6 +222,12 @@ class CertificateApplicationModelMapperTests {
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
 			.extracting(CertificateApplicationStatusModel::getStatusCode)
 			.isNotNull(); // TODO :: GjB :: fix this check when status code mappings are known
+		assertThat(getCertificateApplicationRepresentation) // check status field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
+			.extracting(CertificateApplicationStatusModel::getStatusDate)
+			.extracting(StatusDateModel::getDate)
+			.isEqualTo(statusDate.toString());
 	}
 
 	@Test
@@ -268,6 +276,7 @@ class CertificateApplicationModelMapperTests {
 		assertThat(passportStatus.getFirstName()).isEqualTo("John");
 		assertThat(passportStatus.getLastName()).isEqualTo("Doe");
 		assertThat(passportStatus.getStatus()).isEqualTo(PassportStatus.Status.APPROVED);
+		assertThat(passportStatus.getStatusDate()).isEqualTo(LocalDate.of(2000, 01, 01));
 	}
 
 	@Test

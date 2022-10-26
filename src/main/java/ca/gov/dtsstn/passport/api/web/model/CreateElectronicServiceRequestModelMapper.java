@@ -21,6 +21,7 @@ public interface CreateElectronicServiceRequestModelMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "status", ignore = true)
+	@Mapping(target = "statusDate", ignore = true)
 	PassportStatus toDomain(@Nullable CreateElectronicServiceRequestModel createElectronicServiceRequest);
 
 }

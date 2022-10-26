@@ -43,6 +43,9 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Column(length = 32, nullable = false)
 	private Status status;
 
+	@Column(nullable = false)
+	private LocalDate statusDate;
+
 	public PassportStatusEntity() {
 		super();
 	}
@@ -61,7 +64,8 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable String fileNumber,
 			@Nullable String firstName,
 			@Nullable String lastName,
-			@Nullable Status status) {
+			@Nullable Status status,
+			@Nullable LocalDate statusDate) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
 		this.dateOfBirth = dateOfBirth;
@@ -70,6 +74,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.status = status;
+		this.statusDate = statusDate;
 	}
 
 	public String getApplicationRegisterSid() {
@@ -128,6 +133,14 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.status = status;
 	}
 
+	public LocalDate getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(LocalDate statusDate) {
+		this.statusDate = statusDate;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		// keeps SonarLint happy
@@ -151,6 +164,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("firstName", firstName)
 			.append("lastName", lastName)
 			.append("status", status)
+			.append("statusDate", statusDate)
 			.toString();
 	}
 

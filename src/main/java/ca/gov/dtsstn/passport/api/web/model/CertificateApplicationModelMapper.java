@@ -49,6 +49,7 @@ public interface CertificateApplicationModelMapper {
 	@Mapping(target = "firstName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
 	@Mapping(target = "lastName", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "status", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatus" })
+	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
 	@Nullable
@@ -59,7 +60,8 @@ public interface CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationIdentifications", source = "passportStatus", qualifiedByName = { "getCertificateApplicationIdentifications" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "lastName")
-	@Mapping(target = "certificateApplication.certificateApplicationStatus", source = "status", qualifiedByName = { "toStatus" })
+	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "status", qualifiedByName = { "toStatus" })
+	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
 	GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
 
 	/**
@@ -91,7 +93,7 @@ public interface CertificateApplicationModelMapper {
 	 */
 	@Nullable
 	@Named("toStatus")
-	default CertificateApplicationStatusModel toStatus(@Nullable PassportStatus.Status passportStatus) {
+	default String toStatus(@Nullable PassportStatus.Status passportStatus) {
 		final Function<PassportStatus.Status, String> toStatusCode = status -> statusMap.entrySet().stream()
 			.filter(entry -> entry.getValue().equals(status))
 			.map(Entry<String, Status>::getKey)
@@ -99,9 +101,6 @@ public interface CertificateApplicationModelMapper {
 
 		return Optional.ofNullable(passportStatus)
 			.map(toStatusCode)
-			.map(statusCode -> ImmutableCertificateApplicationStatusModel.builder()
-				.statusCode(statusCode)
-				.build())
 			.orElse(null);
 	}
 

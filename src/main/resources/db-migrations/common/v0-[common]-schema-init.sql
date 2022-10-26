@@ -68,6 +68,7 @@ CREATE TABLE passport_status (
 	first_name VARCHAR(128) NOT NULL,
 	last_name VARCHAR(128) NOT NULL,
 	status VARCHAR(32) NOT NULL,
+	status_date DATE NOT NULL,
 
 	-- audit fields
 	created_by VARCHAR(64) NOT NULL,

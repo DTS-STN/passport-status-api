@@ -45,4 +45,7 @@ public interface PassportStatus extends AbstractDomainObject {
 	@Nullable
 	Status getStatus();
 
+	@Nullable
+	LocalDate getStatusDate();
+
 }

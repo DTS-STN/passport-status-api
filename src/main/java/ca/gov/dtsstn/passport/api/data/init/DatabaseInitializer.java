@@ -1,7 +1,9 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
+import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -100,6 +102,7 @@ public class DatabaseInitializer {
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(generateStatus())
+			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
 			.build();
 	}
 
@@ -118,6 +121,7 @@ public class DatabaseInitializer {
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(generateStatus())
+			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 	}
 
@@ -133,6 +137,7 @@ public class DatabaseInitializer {
 			.firstName(firstName)
 			.lastName(lastName)
 			.status(generateStatus())
+			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 
 		log.trace("Creating fake passport team status: {}", passportStatus);
@@ -170,6 +175,13 @@ public class DatabaseInitializer {
 	protected ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity.Status generateStatus() {
 		final var statuses = PassportStatusEntity.Status.values();
 		return statuses[faker.random().nextInt(statuses.length)];
+	}
+
+	protected LocalDate generateStatusDate(LocalDate start, LocalDate end) {
+		final var zoneOffset = OffsetDateTime.now().getOffset();
+		final var startDate = Timestamp.from(start.atStartOfDay().toInstant(zoneOffset));
+		final var endDate = Timestamp.from(end.atStartOfDay().toInstant(zoneOffset));
+		return faker.date().between(startDate, endDate).toLocalDateTime().toLocalDate();
 	}
 
 	protected String stripDiacritics(String string) {
