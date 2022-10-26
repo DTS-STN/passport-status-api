@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
@@ -26,6 +27,7 @@ public interface CertificateApplicationStatusModel extends Serializable {
 
 	@JsonProperty("StatusCode")
 	@PassportStatusCode(message = "StatusCode is invalid or unknown")
+	@Size(max = 3, message = "StatusCode must be 3 characters or less")
 	@NotBlank(message = "StatusCode is required; it must not null or blank")
 	@Schema(description = "The certificate application status code.", example = "1")
 	String getStatusCode();

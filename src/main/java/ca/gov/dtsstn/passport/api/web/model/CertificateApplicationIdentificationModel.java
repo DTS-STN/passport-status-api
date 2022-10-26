@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
@@ -33,6 +34,7 @@ public interface CertificateApplicationIdentificationModel extends Serializable 
 
 	@JsonProperty("IdentificationID")
 	@NotNull(message = "IdentificationID is required; it must not be null")
+	@Size(max = 32, message = "IdentificationID must be 32 characters or less")
 	@Schema(description = "The value of the certificate application ID entry.", example = "ABCD1234")
 	String getIdentificationId();
 

@@ -32,11 +32,12 @@ public interface PersonNameModel extends Serializable {
 	@NotNull(message = "PersonGivenName is required; it must not be null")
 	@Size(min = 1, max = 1, message = "PersonGivenName must be an array of size 1")
 	@Schema(description = "A set of given names of the certificate applicant.", example = "[\"John\"]")
-	default List<@NotBlank(message = "PersonGivenName is required; it must not be null or blank") String> getPersonGivenNames() {
+	default List<@NotBlank(message = "PersonGivenName is required; it must not be null or blank") @Size(max = 128, message = "PersonGivenName must be 128 characters or less") String> getPersonGivenNames() {
 		return Collections.emptyList();
 	}
 
 	@JsonProperty("PersonSurName")
+	@Size(max = 128, message = "PersonSurName must be 128 characters or less")
 	@NotBlank(message = "PersonSurName is required; it must not be null or blank")
 	@Schema(description = "The surname of the certificate applicant.", example = "Doe")
 	String getPersonSurname();
