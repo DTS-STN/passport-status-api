@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.web.validation;
 
 import javax.validation.Configuration;
 import javax.validation.ConstraintViolation;
+import javax.validation.constraints.PastOrPresent;
 
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.slf4j.Logger;
@@ -21,13 +22,13 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-public class JacksonValidatorFactoryBean extends LocalValidatorFactoryBean {
+public class CustomValidatorFactoryBean extends LocalValidatorFactoryBean {
 
-	private static final Logger log = LoggerFactory.getLogger(JacksonValidatorFactoryBean.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomValidatorFactoryBean.class);
 
 	private final JacksonPropertyNodeNameProvider jacksonPropertyNodeNameProvider;
 
-	public JacksonValidatorFactoryBean(ApplicationContext applicationContext, JacksonPropertyNodeNameProvider jacksonPropertyNodeNameProvider) {
+	public CustomValidatorFactoryBean(ApplicationContext applicationContext, JacksonPropertyNodeNameProvider jacksonPropertyNodeNameProvider) {
 		Assert.notNull(applicationContext, "applicationContext is required; it must not be null");
 		Assert.notNull(jacksonPropertyNodeNameProvider, "jacksonPropertyNodeNameProvider is required; it must not be null");
 		super.setMessageInterpolator(new MessageInterpolatorFactory(applicationContext).getObject());
@@ -36,13 +37,16 @@ public class JacksonValidatorFactoryBean extends LocalValidatorFactoryBean {
 
 	@Override
 	protected void postProcessConfiguration(Configuration<?> configuration) {
-		if (ClassUtils.isAssignableValue(HibernateValidatorConfiguration.class, configuration)) {
-			final var hibernateValidatorConfiguration = (HibernateValidatorConfiguration) configuration;
-			hibernateValidatorConfiguration.propertyNodeNameProvider(jacksonPropertyNodeNameProvider);
-		}
-		else {
-			log.warn("Bean validator is not an instance of org.hibernate.validator.HibernateValidatorConfiguration");
-		}
+		Assert.isTrue(ClassUtils.isAssignableValue(HibernateValidatorConfiguration.class, configuration), "Validation configuration is not an instance of org.hibernate.validator.HibernateValidatorConfiguration");
+
+		log.debug("Registering Jackson based PropertyNodeNameProvider with Hibernate validator");
+		final var hibernateValidatorConfiguration = (HibernateValidatorConfiguration) configuration;
+		hibernateValidatorConfiguration.propertyNodeNameProvider(jacksonPropertyNodeNameProvider);
+
+		log.debug("Registering String based PastOrPresentValidator with Hibernate validator");
+		final var constraintMapping = hibernateValidatorConfiguration.createConstraintMapping();
+		constraintMapping.constraintDefinition(PastOrPresent.class).validatedBy(PastOrPresentValidator.class);
+		hibernateValidatorConfiguration.addMapping(constraintMapping);
 	}
 
 	@Override

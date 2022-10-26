@@ -182,7 +182,7 @@ class CertificateApplicationModelMapperTests {
 			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
 			.extracting(CertificateApplicationApplicantModel::getBirthDate)
 			.extracting(BirthDateModel::getDate)
-			.isEqualTo(dateOfBirth);
+			.isEqualTo(dateOfBirth.toString());
 		assertThat(getCertificateApplicationRepresentation) // check applicationRegisterSid field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asList()

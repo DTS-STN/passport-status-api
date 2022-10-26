@@ -6,16 +6,14 @@ import java.time.LocalDate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 
 import org.immutables.value.Value.Immutable;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import ca.gov.dtsstn.passport.api.web.validation.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -27,11 +25,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface CreateElectronicServiceRequestModel extends Serializable {
 
 	@Nullable
-	@DateTimeFormat(iso = ISO.DATE)
-	@NotNull(message = "dateOfBirth is required; it must not be null")
-	@PastOrPresent(message = "dateOfBirth must be a date in the past")
-	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
-	LocalDate getDateOfBirth();
+	@Date(message = "Date must be a valid ISO 8601 date format (yyyy-mm-dd)")
+	@NotBlank(message = "dateOfBirth is required; it must not be null or blank")
+	@Schema(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", implementation = LocalDate.class, required = true)
+	String getDateOfBirth();
 
 	@Nullable
 	@Email(message = "email must be a valid email address")

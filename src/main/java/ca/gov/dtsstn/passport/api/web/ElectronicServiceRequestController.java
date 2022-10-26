@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.web;
 
+import java.time.LocalDate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,15 +47,20 @@ public class ElectronicServiceRequestController {
 	}
 
 	@PostMapping({ "" })
-	@ResponseStatus(HttpStatus.ACCEPTED)
 	@ApiResponses.BadRequestError
+	@ResponseStatus(HttpStatus.ACCEPTED)
 	@Operation(summary = "Create a new electronic service request.")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	public void create(@RequestBody @Validated CreateElectronicServiceRequestModel createElectronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", createElectronicServiceRequest);
 
-		final var passportStatuses = passportStatusService.emailSearch(createElectronicServiceRequest.getDateOfBirth(), createElectronicServiceRequest.getEmail(), createElectronicServiceRequest.getFirstName(), createElectronicServiceRequest.getLastName());
-		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), createElectronicServiceRequest.getEmail());
+		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getDateOfBirth());
+		final var email = createElectronicServiceRequest.getEmail();
+		final var firstName = createElectronicServiceRequest.getFirstName();
+		final var lastName = createElectronicServiceRequest.getLastName();
+
+		final var passportStatuses = passportStatusService.emailSearch(dateOfBirth, email, firstName, lastName);
+		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), email);
 
 		if (passportStatuses.size() > 1) {
 			log.warn("Search query returned non-unique file numbers: {}", createElectronicServiceRequest);
