@@ -4,8 +4,8 @@ CREATE TABLE event_log (
 	description VARCHAR(256) NOT NULL,
 	details VARCHAR(65536) NOT NULL,
 	event_type VARCHAR(32) NOT NULL,
-	actor VARCHAR(128),
-	source VARCHAR(256),
+	actor VARCHAR(128) NULL,
+	source VARCHAR(256) NULL,
 
 	-- audit fields
 	created_by VARCHAR(64) NOT NULL,
@@ -38,15 +38,15 @@ CREATE TABLE email_request (
 CREATE TABLE http_request (
 	id VARCHAR(64) NOT NULL,
 
-	principal_name VARCHAR(64),
-	request_headers VARCHAR(65536),
+	principal_name VARCHAR(64) NULL,
+	request_headers VARCHAR(65536) NULL,
 	request_method VARCHAR(8) NOT NULL,
 	request_remote_address VARCHAR(64),
 	request_uri VARCHAR(4096) NOT NULL,
 	response_headers VARCHAR(65536),
 	response_status INTEGER NOT NULL,
-	session_id VARCHAR(256),
-	time_taken_millis BIGINT,
+	session_id VARCHAR(256) NULL,
+	time_taken_millis BIGINT NULL,
 	timestamp TIMESTAMP NOT NULL,
 
 	-- audit fields
