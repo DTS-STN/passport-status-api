@@ -6,7 +6,7 @@
 
 application:
   swagger-ui:
-    application-name: Passport Status API
+    application-name: Passport Status API – OpenAPI 3.0
     authentication:
       http:
         description: |

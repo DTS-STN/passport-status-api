@@ -60,7 +60,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @ApiResponses.InternalServerError
 @RequestMapping({ "/api/v1/passport-statuses" })
-@Tag(name = "Passport Statuses", description = "Passport Status API")
+@Tag(name = "passport-statuses", description = "Endpoint to create, read, and search for passport statuses.")
 public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
@@ -90,7 +90,7 @@ public class PassportStatusController {
 	@Authorities.HasPassportStatusWriteAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@Operation(summary = "Create a new passport status.")
+	@Operation(summary = "Create a new passport status.", operationId = "passport-status-create")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	public void create(
 			Authentication authentication,
@@ -118,8 +118,8 @@ public class PassportStatusController {
 	@Authorities.HasPassportStatusRead
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@Operation(summary = "Retrieves a passport status by its internal database ID.")
 	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
+	@Operation(summary = "Retrieves a passport status by its internal database ID.", operationId = "passport-status-read")
 	public GetCertificateApplicationRepresentationModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
 		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[%s]".formatted(id)));
 	}
@@ -131,8 +131,8 @@ public class PassportStatusController {
 	@Authorities.HasPassportStatusReadAll
 	@SecurityRequirement(name = SpringDocConfig.HTTP)
 	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@Operation(summary = "Retrieve a paged list of all passport statuses.")
 	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
+	@Operation(summary = "Retrieve a paged list of all passport statuses.", operationId = "passport-status-readall")
 	public PagedModel<GetCertificateApplicationRepresentationModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
 		return assembler.toModel(service.readAll(pageable));
 	}
@@ -145,7 +145,7 @@ public class PassportStatusController {
 	@ApiResponses.BadRequestError
 	@ResponseStatus(code = HttpStatus.OK)
 	@ApiResponses.UnprocessableEntityError
-	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.")
+	@Operation(summary = "Search for a passport status by fileNumber, firstName, lastName and dateOfBirth.", operationId = "passport-status-search")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)

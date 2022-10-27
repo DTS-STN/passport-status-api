@@ -26,8 +26,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @RestController
 @ApiResponses.InternalServerError
-@RequestMapping({ "/api/v1/electronic-service-requests" })
-@Tag(name = "Electronic Service Requests", description = "Electronic Service Request API")
+@RequestMapping({ "/api/v1/esrf-requests" })
+@Tag(name = "esrf-requests", description = "Endpoint to create ESRF requests.")
 public class ElectronicServiceRequestController {
 
 	private static final Logger log = LoggerFactory.getLogger(ElectronicServiceRequestController.class);
@@ -49,7 +49,7 @@ public class ElectronicServiceRequestController {
 	@PostMapping({ "" })
 	@ApiResponses.BadRequestError
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	@Operation(summary = "Create a new electronic service request.")
+	@Operation(summary = "Create a new electronic service request.", operationId = "esrf-create")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	public void create(@RequestBody @Validated CreateElectronicServiceRequestModel createElectronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", createElectronicServiceRequest);
