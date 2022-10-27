@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -15,7 +15,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMapper;
+import ca.gov.dtsstn.passport.api.web.model.BirthDateModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.PersonContactInformationModel;
+import ca.gov.dtsstn.passport.api.web.model.PersonNameModel;
+import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
 
 
 /**
@@ -179,7 +189,12 @@ class CertificateApplicationModelMapperTests {
 		 * To future developers: I am sorry for this. This is what NIEM does to your code. 😔
 		 */
 
-		assertThat(getCertificateApplicationRepresentation).isNotNull();
+		final var nullFields = new String[] {
+			"id", "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"
+		};
+
+		assertThat(getCertificateApplicationRepresentation)
+			.hasNoNullFieldsOrPropertiesExcept(nullFields);
 		assertThat(getCertificateApplicationRepresentation) // check dateOfBirth field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
@@ -269,15 +284,36 @@ class CertificateApplicationModelMapperTests {
 
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 
-		assertThat(passportStatus).isNotNull();
-		assertThat(passportStatus.getApplicationRegisterSid()).isEqualTo("ABCD1234");
-		assertThat(passportStatus.getDateOfBirth()).isEqualTo(LocalDate.of(2000, 01, 01));
-		assertThat(passportStatus.getEmail()).isEqualTo("user@example.com");
-		assertThat(passportStatus.getFileNumber()).isEqualTo("ABCD1234");
-		assertThat(passportStatus.getFirstName()).isEqualTo("John");
-		assertThat(passportStatus.getLastName()).isEqualTo("Doe");
-		assertThat(passportStatus.getStatus()).isEqualTo(PassportStatus.Status.APPROVED);
-		assertThat(passportStatus.getStatusDate()).isEqualTo(LocalDate.of(2000, 01, 01));
+		final var nonnullFields = new String[] {
+			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "statusDate"
+		};
+
+		assertThat(passportStatus)
+			.hasAllNullFieldsOrPropertiesExcept(nonnullFields);
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getApplicationRegisterSid)
+			.isEqualTo("ABCD1234");
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getDateOfBirth)
+			.isEqualTo(LocalDate.of(2000, 01, 01));
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getEmail)
+			.isEqualTo("user@example.com");
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getFileNumber)
+			.isEqualTo("ABCD1234");
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getFirstName)
+			.isEqualTo("John");
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getLastName)
+			.isEqualTo("Doe");
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getStatus)
+			.isEqualTo(PassportStatus.Status.APPROVED);
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getStatusDate)
+			.isEqualTo(LocalDate.of(2000, 01, 01));
 	}
 
 	@Test
