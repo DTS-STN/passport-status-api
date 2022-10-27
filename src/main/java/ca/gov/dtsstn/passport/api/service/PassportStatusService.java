@@ -43,7 +43,7 @@ public class PassportStatusService {
 	public PassportStatus create(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance");
-		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus)));
+		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus))); // NOSONAR (nullable param)
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
 	}
@@ -58,7 +58,7 @@ public class PassportStatusService {
 	public PassportStatus update(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.notNull(passportStatus.getId(), "passportStatus.id must not be null when updating existing instance");
-		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow();
+		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow(); // NOSONAR (nullable param)
 		final var updatedPassportStatus = mapper.fromEntity(repository.save(mapper.update(passportStatus, originalPassportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusUpdatedEvent.of(mapper.fromEntity(originalPassportStatus), updatedPassportStatus));
 		return updatedPassportStatus;
