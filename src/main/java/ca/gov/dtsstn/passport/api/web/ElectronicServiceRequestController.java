@@ -54,10 +54,10 @@ public class ElectronicServiceRequestController {
 	public void create(@RequestBody @Validated CreateElectronicServiceRequestModel createElectronicServiceRequest) {
 		log.trace("New electronic service request posted for: [{}]", createElectronicServiceRequest);
 
-		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getDateOfBirth());
-		final var email = createElectronicServiceRequest.getEmail();
-		final var firstName = createElectronicServiceRequest.getFirstName();
-		final var lastName = createElectronicServiceRequest.getLastName();
+		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getClient().getPersonBirthDate().getDate());
+		final var email = createElectronicServiceRequest.getClient().getPersonContactInformation().getContactEmailId();
+		final var firstName = createElectronicServiceRequest.getClient().getPersonName().getPersonGivenNames().get(0);
+		final var lastName = createElectronicServiceRequest.getClient().getPersonName().getPersonSurname();
 
 		final var passportStatuses = passportStatusService.emailSearch(dateOfBirth, email, firstName, lastName);
 		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), email);
