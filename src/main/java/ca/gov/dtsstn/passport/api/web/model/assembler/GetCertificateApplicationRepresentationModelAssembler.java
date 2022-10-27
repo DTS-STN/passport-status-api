@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.assembler;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -12,6 +12,8 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.PassportStatusController;
+import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMapper;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

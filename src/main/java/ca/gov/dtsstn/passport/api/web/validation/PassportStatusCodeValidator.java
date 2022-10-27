@@ -6,8 +6,8 @@ import javax.validation.ConstraintValidatorContext;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
-import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModelMapper;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMapper;
 
 /**
  * Checks that a string is a valid passport status code.

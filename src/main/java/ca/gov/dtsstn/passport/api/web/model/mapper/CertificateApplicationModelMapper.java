@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -22,6 +22,12 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus.Status;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

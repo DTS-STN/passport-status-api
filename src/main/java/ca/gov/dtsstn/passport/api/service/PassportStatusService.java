@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.service.domain.PassportStatusMapper;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.PassportStatusMapper;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.service.event.ImmutablePassportStatusReadEvent;

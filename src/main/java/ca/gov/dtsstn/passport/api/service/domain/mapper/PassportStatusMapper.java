@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.service.domain;
+package ca.gov.dtsstn.passport.api.service.domain.mapper;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -8,6 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
 /**
  * MapStruct mapper that maps {@link PassportStatus} instances to {@link PassportStatusDocument} instances (and vice versa).

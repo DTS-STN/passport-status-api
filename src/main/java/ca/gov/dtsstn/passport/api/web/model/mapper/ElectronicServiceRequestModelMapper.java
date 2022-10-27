@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -10,12 +10,13 @@ import org.mapstruct.Named;
 import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Mapper
-public interface CreateElectronicServiceRequestModelMapper {
+public interface ElectronicServiceRequestModelMapper {
 
 	@Nullable
 	@Mapping(target = "applicationRegisterSid", ignore = true)

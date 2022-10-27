@@ -1,4 +1,4 @@
-package ca.gov.dtsstn.passport.api.web.model;
+package ca.gov.dtsstn.passport.api.web.model.assembler;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.service.domain.AbstractDomainObject;
+import ca.gov.dtsstn.passport.api.web.model.AbstractRepresentationModel;
 
 /**
  * A base model assembler that can automate creation of resources and guarantee that a self link is always added.
