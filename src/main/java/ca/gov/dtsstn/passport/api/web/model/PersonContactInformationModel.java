@@ -3,7 +3,6 @@ package ca.gov.dtsstn.passport.api.web.model;
 import java.io.Serializable;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.immutables.value.Value.Immutable;
@@ -25,10 +24,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface PersonContactInformationModel extends Serializable {
 
 	@JsonProperty("ContactEmailID")
-	@Email(message = "ContactEmailID must be a valid email address")
 	@Size(max = 256, message = "ContactEmailID must be 256 characters or less")
 	@Schema(description = "The email address of the certificate applicant.", example = "user@example.com")
-	@Pattern(message = "ContactEmailID must be a valid email address", regexp = "(^$)|(^[^@]+@[^@]+\\.[^@]+$)")
+	@Email(message = "ContactEmailID must be a valid email address", regexp = "(^$)|(^[^@]+@[^@]+\\.[^@]+$)")
 	String getContactEmailId();
 
 }
