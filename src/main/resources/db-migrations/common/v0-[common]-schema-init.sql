@@ -63,7 +63,7 @@ CREATE TABLE passport_status (
 
 	application_register_sid VARCHAR(256) NOT NULL,
 	date_of_birth DATE NOT NULL,
-	email VARCHAR(256) NOT NULL,
+	email VARCHAR(256) NULL,
 	file_number VARCHAR(32) NOT NULL,
 	first_name VARCHAR(128) NOT NULL,
 	last_name VARCHAR(128) NOT NULL,

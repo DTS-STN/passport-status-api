@@ -51,7 +51,7 @@ public interface CertificateApplicationModelMapper {
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "applicationRegisterSid", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findApplicationRegisterSid" })
 	@Mapping(target = "dateOfBirth", source = "certificateApplication.certificateApplicationApplicant.birthDate.date")
-	@Mapping(target = "email", source = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId")
+	@Mapping(target = "email", source = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", qualifiedByName = { "emptyStringToNull" })
 	@Mapping(target = "fileNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findFileNumber" })
 	@Mapping(target = "firstName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
 	@Mapping(target = "lastName", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
@@ -208,4 +208,11 @@ public interface CertificateApplicationModelMapper {
 			.orElse(Stream.empty());
 	}
 
+	@Nullable
+	@Named("emptyStringToNull")
+	default String emptyStringToNull(@Nullable String string) {
+		if (string == null) { return null; }
+		if (string.length() == 0) { return null; }
+		return string;
+	}
 }
