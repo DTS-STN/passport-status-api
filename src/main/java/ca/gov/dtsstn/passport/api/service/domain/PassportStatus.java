@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutablePassportStatus.class)
 public interface PassportStatus extends AbstractDomainObject {
 
-	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
+	public enum Status { APPROVED, IN_EXAMINATION, REJECTED, UNKNOWN }
 
 	@Nullable
 	String getApplicationRegisterSid();

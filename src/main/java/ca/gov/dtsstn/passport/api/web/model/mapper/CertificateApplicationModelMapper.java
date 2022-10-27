@@ -37,6 +37,7 @@ public interface CertificateApplicationModelMapper {
 
 	// TODO :: GjB :: remove this once actual code → status mappings are known
 	final Map<String, PassportStatus.Status> statusMap = Map.of(
+		"-1", PassportStatus.Status.UNKNOWN,
 		"1", PassportStatus.Status.APPROVED,
 		"2", PassportStatus.Status.IN_EXAMINATION,
 		"3", PassportStatus.Status.REJECTED

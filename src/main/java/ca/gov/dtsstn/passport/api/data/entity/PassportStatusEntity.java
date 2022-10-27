@@ -19,7 +19,7 @@ import org.springframework.lang.Nullable;
 @Entity(name = "PassportStatus")
 public class PassportStatusEntity extends AbstractEntity {
 
-	public enum Status { APPROVED, IN_EXAMINATION, REJECTED }
+	public enum Status { APPROVED, IN_EXAMINATION, REJECTED, UNKNOWN }
 
 	@Column(length = 256, nullable = false)
 	private String applicationRegisterSid;
