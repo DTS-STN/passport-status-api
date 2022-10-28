@@ -7,7 +7,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
 
 /**
  * Checks that a string is a valid passport status code.
@@ -25,8 +24,7 @@ public class PassportStatusCodeValidator implements ConstraintValidator<Passport
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(value).build();
-		final var statusCode = statusCodeService.readByCdoCode(certificateApplicationStatusModel.getStatusCode());
+		final var statusCode = statusCodeService.readByCdoCode(value);
 		return statusCode.isPresent() == true && BooleanUtils.isTrue(statusCode.get().getIsActive());
 	}
 

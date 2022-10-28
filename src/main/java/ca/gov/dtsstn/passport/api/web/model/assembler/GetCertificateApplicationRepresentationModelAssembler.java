@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.Optional;
 
-import org.mapstruct.factory.Mappers;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -21,10 +20,11 @@ import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMa
 @Component
 public class GetCertificateApplicationRepresentationModelAssembler extends AbstractResponseModelAssembler<PassportStatus, GetCertificateApplicationRepresentationModel> {
 
-	protected final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
+	protected final CertificateApplicationModelMapper mapper;
 
-	public GetCertificateApplicationRepresentationModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler) {
+	public GetCertificateApplicationRepresentationModelAssembler(PagedResourcesAssembler<PassportStatus> pagedResourcesAssembler, CertificateApplicationModelMapper mapper) {
 		super(PassportStatusController.class, GetCertificateApplicationRepresentationModel.class, pagedResourcesAssembler);
+		this.mapper = mapper;
 	}
 
 	@Override

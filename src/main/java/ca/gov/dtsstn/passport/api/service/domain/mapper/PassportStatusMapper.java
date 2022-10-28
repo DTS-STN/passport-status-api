@@ -8,6 +8,7 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.StatusCodeEntity;
@@ -22,11 +23,21 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 @Mapper(componentModel = "spring")
 public abstract class PassportStatusMapper {
 
-	@Autowired
 	protected StatusCodeMapper statusCodeMapper;
 
-	@Autowired
 	protected StatusCodeService statusCodeService;
+
+	@Autowired
+	public void setStatusCodeMapper(StatusCodeMapper statusCodeMapper) {
+		Assert.notNull(statusCodeMapper, "statusCodeMapper is required; it must not be null");
+		this.statusCodeMapper = statusCodeMapper;
+	}
+
+	@Autowired
+	public void setStatusCodeService(StatusCodeService statusCodeService) {
+		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
+		this.statusCodeService = statusCodeService;
+	}
 
 	@Nullable
 	@Mapping(target = "isNew", ignore = true)

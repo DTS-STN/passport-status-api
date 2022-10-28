@@ -34,9 +34,9 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdent
 @Mapper(componentModel = "spring")
 public abstract class CertificateApplicationModelMapper {
 
-	@Autowired
-    protected StatusCodeService statusCodeService;
+	protected StatusCodeService statusCodeService;
 
+	@Autowired
 	public void setStatusCodeService(StatusCodeService statusCodeService) {
 		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
 		this.statusCodeService = statusCodeService;
