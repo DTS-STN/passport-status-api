@@ -58,6 +58,26 @@ CREATE TABLE http_request (
 	CONSTRAINT pk_http_request PRIMARY KEY (id)
 );
 
+CREATE TABLE status_code (
+	id VARCHAR(64) NOT NULL,
+
+	code VARCHAR(16) NOT NULL,
+	cdo_code VARCHAR(8) NOT NULL,
+	description VARCHAR(256) NULL,
+	is_active BOOLEAN NOT NULL,
+
+	-- audit fields
+	created_by VARCHAR(64) NOT NULL,
+	created_date TIMESTAMP NOT NULL,
+	last_modified_by VARCHAR(64) NULL,
+	last_modified_date TIMESTAMP NULL,
+
+	CONSTRAINT pk_status_code PRIMARY KEY (id)
+);
+
+CREATE INDEX ix_code ON status_code(code);
+CREATE INDEX ix_cdo_code ON status_code(cdo_code);
+
 CREATE TABLE passport_status (
 	id VARCHAR(64) NOT NULL,
 
