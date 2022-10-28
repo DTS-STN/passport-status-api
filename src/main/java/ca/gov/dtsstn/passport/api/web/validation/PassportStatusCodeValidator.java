@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
@@ -26,7 +27,7 @@ public class PassportStatusCodeValidator implements ConstraintValidator<Passport
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(value).build();
 		final var statusCode = statusCodeService.readByCdoCode(certificateApplicationStatusModel.getStatusCode());
-		return statusCode.isPresent() == true && statusCode.get().getIsActive() == true;
+		return statusCode.isPresent() == true && BooleanUtils.isTrue(statusCode.get().getIsActive());
 	}
 
 }
