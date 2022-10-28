@@ -10,7 +10,7 @@ import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface StatusCodeMapper {
 
 	@Nullable
