@@ -2,18 +2,26 @@ package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.ImmutableStatusCode;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.model.BirthDateModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
@@ -23,6 +31,7 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonContactInformationModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonNameModel;
 import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
@@ -34,7 +43,18 @@ import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
 @ExtendWith({ MockitoExtension.class })
 class CertificateApplicationModelMapperTests {
 
+	private final static String STATUS_CODE__UNKNOWN__ID = "8b4ecef5-9617-4dbc-91ca-ff24b2367b66";
+	private final static String STATUS_CODE__UNKNOWN__CDO_CODE = "-1";
+
 	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
+
+	@Mock
+  	private StatusCodeService statusCodeService;
+
+	@BeforeEach
+	void setUp() {
+		mapper.setStatusCodeService(statusCodeService);
+	}
 
 	@Test
 	void testFindApplicationRegisterSid_null() {
@@ -163,13 +183,15 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToModel_nonnull() {
+		when(statusCodeService.read(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+
 		final var applicationRegisterSid = "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf";
 		final var dateOfBirth = LocalDate.of(2004, 12, 8);
 		final var fileNumber = "https://open.spotify.com/track/1fZvEmAmWtsDSUjAgDhddU?";
 		final var email = "user@example.com";
 		final var firstName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
 		final var lastName = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
-		final var status = PassportStatus.Status.APPROVED;
+		final var statusCodeId = STATUS_CODE__UNKNOWN__ID;
 		final var statusDate = LocalDate.of(2000, 01, 01);
 
 		final var passportStatus = ImmutablePassportStatus.builder()
@@ -179,7 +201,7 @@ class CertificateApplicationModelMapperTests {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.status(status)
+			.statusCodeId(statusCodeId)
 			.statusDate(statusDate)
 			.build();
 
@@ -237,13 +259,15 @@ class CertificateApplicationModelMapperTests {
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
 			.extracting(CertificateApplicationStatusModel::getStatusCode)
-			.isNotNull(); // TODO :: GjB :: fix this check when status code mappings are known
+			.isEqualTo(STATUS_CODE__UNKNOWN__CDO_CODE);
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
 			.extracting(CertificateApplicationStatusModel::getStatusDate)
 			.extracting(StatusDateModel::getDate)
 			.isEqualTo(statusDate.toString());
+
+		verify(statusCodeService).read(any());
 	}
 
 	@Test
@@ -253,10 +277,12 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToDomain_nonnull() throws Exception {
+		when(statusCodeService.readByCdoCode(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
 		// cheating a little here because doing anything with NIEM sucks.. 😳
-		final var createCertificateApplicationRequest = objectMapper.readValue("""
+		final String json = String.format("""
 			{
 			  "CertificateApplication": {
 			    "CertificateApplicationApplicant": {
@@ -275,17 +301,19 @@ class CertificateApplicationModelMapperTests {
 			      "IdentificationID": "ABCD1234"
 			    }],
 			    "CertificateApplicationStatus": {
-			      "StatusCode": "1",
+			      "StatusCode": "%s",
 			      "StatusDate": "2000-01-01"
 			    }
 			  }
 			}
-			""", CreateCertificateApplicationRequestModel.class);
+		""", STATUS_CODE__UNKNOWN__CDO_CODE);
+
+		final var createCertificateApplicationRequest = objectMapper.readValue(json, CreateCertificateApplicationRequestModel.class);
 
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 
 		final var nonnullFields = new String[] {
-			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "status", "statusDate"
+			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "firstName", "lastName", "statusCodeId", "statusDate"
 		};
 
 		assertThat(passportStatus)
@@ -309,16 +337,40 @@ class CertificateApplicationModelMapperTests {
 			.extracting(PassportStatus::getLastName)
 			.isEqualTo("Doe");
 		assertThat(passportStatus)
-			.extracting(PassportStatus::getStatus)
-			.isEqualTo(PassportStatus.Status.APPROVED);
+			.extracting(PassportStatus::getStatusCodeId)
+			.isEqualTo(STATUS_CODE__UNKNOWN__ID);
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusDate)
 			.isEqualTo(LocalDate.of(2000, 01, 01));
+
+		verify(statusCodeService).readByCdoCode(any());
 	}
 
 	@Test
-	void testToStatus() {
-		// TODO :: GjB :: fix this test once the status mappings are known
-		assertThat("https://open.spotify.com/track/3nBGFgfRQ8ujSmu5cGlZIU").isNotNull();
+	void testToStatusCodeId() {
+		// arrange
+		when(statusCodeService.readByCdoCode(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+
+		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(STATUS_CODE__UNKNOWN__CDO_CODE).build();
+
+		// act
+		final var act = mapper.toStatusCodeId(certificateApplicationStatusModel);
+
+		// assert
+		assertThat(act).isEqualTo(STATUS_CODE__UNKNOWN__ID);
+		verify(statusCodeService).readByCdoCode(any());
+	}
+
+	@Test
+	void testToStatusCdoCode() {
+		// arrange
+		when(statusCodeService.read(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+
+		// act
+		final var act = mapper.toStatusCdoCode(STATUS_CODE__UNKNOWN__ID);
+
+		// assert
+		assertThat(act).isEqualTo(STATUS_CODE__UNKNOWN__CDO_CODE);
+		verify(statusCodeService).read(any());
 	}
 }

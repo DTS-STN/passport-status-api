@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.mapstruct.factory.Mappers;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,14 +28,16 @@ public class PassportStatusService {
 
 	private final ApplicationEventPublisher eventPublisher;
 
-	private final PassportStatusMapper mapper = Mappers.getMapper(PassportStatusMapper.class);
+	private final PassportStatusMapper mapper;
 
 	private final PassportStatusRepository repository;
 
-	public PassportStatusService(ApplicationEventPublisher eventPublisher, PassportStatusRepository repository) {
+	public PassportStatusService(ApplicationEventPublisher eventPublisher, PassportStatusMapper mapper, PassportStatusRepository repository) {
 		Assert.notNull(eventPublisher, "eventPublisher is required; it must not be null");
+		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(repository, "repository is required; it must not be null");
 		this.eventPublisher = eventPublisher;
+		this.mapper = mapper;
 		this.repository = repository;
 	}
 

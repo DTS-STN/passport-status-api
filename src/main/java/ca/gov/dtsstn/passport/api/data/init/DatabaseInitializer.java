@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +25,9 @@ import org.springframework.util.Assert;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
+import ca.gov.dtsstn.passport.api.data.entity.StatusCodeEntity;
+import ca.gov.dtsstn.passport.api.service.StatusCodeService;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.StatusCodeMapper;
 import net.datafaker.Faker;
 
 /**
@@ -43,12 +47,19 @@ public class DatabaseInitializer {
 
 	private final PassportStatusRepository passportStatusRepository;
 
+	private final StatusCodeService statusCodeService;
+
+	private final StatusCodeMapper statusCodeMapper = Mappers.getMapper(StatusCodeMapper.class);
+
 	private int duplicateStatusesNumber = 10;
 
 	private int generatedStatusesNumber = 1000;
 
-	public DatabaseInitializer(PassportStatusRepository passportStatusRepository) {
+	public DatabaseInitializer(PassportStatusRepository passportStatusRepository, StatusCodeService statusCodeService) {
+		Assert.notNull(passportStatusRepository, "passportStatusRepository is required; it must not be null");
+		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
 		this.passportStatusRepository = passportStatusRepository;
+		this.statusCodeService = statusCodeService;
 	}
 
 	@Async
@@ -101,7 +112,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.status(generateStatus())
+			.statusCode(generateStatusCodeEntity())
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
 			.build();
 	}
@@ -120,7 +131,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.status(generateStatus())
+			.statusCode(generateStatusCodeEntity())
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 	}
@@ -136,7 +147,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.status(generateStatus())
+			.statusCode(generateStatusCodeEntity())
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 
@@ -172,9 +183,11 @@ public class DatabaseInitializer {
 		return faker.name().lastName();
 	}
 
-	protected ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity.Status generateStatus() {
-		final var statuses = PassportStatusEntity.Status.values();
-		return statuses[faker.random().nextInt(statuses.length)];
+	protected StatusCodeEntity generateStatusCodeEntity() {
+		final var statusCodeEntities = statusCodeService.readAllByIsActive(true)
+			.stream().map(statusCodeMapper::toEntity).toArray(StatusCodeEntity[]::new);
+
+		return statusCodeEntities[faker.random().nextInt(statusCodeEntities.length)];
 	}
 
 	protected LocalDate generateStatusDate(LocalDate start, LocalDate end) {

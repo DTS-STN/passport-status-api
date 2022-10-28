@@ -3,11 +3,10 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
+import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMapper;
 
 /**
  * Checks that a string is a valid passport status code.
@@ -17,12 +16,17 @@ import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMa
 @Component
 public class PassportStatusCodeValidator implements ConstraintValidator<PassportStatusCode, String> {
 
-	private final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
+	private final StatusCodeService statusCodeService;
+
+	public PassportStatusCodeValidator(StatusCodeService statusCodeService) {
+		this.statusCodeService = statusCodeService;
+	}
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		// TODO :: GjB :: make this more robust (don't rely on a mapper class)
-		return mapper.toStatus(ImmutableCertificateApplicationStatusModel.builder().statusCode(value).build()) != null;
+		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(value).build();
+		final var statusCode = statusCodeService.readByCdoCode(certificateApplicationStatusModel.getStatusCode());
+		return statusCode.isPresent() == true && statusCode.get().getIsActive() == true;
 	}
 
 }
