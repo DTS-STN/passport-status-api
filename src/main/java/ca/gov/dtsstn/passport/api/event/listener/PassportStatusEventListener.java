@@ -1,8 +1,13 @@
-package ca.gov.dtsstn.passport.api.service.event;
+package ca.gov.dtsstn.passport.api.event.listener;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import ca.gov.dtsstn.passport.api.event.PassportStatusCreatedEvent;
+import ca.gov.dtsstn.passport.api.event.PassportStatusDeletedEvent;
+import ca.gov.dtsstn.passport.api.event.PassportStatusReadEvent;
+import ca.gov.dtsstn.passport.api.event.PassportStatusUpdatedEvent;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

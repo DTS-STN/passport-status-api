@@ -1,11 +1,12 @@
-package ca.gov.dtsstn.passport.api.service.event;
+package ca.gov.dtsstn.passport.api.event;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Map;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
+
+import ca.gov.dtsstn.passport.api.event.ImmutableNotificationSentEvent.Builder;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -13,14 +14,13 @@ import org.immutables.value.Value.Immutable;
 @Immutable
 public interface NotificationSentEvent extends Serializable {
 
+	static Builder builder() {
+		return ImmutableNotificationSentEvent.builder();
+	}
+
 	String getEmail();
 
-	String getTemplateId();
-
-	@Default
-	default Map<String, String> getParameters() {
-		return Map.of();
-	}
+	String getEsrf();
 
 	@Default
 	default Instant getTimestamp() {
