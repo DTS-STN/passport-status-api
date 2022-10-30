@@ -3,8 +3,6 @@ package ca.gov.dtsstn.passport.api.web;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -29,8 +27,6 @@ import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 @RestControllerAdvice
 public class SecurityController extends AbstractMappingJacksonResponseBodyAdvice {
 
-	private static final Logger log = LoggerFactory.getLogger(SecurityController.class);
-
 	@Override
 	protected void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType, MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response) {
 		bodyContainer.setSerializationView(Authorities.AnonymousView.class);
@@ -38,8 +34,6 @@ public class SecurityController extends AbstractMappingJacksonResponseBodyAdvice
 		if (isAuthenticated(SecurityContextHolder.getContext().getAuthentication())) {
 			bodyContainer.setSerializationView(Authorities.AuthenticatedView.class);
 		}
-
-		log.debug("Set security serialization view to {}", bodyContainer.getSerializationView());
 	}
 
 	protected boolean isAuthenticated(@Nullable Authentication authentication) {
