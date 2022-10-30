@@ -63,6 +63,8 @@ management:
     export:
       dynatrace:
         enabled: false
+        api-token: # must be set externally (ex: big-random-string)
+        uri: # must be set externally (ex: https://dynatrace.example.com/e/00000000-0000-0000-0000-000000000000/api/v2/metrics/ingest)
         v2:
           metric-key-prefix: passport-status-api
 

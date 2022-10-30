@@ -26,7 +26,7 @@ public class EventLogEntity extends AbstractEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 32, nullable = false, updatable = false)
-	private EventLogTypeEntity eventType;
+	private EventLogType eventType;
 
 	@Column(length = 128, nullable = true, updatable = false)
 	private String actor;
@@ -47,7 +47,7 @@ public class EventLogEntity extends AbstractEntity {
 			@Nullable Instant lastModifiedDate,
 			@Nullable Boolean isNew,
 			@Nullable String actor,
-			@Nullable EventLogTypeEntity eventType,
+			@Nullable EventLogType eventType,
 			@Nullable String description,
 			@Nullable String details,
 			@Nullable String source) {
@@ -75,11 +75,11 @@ public class EventLogEntity extends AbstractEntity {
 		this.details = details;
 	}
 
-	public EventLogTypeEntity getEventType() {
+	public EventLogType getEventType() {
 		return eventType;
 	}
 
-	public void setEventType(EventLogTypeEntity eventType) {
+	public void setEventType(EventLogType eventType) {
 		this.eventType = eventType;
 	}
 
@@ -127,6 +127,29 @@ public class EventLogEntity extends AbstractEntity {
 			.append("actor", actor)
 			.append("source", source)
 			.toString();
+	}
+
+	public enum EventLogType {
+
+		/*
+		 * ESRF read events
+		 */
+
+		GET_ESRF_REQUEST,
+		GET_ESRF_SUCCESS,
+		GET_ESRF_FAIL,
+
+		/*
+		 * PassportStatus create/read events
+		 */
+
+		CREATE_STATUS_REQUEST,
+		CREATE_STATUS_SUCCESS,
+		CREATE_STATUS_FAIL,
+		GET_STATUS_REQUEST,
+		GET_STATUS_SUCCESS,
+		GET_STATUS_FAIL
+
 	}
 
 }
