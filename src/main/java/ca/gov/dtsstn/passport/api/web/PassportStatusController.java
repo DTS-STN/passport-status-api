@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
@@ -65,7 +64,7 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
-	private final CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
+	private final CertificateApplicationModelMapper mapper;
 
 	private final GetCertificateApplicationRepresentationModelAssembler assembler;
 
@@ -73,11 +72,16 @@ public class PassportStatusController {
 
 	private final PassportStatusService service;
 
-	public PassportStatusController(GetCertificateApplicationRepresentationModelAssembler assembler, PassportStatusJmsService passportStatusJmsService, PassportStatusService service) {
-		Assert.notNull(assembler, "assembler is required; it must not be null");
+	public PassportStatusController(GetCertificateApplicationRepresentationModelAssembler assembler,
+			CertificateApplicationModelMapper mapper,
+			PassportStatusJmsService passportStatusJmsService,
+			PassportStatusService service) {
+		Assert.notNull(mapper, "mapper is required; it must not be null");
+		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
 		this.assembler = assembler;
+		this.mapper = mapper;
 		this.passportStatusJmsService = passportStatusJmsService;
 		this.service = service;
 	}
