@@ -28,20 +28,20 @@ import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 @ExtendWith({ MockitoExtension.class })
 class PassportStatusCodeValidatorTests {
 
-	PassportStatusCodeValidator sut;
+	PassportStatusCodeValidator validator;
 
 	@Mock
 	StatusCodeService statusCodeService;
 
 	@BeforeEach
 	void init() {
-		sut = new PassportStatusCodeValidator(statusCodeService);
+		validator = new PassportStatusCodeValidator(statusCodeService);
 	}
 
 	@Test
 	void testIsValid_withNullValue() {
 		// arrange & act
-		var act = sut.isValid(null, null);
+		var act = validator.isValid(null, null);
 
 		// assert
 		assertThat(act).isTrue();
@@ -55,7 +55,7 @@ class PassportStatusCodeValidatorTests {
 		when(statusCodeService.readByCdoCode(any())).thenReturn(readByCdoCodeValue);
 
 		// act
-		var act = sut.isValid("mock-code", null);
+		var act = validator.isValid("mock-code", null);
 
 		// assert
 		assertThat(act).isEqualTo(expected);

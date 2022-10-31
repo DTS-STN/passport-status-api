@@ -183,7 +183,7 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToModel_nonnull() {
-		when(statusCodeService.read(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
 
 		final var applicationRegisterSid = "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf";
 		final var dateOfBirth = LocalDate.of(2004, 12, 8);
@@ -277,7 +277,7 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToDomain_nonnull() throws Exception {
-		when(statusCodeService.readByCdoCode(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
 
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -349,7 +349,7 @@ class CertificateApplicationModelMapperTests {
 	@Test
 	void testToStatusCodeId() {
 		// arrange
-		when(statusCodeService.readByCdoCode(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
 
 		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(STATUS_CODE__UNKNOWN__CDO_CODE).build();
 
@@ -364,7 +364,7 @@ class CertificateApplicationModelMapperTests {
 	@Test
 	void testToStatusCdoCode() {
 		// arrange
-		when(statusCodeService.read(any())).thenAnswer(invok -> Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
 
 		// act
 		final var act = mapper.toStatusCdoCode(STATUS_CODE__UNKNOWN__ID);

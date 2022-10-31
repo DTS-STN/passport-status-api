@@ -49,8 +49,8 @@ class PassportStatusServiceTests {
 
 	@Test void testCreate() {
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-		when(passportStatusMapper.fromEntity(any())).thenAnswer(invocation -> ImmutablePassportStatus.builder().build());
-		when(passportStatusMapper.toEntity(any())).thenAnswer(invocation -> new PassportStatusEntityBuilder().build());
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
+		when(passportStatusMapper.toEntity(any())).thenReturn(new PassportStatusEntityBuilder().build());
 
 		final var passportStatus = passportStatusService.create(ImmutablePassportStatus.builder().build());
 
@@ -62,7 +62,7 @@ class PassportStatusServiceTests {
 
 	@Test void testRead() {
 		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
-		when(passportStatusMapper.fromEntity(any())).thenAnswer(invocation -> ImmutablePassportStatus.builder().build());
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		final var passportStatus = passportStatusService.read("id");
 
@@ -74,7 +74,7 @@ class PassportStatusServiceTests {
 	@Test void testUpdate() {
 		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-		when(passportStatusMapper.fromEntity(any())).thenAnswer(invocation -> ImmutablePassportStatus.builder().build());
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		final var passportStatus = passportStatusService.update(ImmutablePassportStatus.builder().id("id").build());
 
@@ -94,7 +94,7 @@ class PassportStatusServiceTests {
 
 	@Test void testDelete() {
 		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
-		when(passportStatusMapper.fromEntity(any())).thenAnswer(invocation -> ImmutablePassportStatus.builder().build());
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		passportStatusService.delete("id");
 
