@@ -5,7 +5,6 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.immutables.builder.Builder;
@@ -38,7 +37,6 @@ public class PassportStatusEntity extends AbstractEntity {
 	private String lastName;
 
 	@ManyToOne()
-	@JoinColumn(name = "status_code_id")
 	private StatusCodeEntity statusCode;
 
 	@Column(nullable = false)
