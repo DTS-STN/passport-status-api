@@ -15,6 +15,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +36,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.gov.dtsstn.passport.api.config.SpringDocConfig;
+import ca.gov.dtsstn.passport.api.event.PassportStatusSearchEvent;
+import ca.gov.dtsstn.passport.api.event.PassportStatusSearchEvent.Result;
 import ca.gov.dtsstn.passport.api.service.PassportStatusJmsService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
@@ -64,6 +67,8 @@ public class PassportStatusController {
 
 	private static final Logger log = LoggerFactory.getLogger(PassportStatusController.class);
 
+	private ApplicationEventPublisher eventPublisher;
+
 	private final CertificateApplicationModelMapper mapper;
 
 	private final GetCertificateApplicationRepresentationModelAssembler assembler;
@@ -72,15 +77,20 @@ public class PassportStatusController {
 
 	private final PassportStatusService service;
 
-	public PassportStatusController(GetCertificateApplicationRepresentationModelAssembler assembler,
+	public PassportStatusController(
+			ApplicationEventPublisher eventPublisher,
+			GetCertificateApplicationRepresentationModelAssembler assembler,
 			CertificateApplicationModelMapper mapper,
 			PassportStatusJmsService passportStatusJmsService,
 			PassportStatusService service) {
+		Assert.notNull(assembler, "assembler is required; it must not be null");
+		Assert.notNull(eventPublisher, "eventPublisher is required; it must not be null;");
 		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
 		this.assembler = assembler;
+		this.eventPublisher = eventPublisher;
 		this.mapper = mapper;
 		this.passportStatusJmsService = passportStatusJmsService;
 		this.service = service;
@@ -176,12 +186,28 @@ public class PassportStatusController {
 
 		if (unique && passportStatuses.size() > 1) {
 			log.warn("Search query returned non-unique results: {}", List.of(dateOfBirth, fileNumber, firstName, lastName));
+
+			eventPublisher.publishEvent(PassportStatusSearchEvent.builder()
+				.dateOfBirth(dateOfBirth)
+				.fileNumber(fileNumber)
+				.firstName(firstName)
+				.lastName(lastName)
+				.result(Result.NON_UNIQUE)
+				.build());
+
 			throw new NonUniqueResourceException("Search query returned non-unique results");
 		}
 
+		eventPublisher.publishEvent(PassportStatusSearchEvent.builder()
+			.dateOfBirth(dateOfBirth)
+			.fileNumber(fileNumber)
+			.firstName(firstName)
+			.lastName(lastName)
+			.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT)
+			.build());
+
 		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, firstName, lastName, unique)).withSelfRel();
 		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
-
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}
 
