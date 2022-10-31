@@ -3,10 +3,10 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
+import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 
 /**
  * Checks that a string is a valid passport status code.
@@ -25,8 +25,10 @@ public class PassportStatusCodeValidator implements ConstraintValidator<Passport
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		if (value == null) { return true; }
-		final var statusCode = statusCodeService.readByCdoCode(value);
-		return statusCode.isPresent() == true && BooleanUtils.isTrue(statusCode.get().getIsActive());
+		return statusCodeService.readByCdoCode(value)
+			.map(StatusCode::getIsActive)
+			.filter(Boolean.TRUE::equals)
+			.isPresent();
 	}
 
 }
