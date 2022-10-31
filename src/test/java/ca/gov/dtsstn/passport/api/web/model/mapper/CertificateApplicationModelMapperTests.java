@@ -282,7 +282,7 @@ class CertificateApplicationModelMapperTests {
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
 		// cheating a little here because doing anything with NIEM sucks.. 😳
-		final String json = String.format("""
+		final String json = """
 			{
 			  "CertificateApplication": {
 			    "CertificateApplicationApplicant": {
@@ -306,7 +306,7 @@ class CertificateApplicationModelMapperTests {
 			    }
 			  }
 			}
-		""", STATUS_CODE__UNKNOWN__CDO_CODE);
+		""".formatted(STATUS_CODE__UNKNOWN__CDO_CODE);
 
 		final var createCertificateApplicationRequest = objectMapper.readValue(json, CreateCertificateApplicationRequestModel.class);
 
