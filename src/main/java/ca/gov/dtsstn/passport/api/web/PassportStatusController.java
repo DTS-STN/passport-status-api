@@ -164,7 +164,7 @@ public class PassportStatusController {
 
 			@NotBlank(message = "firstName must not be null or blank")
 			@Parameter(description = "The first name of the passport applicant.", example = "John", required = true)
-			@RequestParam(required = false)  String firstName,
+			@RequestParam(required = false) String firstName,
 
 			@NotBlank(message = "lastName must not be null or blank")
 			@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)

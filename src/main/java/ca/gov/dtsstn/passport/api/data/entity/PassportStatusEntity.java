@@ -38,8 +38,8 @@ public class PassportStatusEntity extends AbstractEntity {
 	private String lastName;
 
 	@ManyToOne()
-    @JoinColumn(name = "status_code_id")
-    private StatusCodeEntity statusCode;
+	@JoinColumn(name = "status_code_id")
+	private StatusCodeEntity statusCode;
 
 	@Column(nullable = false)
 	private LocalDate statusDate;
