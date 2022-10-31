@@ -69,28 +69,31 @@ public class DatabaseInitializer {
 		log.info("Deleting all passport statuses");
 		passportStatusRepository.deleteAllInBatch();
 
+		log.info("Fetch all active passport status codes");
+		final var statusCodeEntities = statusCodeService.readAllByIsActive(true).stream().map(statusCodeMapper::toEntity).toList();
+
 		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		final var randomPassportStatuses = Stream.generate(this::generateRandomPassportStatus).limit(generatedStatusesNumber).toList();
+		final var randomPassportStatuses = Stream.generate(() -> generateRandomPassportStatus(statusCodeEntities)).limit(generatedStatusesNumber).toList();
 		partition(randomPassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
 		log.info("Fake random data created in {}ms", stopWatch.getTime());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		final var duplicatePassportStatuses = Stream.generate(this::generateDuplicatePassportStatus).limit(duplicateStatusesNumber).toList();
+		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(statusCodeEntities)).limit(duplicateStatusesNumber).toList();
 		partition(duplicatePassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
 		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
 
 		// TODO :: GjB :: use properties for these
 		log.info("Generating passport team fake passport statuses");
 		stopWatch.reset(); stopWatch.start();
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", LocalDate.of(2000, 01, 01), "kristopher.charbonneau@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", LocalDate.of(2000, 01, 01), "maxim.lam@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(2000, 01, 01), "sebastien.comeau@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca"));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", LocalDate.of(2000, 01, 01), "stephane.viau@hrsdc-rhdcc.gc.ca"));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", LocalDate.of(2000, 01, 01), "kristopher.charbonneau@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", LocalDate.of(2000, 01, 01), "maxim.lam@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(1985, 01, 10), "sebastien.comeau@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca", statusCodeEntities));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", LocalDate.of(2000, 01, 01), "stephane.viau@hrsdc-rhdcc.gc.ca", statusCodeEntities));
 		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
 	}
 
@@ -99,7 +102,7 @@ public class DatabaseInitializer {
 		return List.copyOf(passportStatuses.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values());
 	}
 
-	protected PassportStatusEntity generateRandomPassportStatus() {
+	protected PassportStatusEntity generateRandomPassportStatus(List<StatusCodeEntity> statusCodeEntities) {
 		final var fileNumber = generateFileNumber();
 		final var firstName = generateFirstName();
 		final var lastName = generateLastName();
@@ -112,12 +115,12 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.statusCode(generateStatusCodeEntity())
+			.statusCode(generateStatusCodeEntity(statusCodeEntities))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
 			.build();
 	}
 
-	protected PassportStatusEntity generateDuplicatePassportStatus() {
+	protected PassportStatusEntity generateDuplicatePassportStatus(List<StatusCodeEntity> statusCodeEntities) {
 		final var dupeString = "DUPE0000";
 		final var fileNumber = dupeString;
 		final var firstName = dupeString;
@@ -131,12 +134,12 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.statusCode(generateStatusCodeEntity())
+			.statusCode(generateStatusCodeEntity(statusCodeEntities))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 	}
 
-	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email) {
+	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email, List<StatusCodeEntity> statusCodeEntities) {
 		final var fileNumber = generateFileNumber();
 
 		final var passportStatus = new PassportStatusEntityBuilder()
@@ -147,7 +150,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.firstName(firstName)
 			.lastName(lastName)
-			.statusCode(generateStatusCodeEntity())
+			.statusCode(generateStatusCodeEntity(statusCodeEntities))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 
@@ -183,11 +186,9 @@ public class DatabaseInitializer {
 		return faker.name().lastName();
 	}
 
-	protected StatusCodeEntity generateStatusCodeEntity() {
-		final var statusCodeEntities = statusCodeService.readAllByIsActive(true)
-			.stream().map(statusCodeMapper::toEntity).toArray(StatusCodeEntity[]::new);
-
-		return statusCodeEntities[faker.random().nextInt(statusCodeEntities.length)];
+	protected StatusCodeEntity generateStatusCodeEntity(List<StatusCodeEntity> statusCodeEntities) {
+		Assert.notEmpty(statusCodeEntities, "statusCodeEntities is required; it must not be null and must contain at least one element");
+        return statusCodeEntities.get(faker.random().nextInt(statusCodeEntities.size()));
 	}
 
 	protected LocalDate generateStatusDate(LocalDate start, LocalDate end) {
