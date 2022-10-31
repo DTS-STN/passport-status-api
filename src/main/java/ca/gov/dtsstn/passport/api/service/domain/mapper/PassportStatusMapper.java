@@ -60,6 +60,7 @@ public abstract class PassportStatusMapper {
 
 	@Named("toStatusCodeEntity")
 	protected StatusCodeEntity toStatusCodeEntity(PassportStatus passportStatus) {
+		if (passportStatus == null) { return null; }
 		return statusCodeMapper.toEntity(statusCodeService.read(passportStatus.getStatusCodeId()).orElse(null));
 	}
 
