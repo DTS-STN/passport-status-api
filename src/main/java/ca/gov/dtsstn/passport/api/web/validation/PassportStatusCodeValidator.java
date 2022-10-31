@@ -24,6 +24,7 @@ public class PassportStatusCodeValidator implements ConstraintValidator<Passport
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
+		if (value == null) { return true; }
 		final var statusCode = statusCodeService.readByCdoCode(value);
 		return statusCode.isPresent() == true && BooleanUtils.isTrue(statusCode.get().getIsActive());
 	}

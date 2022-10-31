@@ -34,7 +34,7 @@ public class StatusCodeService {
 	}
 
 	public Optional<StatusCode> readByCdoCode(String cdoCode) {
-		Assert.hasText(cdoCode, "cdoCode is required; it must not be null or blank");
+		Assert.notNull(cdoCode, "cdoCode is required; it must not be null");
 		return repository.findByCdoCode(cdoCode).map(mapper::fromEntity);
 	}
 
