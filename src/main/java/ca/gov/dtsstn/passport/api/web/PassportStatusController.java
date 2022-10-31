@@ -45,7 +45,7 @@ import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestM
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.assembler.GetCertificateApplicationRepresentationModelAssembler;
 import ca.gov.dtsstn.passport.api.web.model.mapper.CertificateApplicationModelMapper;
-import ca.gov.dtsstn.passport.api.web.validation.Boolean;
+import ca.gov.dtsstn.passport.api.web.validation.BooleanString;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -100,7 +100,7 @@ public class PassportStatusController {
 			CreateCertificateApplicationRequestModel passportStatusCreateRequestModel,
 
 			@RequestParam(defaultValue = "true", required = false)
-			@Boolean(message = "async must be one of: 'true', 'false'")
+			@BooleanString(message = "async must be one of: 'true', 'false'")
 			@Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = { "false", "true" }, defaultValue = "true"))
 			String async) {
 		if (!BooleanUtils.toBoolean(async)) {

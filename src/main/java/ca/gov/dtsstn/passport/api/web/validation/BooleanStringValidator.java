@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-public class BooleanValidator implements ConstraintValidator<Boolean, String> {
+public class BooleanStringValidator implements ConstraintValidator<BooleanString, String> {
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {

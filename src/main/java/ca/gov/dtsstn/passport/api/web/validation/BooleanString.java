@@ -12,9 +12,9 @@ import javax.validation.Payload;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { BooleanValidator.class })
+@Constraint(validatedBy = { BooleanStringValidator.class })
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE_USE })
-public @interface Boolean {
+public @interface BooleanString {
 
 	String message();
 
