@@ -31,7 +31,7 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "dateOfBirth", source = "client.personBirthDate.date")
 	@Mapping(target = "email", source = "client.personContactInformation.contactEmailId")
 	@Mapping(target = "givenName", source = "client.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
-	@Mapping(target = "lastName", source = "client.personName.personSurname")
+	@Mapping(target = "surname", source = "client.personName.personSurname")
 	PassportStatus toDomain(@Nullable CreateElectronicServiceRequestModel createElectronicServiceRequest);
 
 	/**

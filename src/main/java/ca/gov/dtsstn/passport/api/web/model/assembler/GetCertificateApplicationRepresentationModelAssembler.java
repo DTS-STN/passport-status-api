@@ -34,9 +34,9 @@ public class GetCertificateApplicationRepresentationModelAssembler extends Abstr
 		final var dateOfBirth = passportStatus.getDateOfBirth();
 		final var fileNumber = passportStatus.getFileNumber();
 		final var givenName = passportStatus.getGivenName();
-		final var lastName = passportStatus.getLastName();
+		final var surname = passportStatus.getSurname();
 
-		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, givenName, lastName, true)).withRel("search");
+		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, givenName, surname, true)).withRel("search");
 
 		return Optional.ofNullable(passportStatus)
 			.map(mapper::toModel).orElseThrow()

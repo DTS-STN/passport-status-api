@@ -159,7 +159,7 @@ public class PassportStatusController {
 	@ApiResponses.BadRequestError
 	@ResponseStatus(code = HttpStatus.OK)
 	@ApiResponses.UnprocessableEntityError
-	@Operation(summary = "Search for a passport status by fileNumber, givenName, lastName and dateOfBirth.", operationId = "passport-status-search")
+	@Operation(summary = "Search for a passport status by fileNumber, givenName, surname and dateOfBirth.", operationId = "passport-status-search")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
@@ -176,22 +176,22 @@ public class PassportStatusController {
 			@Parameter(description = "The given name of the passport applicant.", example = "John", required = true)
 			@RequestParam(required = false) String givenName,
 
-			@NotBlank(message = "lastName must not be null or blank")
-			@Parameter(description = "The last name of the passport applicant.", example = "Doe", required = true)
-			@RequestParam(required = false) String lastName,
+			@NotBlank(message = "surname must not be null or blank")
+			@Parameter(description = "The surname of the passport applicant.", example = "Doe", required = true)
+			@RequestParam(required = false) String surname,
 
 			@Parameter(description = "If the query should return a single unique result.", required = false)
 			@RequestParam(defaultValue = "true") boolean unique) {
-		final var passportStatuses = service.fileNumberSearch(dateOfBirth, fileNumber, givenName, lastName);
+		final var passportStatuses = service.fileNumberSearch(dateOfBirth, fileNumber, givenName, surname);
 
 		if (unique && passportStatuses.size() > 1) {
-			log.warn("Search query returned non-unique results: {}", List.of(dateOfBirth, fileNumber, givenName, lastName));
+			log.warn("Search query returned non-unique results: {}", List.of(dateOfBirth, fileNumber, givenName, surname));
 
 			eventPublisher.publishEvent(PassportStatusSearchEvent.builder()
 				.dateOfBirth(dateOfBirth)
 				.fileNumber(fileNumber)
 				.givenName(givenName)
-				.lastName(lastName)
+				.surname(surname)
 				.result(Result.NON_UNIQUE)
 				.build());
 
@@ -202,11 +202,11 @@ public class PassportStatusController {
 			.dateOfBirth(dateOfBirth)
 			.fileNumber(fileNumber)
 			.givenName(givenName)
-			.lastName(lastName)
+			.surname(surname)
 			.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT)
 			.build());
 
-		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, lastName, unique)).withSelfRel();
+		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, surname, unique)).withSelfRel();
 		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}

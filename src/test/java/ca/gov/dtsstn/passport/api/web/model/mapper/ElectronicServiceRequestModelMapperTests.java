@@ -70,7 +70,7 @@ class ElectronicServiceRequestModelMapperTests {
 		final var passportStatus = mapper.toDomain(createElectronicServiceRequest);
 
 		final var nonnullFields = new String[] {
-			"dateOfBirth", "email", "givenName", "lastName"
+			"dateOfBirth", "email", "givenName", "surname"
 		};
 
 		assertThat(passportStatus)
@@ -85,7 +85,7 @@ class ElectronicServiceRequestModelMapperTests {
 			.extracting(PassportStatus::getGivenName)
 			.isEqualTo("John");
 		assertThat(passportStatus)
-			.extracting(PassportStatus::getLastName)
+			.extracting(PassportStatus::getSurname)
 			.isEqualTo("Doe");
 	}
 

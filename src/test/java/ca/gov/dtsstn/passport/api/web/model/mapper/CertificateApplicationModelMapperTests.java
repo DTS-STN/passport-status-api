@@ -190,7 +190,7 @@ class CertificateApplicationModelMapperTests {
 		final var fileNumber = "https://open.spotify.com/track/1fZvEmAmWtsDSUjAgDhddU?";
 		final var email = "user@example.com";
 		final var givenName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
-		final var lastName = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
+		final var surname = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
 		final var statusCodeId = STATUS_CODE__UNKNOWN__ID;
 		final var statusDate = LocalDate.of(2000, 01, 01);
 
@@ -200,7 +200,7 @@ class CertificateApplicationModelMapperTests {
 			.email(email)
 			.fileNumber(fileNumber)
 			.givenName(givenName)
-			.lastName(lastName)
+			.surname(surname)
 			.statusCodeId(statusCodeId)
 			.statusDate(statusDate)
 			.build();
@@ -249,12 +249,12 @@ class CertificateApplicationModelMapperTests {
 			.extracting(CertificateApplicationApplicantModel::getPersonName)
 			.extracting(PersonNameModel::getPersonGivenNames).asList()
 			.contains(givenName);
-		assertThat(getCertificateApplicationRepresentation) // check lastName field
+		assertThat(getCertificateApplicationRepresentation) // check surname field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
 			.extracting(CertificateApplicationApplicantModel::getPersonName)
 			.extracting(PersonNameModel::getPersonSurname)
-			.isEqualTo(lastName);
+			.isEqualTo(surname);
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
@@ -313,7 +313,7 @@ class CertificateApplicationModelMapperTests {
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 
 		final var nonnullFields = new String[] {
-			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "lastName", "statusCodeId", "statusDate"
+			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "surname", "statusCodeId", "statusDate"
 		};
 
 		assertThat(passportStatus)
@@ -334,7 +334,7 @@ class CertificateApplicationModelMapperTests {
 			.extracting(PassportStatus::getGivenName)
 			.isEqualTo("John");
 		assertThat(passportStatus)
-			.extracting(PassportStatus::getLastName)
+			.extracting(PassportStatus::getSurname)
 			.isEqualTo("Doe");
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusCodeId)
