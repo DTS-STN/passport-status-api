@@ -32,10 +32,10 @@ public interface PassportStatusSearchEvent extends Serializable {
 	String getFileNumber();
 
 	@Nullable
-	String getFirstName();
+	String getGivenName();
 
 	@Nullable
-	String getLastName();
+	String getSurname();
 
 	Result getResult();
 

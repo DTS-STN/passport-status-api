@@ -64,17 +64,17 @@ public class ElectronicServiceRequestController {
 
 		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getClient().getPersonBirthDate().getDate());
 		final var email = createElectronicServiceRequest.getClient().getPersonContactInformation().getContactEmailId();
-		final var firstName = createElectronicServiceRequest.getClient().getPersonName().getPersonGivenNames().get(0);
-		final var lastName = createElectronicServiceRequest.getClient().getPersonName().getPersonSurname();
+		final var givenName = createElectronicServiceRequest.getClient().getPersonName().getPersonGivenNames().get(0);
+		final var surname = createElectronicServiceRequest.getClient().getPersonName().getPersonSurname();
 
 		eventPublisher.publishEvent(NotificationRequestedEvent.builder()
 			.dateOfBirth(dateOfBirth)
 			.email(email)
-			.firstName(firstName)
-			.lastName(lastName)
+			.givenName(givenName)
+			.surname(surname)
 			.build());
 
-		final var passportStatuses = passportStatusService.emailSearch(dateOfBirth, email, firstName, lastName);
+		final var passportStatuses = passportStatusService.emailSearch(dateOfBirth, email, givenName, surname);
 		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), email);
 
 		if (passportStatuses.size() > 1) {
@@ -83,8 +83,8 @@ public class ElectronicServiceRequestController {
 			eventPublisher.publishEvent(NotificationNotSentEvent.builder()
 				.dateOfBirth(dateOfBirth)
 				.email(email)
-				.firstName(firstName)
-				.lastName(lastName)
+				.givenName(givenName)
+				.surname(surname)
 				.reason("Search query returned non-unique results"));
 
 			throw new NonUniqueResourceException("Search query returned non-unique results");
@@ -102,8 +102,8 @@ public class ElectronicServiceRequestController {
 			() -> eventPublisher.publishEvent(NotificationNotSentEvent.builder()
 				.dateOfBirth(dateOfBirth)
 				.email(email)
-				.firstName(firstName)
-				.lastName(lastName)
+				.givenName(givenName)
+				.surname(surname)
 				.reason("Search query returned zero results")
 				.build()));
 	}

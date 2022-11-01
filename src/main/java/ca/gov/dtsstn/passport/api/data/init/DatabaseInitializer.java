@@ -104,17 +104,17 @@ public class DatabaseInitializer {
 
 	protected PassportStatusEntity generateRandomPassportStatus(List<StatusCodeEntity> statusCodes) {
 		final var fileNumber = generateFileNumber();
-		final var firstName = generateFirstName();
-		final var lastName = generateLastName();
+		final var givenName = generateGivenName();
+		final var surname = generateSurname();
 
 		return new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, firstName, lastName))
-			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
+			.id(generateId(fileNumber, givenName, surname))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(generateDateOfBirth())
-			.email(generateEmail(firstName, lastName))
+			.email(generateEmail(givenName, surname))
 			.fileNumber(fileNumber)
-			.firstName(firstName)
-			.lastName(lastName)
+			.givenName(givenName)
+			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
 			.build();
@@ -123,33 +123,33 @@ public class DatabaseInitializer {
 	protected PassportStatusEntity generateDuplicatePassportStatus(List<StatusCodeEntity> statusCodes) {
 		final var dupeString = "DUPE0000";
 		final var fileNumber = dupeString;
-		final var firstName = dupeString;
-		final var lastName = dupeString;
+		final var givenName = dupeString;
+		final var surname = dupeString;
 
 		return new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, firstName, lastName))
-			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
+			.id(generateId(fileNumber, givenName, surname))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.email("%s.%s@example.com".formatted(dupeString, dupeString).toLowerCase())
 			.fileNumber(fileNumber)
-			.firstName(firstName)
-			.lastName(lastName)
+			.givenName(givenName)
+			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
 	}
 
-	protected PassportStatusEntity generatePassportTeamPassportStatus(String firstName, String lastName, LocalDate dateOfBirth, String email, List<StatusCodeEntity> statusCodes) {
+	protected PassportStatusEntity generatePassportTeamPassportStatus(String givenName, String surname, LocalDate dateOfBirth, String email, List<StatusCodeEntity> statusCodes) {
 		final var fileNumber = generateFileNumber();
 
 		final var passportStatus = new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, firstName, lastName))
-			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, firstName, lastName))
+			.id(generateId(fileNumber, givenName, surname))
+			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(dateOfBirth)
 			.email(email)
 			.fileNumber(fileNumber)
-			.firstName(firstName)
-			.lastName(lastName)
+			.givenName(givenName)
+			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.build();
@@ -158,31 +158,31 @@ public class DatabaseInitializer {
 		return passportStatus;
 	}
 
-	protected String generateApplicationRegisterSid(String fileNumber, String firstName, String lastName) {
-		return UUID.nameUUIDFromBytes(("applicationRegisterSid-%s-%s-%s".formatted(fileNumber, firstName, lastName)).getBytes()).toString();
+	protected String generateApplicationRegisterSid(String fileNumber, String givenName, String surname) {
+		return UUID.nameUUIDFromBytes(("applicationRegisterSid-%s-%s-%s".formatted(fileNumber, givenName, surname)).getBytes()).toString();
 	}
 
 	protected LocalDate generateDateOfBirth() {
 		return faker.date().birthday().toLocalDateTime().toLocalDate();
 	}
 
-	protected String generateEmail(final String firstName, final String lastName) {
-		return stripDiacritics("%s.%s@example.com".formatted(firstName, lastName)).toLowerCase();
+	protected String generateEmail(final String givenName, final String surname) {
+		return stripDiacritics("%s.%s@example.com".formatted(givenName, surname)).toLowerCase();
 	}
 
 	protected String generateFileNumber() {
 		return faker.random().hex(8);
 	}
 
-	protected String generateFirstName() {
+	protected String generateGivenName() {
 		return faker.name().firstName();
 	}
 
-	protected String generateId(String fileNumber, String firstName, String lastName) {
-		return UUID.nameUUIDFromBytes(("id-%s-%s-%s".formatted(fileNumber, firstName, lastName)).getBytes()).toString();
+	protected String generateId(String fileNumber, String givenName, String surname) {
+		return UUID.nameUUIDFromBytes(("id-%s-%s-%s".formatted(fileNumber, givenName, surname)).getBytes()).toString();
 	}
 
-	protected String generateLastName() {
+	protected String generateSurname() {
 		return faker.name().lastName();
 	}
 

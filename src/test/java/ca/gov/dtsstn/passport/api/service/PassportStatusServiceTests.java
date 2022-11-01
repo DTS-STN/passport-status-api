@@ -114,7 +114,7 @@ class PassportStatusServiceTests {
 	@Test void testSearch() {
 		when(passportStatusRepository.fileNumberSearch(any(), any(), any(), any())).thenReturn(List.of());
 
-		final var passportStatuses = passportStatusService.fileNumberSearch(LocalDate.now(), "fileNumber", "firstName", "lastName");
+		final var passportStatuses = passportStatusService.fileNumberSearch(LocalDate.now(), "fileNumber", "givenName", "surname");
 
 		assertThat(passportStatuses).isNotNull();
 		verify(passportStatusRepository).fileNumberSearch(any(), any(), any(), any());

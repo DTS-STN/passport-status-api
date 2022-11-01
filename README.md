@@ -27,7 +27,7 @@ application statuses.
 The Passport Status API fetches and returns Canadian passport application
 statuses by searching a database using a set of shared datapoints. Software
 services can query the database by providing various pieces of data such as
-`firstName`, `lastName`, `dateOfBirth`, and other data that is volunteered by
+`givenName`, `surname`, `dateOfBirth`, and other data that is volunteered by
 end users.
 
 ## Requirements

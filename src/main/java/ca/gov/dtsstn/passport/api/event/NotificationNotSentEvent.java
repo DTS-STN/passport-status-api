@@ -23,9 +23,9 @@ public interface NotificationNotSentEvent extends Serializable {
 
 	String getEmail();
 
-	String getFirstName();
+	String getGivenName();
 
-	String getLastName();
+	String getSurname();
 
 	String getReason();
 

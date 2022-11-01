@@ -52,8 +52,8 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "dateOfBirth", source = "certificateApplication.certificateApplicationApplicant.birthDate.date")
 	@Mapping(target = "email", source = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", qualifiedByName = { "emptyStringToNull" })
 	@Mapping(target = "fileNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findFileNumber" })
-	@Mapping(target = "firstName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
-	@Mapping(target = "lastName", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
+	@Mapping(target = "givenName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
+	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
@@ -65,7 +65,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", source = "email")
 	@Mapping(target = "certificateApplication.certificateApplicationIdentifications", source = "passportStatus", qualifiedByName = { "getCertificateApplicationIdentifications" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
-	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "lastName")
+	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "surname")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
@@ -143,7 +143,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Named("getPersonGivenNames")
 	protected List<String> getPersonGivenNames(@Nullable PassportStatus passportStatus) {
 		return Optional.ofNullable(passportStatus)
-			.map(PassportStatus::getFirstName)
+			.map(PassportStatus::getGivenName)
 			.map(List::of)
 			.orElse(List.of());
 	}

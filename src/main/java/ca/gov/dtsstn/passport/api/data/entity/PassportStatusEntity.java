@@ -31,10 +31,10 @@ public class PassportStatusEntity extends AbstractEntity {
 	private String fileNumber;
 
 	@Column(length = 64, nullable = false)
-	private String firstName;
+	private String givenName;
 
 	@Column(length = 64, nullable = false)
-	private String lastName;
+	private String surname;
 
 	@ManyToOne()
 	private StatusCodeEntity statusCode;
@@ -58,8 +58,8 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable LocalDate dateOfBirth,
 			@Nullable String email,
 			@Nullable String fileNumber,
-			@Nullable String firstName,
-			@Nullable String lastName,
+			@Nullable String givenName,
+			@Nullable String surname,
 			@Nullable StatusCodeEntity statusCode,
 			@Nullable LocalDate statusDate) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
@@ -67,8 +67,8 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.dateOfBirth = dateOfBirth;
 		this.email = email;
 		this.fileNumber = fileNumber;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.givenName = givenName;
+		this.surname = surname;
 		this.statusCode = statusCode;
 		this.statusDate = statusDate;
 	}
@@ -105,20 +105,20 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.fileNumber = fileNumber;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getGivenName() {
+		return givenName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getSurname() {
+		return surname;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
 	public StatusCodeEntity getStatusCode() {
@@ -157,8 +157,8 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("dateOfBirth", dateOfBirth)
 			.append("email", email)
 			.append("fileNumber", fileNumber)
-			.append("firstName", firstName)
-			.append("lastName", lastName)
+			.append("givenName", givenName)
+			.append("surname", surname)
 			.append("statusCode", statusCode)
 			.append("statusDate", statusDate)
 			.toString();
