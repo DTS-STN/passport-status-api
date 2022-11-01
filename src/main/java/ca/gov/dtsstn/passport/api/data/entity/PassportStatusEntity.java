@@ -5,8 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
@@ -18,8 +17,6 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings({ "serial" })
 @Entity(name = "PassportStatus")
 public class PassportStatusEntity extends AbstractEntity {
-
-	public enum Status { APPROVED, IN_EXAMINATION, REJECTED, UNKNOWN }
 
 	@Column(length = 256, nullable = false)
 	private String applicationRegisterSid;
@@ -39,9 +36,8 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Column(length = 64, nullable = false)
 	private String lastName;
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 32, nullable = false)
-	private Status status;
+	@ManyToOne()
+	private StatusCodeEntity statusCode;
 
 	@Column(nullable = false)
 	private LocalDate statusDate;
@@ -64,7 +60,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable String fileNumber,
 			@Nullable String firstName,
 			@Nullable String lastName,
-			@Nullable Status status,
+			@Nullable StatusCodeEntity statusCode,
 			@Nullable LocalDate statusDate) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
@@ -73,7 +69,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.fileNumber = fileNumber;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.status = status;
+		this.statusCode = statusCode;
 		this.statusDate = statusDate;
 	}
 
@@ -125,12 +121,12 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.lastName = lastName;
 	}
 
-	public Status getStatus() {
-		return status;
+	public StatusCodeEntity getStatusCode() {
+		return this.statusCode;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setStatusCode(StatusCodeEntity statusCode) {
+		this.statusCode = statusCode;
 	}
 
 	public LocalDate getStatusDate() {
@@ -163,7 +159,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("fileNumber", fileNumber)
 			.append("firstName", firstName)
 			.append("lastName", lastName)
-			.append("status", status)
+			.append("statusCode", statusCode)
 			.append("statusDate", statusDate)
 			.toString();
 	}

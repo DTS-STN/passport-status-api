@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,9 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
-import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.PassportStatusMapper;
 
 /**
  * TODO :: GjB :: verify event publisher is fired for each method
@@ -40,37 +41,47 @@ class PassportStatusServiceTests {
 
 	@Mock PassportStatusRepository passportStatusRepository;
 
+	@Mock PassportStatusMapper passportStatusMapper;
+
 	@BeforeEach void beforeEach() {
-		this.passportStatusService = new PassportStatusService(applicationEventPublisher, passportStatusRepository);
+		this.passportStatusService = new PassportStatusService(applicationEventPublisher, passportStatusMapper, passportStatusRepository);
 	}
 
 	@Test void testCreate() {
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
+		when(passportStatusMapper.toEntity(any())).thenReturn(new PassportStatusEntityBuilder().build());
 
 		final var passportStatus = passportStatusService.create(ImmutablePassportStatus.builder().build());
 
 		assertThat(passportStatus).isNotNull();
 		verify(passportStatusRepository).save(any());
+		verify(passportStatusMapper).fromEntity(any());
+		verify(passportStatusMapper).toEntity(any());
 	}
 
 	@Test void testRead() {
 		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		final var passportStatus = passportStatusService.read("id");
 
 		assertThat(passportStatus).isNotEmpty();
 		verify(passportStatusRepository).findById(any());
+		verify(passportStatusMapper).fromEntity(any());
 	}
 
 	@Test void testUpdate() {
 		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
 		when(passportStatusRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		final var passportStatus = passportStatusService.update(ImmutablePassportStatus.builder().id("id").build());
 
 		assertThat(passportStatus).isNotNull();
 		verify(passportStatusRepository).findById(any());
 		verify(passportStatusRepository).save(any());
+		verify(passportStatusMapper, times(2)).fromEntity(any());
 	}
 
 	@Test void testUpdate_notFound() {
@@ -82,11 +93,13 @@ class PassportStatusServiceTests {
 	}
 
 	@Test void testDelete() {
-		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntity()));
+		when(passportStatusRepository.findById(any())).thenReturn(Optional.of(new PassportStatusEntityBuilder().build()));
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
 		passportStatusService.delete("id");
 
 		verify(passportStatusRepository).deleteById(any());
+		verify(passportStatusMapper).fromEntity(any());
 	}
 
 	@Test void testReadAll() {

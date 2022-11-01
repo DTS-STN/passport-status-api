@@ -15,14 +15,16 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@Mapper
+@Mapper(componentModel = "spring", uses = { StatusCodeMapper.class })
 public interface PassportStatusMapper {
 
 	@Nullable
 	@Mapping(target = "isNew", ignore = true)
+	@Mapping(target = "statusCode", source = "statusCodeId")
 	PassportStatusEntity toEntity(@Nullable PassportStatus passportStatus);
 
 	@Nullable
+	@Mapping(target = "statusCodeId", source = "statusCode.id")
 	PassportStatus fromEntity(@Nullable PassportStatusEntity passportStatus);
 
 	@Mapping(target = "id", ignore = true)
@@ -31,6 +33,7 @@ public interface PassportStatusMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "isNew", ignore = true)
+	@Mapping(target = "statusCode", source = "statusCodeId")
 	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 	PassportStatusEntity update(@Nullable PassportStatus passportStatus, @MappingTarget PassportStatusEntity target);
 
