@@ -51,6 +51,7 @@
 		<dependency-check-maven.version>7.2.1</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.13.17</gitlog-maven-plugin.version>
+		<guava.version>31.1-jre</guava.version>
 		<icu4j.version>72.1</icu4j.version>
 		<immutables.version>2.9.2</immutables.version>
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
@@ -67,6 +68,11 @@
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
