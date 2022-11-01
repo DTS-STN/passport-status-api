@@ -24,7 +24,7 @@ CREATE TABLE email_request
 	date_of_birth DATE NOT NULL,
 	email VARCHAR(256) NOT NULL,
 	file_number VARCHAR(32) NOT NULL,
-	first_name VARCHAR(128) NOT NULL,
+	given_name VARCHAR(128) NOT NULL,
 	last_name VARCHAR(128) NOT NULL,
 	status VARCHAR(32) NOT NULL,
 
@@ -90,7 +90,7 @@ CREATE TABLE passport_status
 	date_of_birth DATE NOT NULL,
 	email VARCHAR(256),
 	file_number VARCHAR(32) NOT NULL,
-	first_name VARCHAR(128) NOT NULL,
+	given_name VARCHAR(128) NOT NULL,
 	last_name VARCHAR(128) NOT NULL,
 	status_code_id VARCHAR(64) NOT NULL,
 	status_date DATE NOT NULL,
@@ -108,5 +108,5 @@ CREATE TABLE passport_status
 CREATE INDEX ix_date_of_birth ON passport_status(date_of_birth);
 CREATE INDEX ix_email ON passport_status(email);
 CREATE INDEX ix_file_number ON passport_status(file_number);
-CREATE INDEX ix_first_name ON passport_status(first_name);
+CREATE INDEX ix_given_name ON passport_status(given_name);
 CREATE INDEX ix_last_name ON passport_status(last_name);

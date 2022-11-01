@@ -81,22 +81,22 @@ public class PassportStatusService {
 		return passportStatuses;
 	}
 
-	public List<PassportStatus> emailSearch(LocalDate dateOfBirth, String email, String firstName, String lastName) {
+	public List<PassportStatus> emailSearch(LocalDate dateOfBirth, String email, String givenName, String lastName) {
 		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
 		Assert.hasText(email, "email is required; it must not be blank or null");
-		Assert.hasText(firstName, "firstName is required, it must not be blank or null");
+		Assert.hasText(givenName, "givenName is required, it must not be blank or null");
 		Assert.hasText(lastName, "lastName is required; it must not be blank or null");
-		final var passportStatuses = repository.emailSearch(email, dateOfBirth, firstName, lastName).stream().map(mapper::fromEntity).toList();
+		final var passportStatuses = repository.emailSearch(email, dateOfBirth, givenName, lastName).stream().map(mapper::fromEntity).toList();
 		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}
 
-	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String firstName, String lastName) {
+	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String givenName, String lastName) {
 		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
-		Assert.hasText(firstName, "firstName is required, it must not be blank or null");
+		Assert.hasText(givenName, "givenName is required, it must not be blank or null");
 		Assert.hasText(lastName, "lastName is required; it must not be blank or null");
-		final var passportStatuses = repository.fileNumberSearch(fileNumber, dateOfBirth, firstName, lastName).stream().map(mapper::fromEntity).toList();
+		final var passportStatuses = repository.fileNumberSearch(fileNumber, dateOfBirth, givenName, lastName).stream().map(mapper::fromEntity).toList();
 		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}

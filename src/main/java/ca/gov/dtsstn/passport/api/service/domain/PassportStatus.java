@@ -35,7 +35,7 @@ public interface PassportStatus extends AbstractDomainObject {
 	String getFileNumber();
 
 	@Nullable
-	String getFirstName();
+	String getGivenName();
 
 	@Nullable
 	String getLastName();

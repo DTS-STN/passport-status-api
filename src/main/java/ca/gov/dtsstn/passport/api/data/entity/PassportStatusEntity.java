@@ -31,7 +31,7 @@ public class PassportStatusEntity extends AbstractEntity {
 	private String fileNumber;
 
 	@Column(length = 64, nullable = false)
-	private String firstName;
+	private String givenName;
 
 	@Column(length = 64, nullable = false)
 	private String lastName;
@@ -58,7 +58,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable LocalDate dateOfBirth,
 			@Nullable String email,
 			@Nullable String fileNumber,
-			@Nullable String firstName,
+			@Nullable String givenName,
 			@Nullable String lastName,
 			@Nullable StatusCodeEntity statusCode,
 			@Nullable LocalDate statusDate) {
@@ -67,7 +67,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.dateOfBirth = dateOfBirth;
 		this.email = email;
 		this.fileNumber = fileNumber;
-		this.firstName = firstName;
+		this.givenName = givenName;
 		this.lastName = lastName;
 		this.statusCode = statusCode;
 		this.statusDate = statusDate;
@@ -105,12 +105,12 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.fileNumber = fileNumber;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getGivenName() {
+		return givenName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
 	}
 
 	public String getLastName() {
@@ -157,7 +157,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("dateOfBirth", dateOfBirth)
 			.append("email", email)
 			.append("fileNumber", fileNumber)
-			.append("firstName", firstName)
+			.append("givenName", givenName)
 			.append("lastName", lastName)
 			.append("statusCode", statusCode)
 			.append("statusDate", statusDate)

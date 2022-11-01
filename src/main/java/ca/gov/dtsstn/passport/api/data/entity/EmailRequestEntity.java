@@ -31,7 +31,7 @@ public class EmailRequestEntity extends AbstractEntity {
 	private String fileNumber;
 
 	@Column(length = 64, nullable = false)
-	private String firstName;
+	private String givenName;
 
 	@Column(length = 64, nullable = false)
 	private String lastName;
@@ -55,14 +55,14 @@ public class EmailRequestEntity extends AbstractEntity {
 		@Nullable LocalDate dateOfBirth,
 		@Nullable String email,
 		@Nullable String fileNumber,
-		@Nullable String firstName,
+		@Nullable String givenName,
 		@Nullable String lastName,
 		@Nullable Status status) {
 	super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.dateOfBirth = dateOfBirth;
 		this.email = email;
 		this.fileNumber = fileNumber;
-		this.firstName = firstName;
+		this.givenName = givenName;
 		this.lastName = lastName;
 		this.status = status;
 	}
@@ -91,12 +91,12 @@ public class EmailRequestEntity extends AbstractEntity {
 		this.fileNumber = fileNumber;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getGivenName() {
+		return givenName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
 	}
 
 	public String getLastName() {
@@ -134,7 +134,7 @@ public class EmailRequestEntity extends AbstractEntity {
 			.append("dateOfBirth", dateOfBirth)
 			.append("email", email)
 			.append("fileNumber", fileNumber)
-			.append("firstName", firstName)
+			.append("givenName", givenName)
 			.append("lastName", lastName)
 			.append("status", status)
 			.toString();
