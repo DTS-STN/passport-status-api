@@ -27,13 +27,14 @@ public interface CertificateApplicationIdentificationModel extends Serializable 
 
 	static final String FILE_NUMBER_CATEGORY_TEXT = "File Number";
 
+	static final String MANIFEST_NUMBER_CATEGORY_TEXT = "Manifest Number";
+
 	@JsonProperty("IdentificationCategoryText")
 	@NotNull(message = "IdentificationCategoryText is required; it must not be null")
 	@Schema(description = "A human readable description of the certificate application ID entry.", example = "Application Register SID")
 	String getIdentificationCategoryText();
 
 	@JsonProperty("IdentificationID")
-	@NotNull(message = "IdentificationID is required; it must not be null")
 	@Size(max = 32, message = "IdentificationID must be 32 characters or less")
 	@Schema(description = "The value of the certificate application ID entry.", example = "ABCD1234")
 	String getIdentificationId();
