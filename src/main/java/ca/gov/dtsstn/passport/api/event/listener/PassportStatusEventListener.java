@@ -85,30 +85,25 @@ public class PassportStatusEventListener {
 	@EventListener({ PassportStatusSearchEvent.class })
 	public void handleSearch(PassportStatusSearchEvent event) throws JsonProcessingException {
 		switch(event.getResult()){
-			case HIT:
-				eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_HIT)
-					.description("Passport status search hit")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
-				break;
-			case MISS:
-				eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_MISS)
-					.description("Passport status search miss")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
-				break;
-			case NON_UNIQUE:
-				eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_NON_UNIQUE)
-					.description("Passport status search non-unique")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
-				break;
-			default:
-				log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
-				break;
+			case HIT -> eventLogRepository.save(new EventLogEntityBuilder()
+				.eventType(EventLogType.SEARCH_STATUS_HIT)
+				.description("Passport status search hit")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+			case MISS -> eventLogRepository.save(new EventLogEntityBuilder()
+				.eventType(EventLogType.SEARCH_STATUS_MISS)
+				.description("Passport status search miss")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+			case NON_UNIQUE -> eventLogRepository.save(new EventLogEntityBuilder()
+				.eventType(EventLogType.SEARCH_STATUS_NON_UNIQUE)
+				.description("Passport status search non-unique")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+			default ->  log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
 		}
 	}
 
