@@ -140,15 +140,16 @@ public class EventLogEntity extends AbstractEntity {
 		GET_ESRF_FAIL,
 
 		/*
-		 * PassportStatus create/read events
+		 * PassportStatus create/delete/read/search/update events
 		 */
 
-		CREATE_STATUS_REQUEST,
 		CREATE_STATUS_SUCCESS,
-		CREATE_STATUS_FAIL,
-		GET_STATUS_REQUEST,
-		GET_STATUS_SUCCESS,
-		GET_STATUS_FAIL
+		DELETE_STATUS_SUCCESS,
+		READ_STATUS_SUCCESS,
+		SEARCH_STATUS_HIT,
+		SEARCH_STATUS_MISS,
+		SEARCH_STATUS_NON_UNIQUE,
+		UPDATE_STATUS_SUCCESS
 
 	}
 
