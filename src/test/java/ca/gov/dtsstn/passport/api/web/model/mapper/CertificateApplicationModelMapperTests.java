@@ -313,7 +313,7 @@ class CertificateApplicationModelMapperTests {
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 
 		final var nonnullFields = new String[] {
-			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "surname", "statusCodeId", "statusDate"
+			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "surname", "statusCodeId", "statusDate", "version"
 		};
 
 		assertThat(passportStatus)

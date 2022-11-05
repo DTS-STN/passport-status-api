@@ -70,7 +70,7 @@ class ElectronicServiceRequestModelMapperTests {
 		final var passportStatus = mapper.toDomain(createElectronicServiceRequest);
 
 		final var nonnullFields = new String[] {
-			"dateOfBirth", "email", "givenName", "surname"
+			"dateOfBirth", "email", "givenName", "surname", "version"
 		};
 
 		assertThat(passportStatus)
