@@ -41,7 +41,6 @@ public interface CertificateApplicationModel extends Serializable {
 
 	@Valid
 	@Default
-	@JsonView({ Authorities.AuthenticatedView.class })
 	@JsonProperty("CertificateApplicationIdentification")
 	@NotNull(message = "CertificateApplicationIdentification is required; it must not be null")
 	@Schema(example = "[{\"IdentificationCategoryText\": \"Application Register SID\", \"IdentificationID\": \"ABCD1234\" },{ \"IdentificationCategoryText\": \"File Number\", \"IdentificationID\": \"ABCD1234\" }]")

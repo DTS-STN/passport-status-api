@@ -33,6 +33,9 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Column(length = 64, nullable = false)
 	private String givenName;
 
+	@Column(length = 32, nullable = true)
+	private String manifestNumber;
+
 	@Column(length = 64, nullable = false)
 	private String surname;
 
@@ -59,6 +62,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable String email,
 			@Nullable String fileNumber,
 			@Nullable String givenName,
+			@Nullable String manifestNumber,
 			@Nullable String surname,
 			@Nullable StatusCodeEntity statusCode,
 			@Nullable LocalDate statusDate) {
@@ -68,6 +72,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.email = email;
 		this.fileNumber = fileNumber;
 		this.givenName = givenName;
+		this.manifestNumber = manifestNumber;
 		this.surname = surname;
 		this.statusCode = statusCode;
 		this.statusDate = statusDate;
@@ -111,6 +116,14 @@ public class PassportStatusEntity extends AbstractEntity {
 
 	public void setGivenName(String givenName) {
 		this.givenName = givenName;
+	}
+
+	public String getManifestNumber() {
+		return manifestNumber;
+	}
+
+	public void setManifestNumber(String manifestNumber) {
+		this.manifestNumber = manifestNumber;
 	}
 
 	public String getSurname() {

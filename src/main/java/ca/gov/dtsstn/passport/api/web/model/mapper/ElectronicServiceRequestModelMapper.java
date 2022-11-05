@@ -26,6 +26,7 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
+	@Mapping(target = "manifestNumber", ignore = true)
 	@Mapping(target = "statusCodeId", ignore = true)
 	@Mapping(target = "statusDate", ignore = true)
 	@Mapping(target = "dateOfBirth", source = "client.personBirthDate.date")

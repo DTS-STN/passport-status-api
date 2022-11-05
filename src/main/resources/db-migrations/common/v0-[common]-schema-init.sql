@@ -91,6 +91,7 @@ CREATE TABLE passport_status
 	email VARCHAR(256),
 	file_number VARCHAR(32) NOT NULL,
 	given_name VARCHAR(128) NOT NULL,
+	manifest_number VARCHAR(32),
 	surname VARCHAR(128) NOT NULL,
 	status_code_id VARCHAR(64) NOT NULL,
 	status_date DATE NOT NULL,

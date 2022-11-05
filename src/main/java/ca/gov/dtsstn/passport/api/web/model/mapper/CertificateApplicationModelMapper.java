@@ -53,6 +53,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "email", source = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", qualifiedByName = { "emptyStringToNull" })
 	@Mapping(target = "fileNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findFileNumber" })
 	@Mapping(target = "givenName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
+	@Mapping(target = "manifestNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findManifestNumber" })
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
@@ -136,7 +137,14 @@ public abstract class CertificateApplicationModelMapper {
 				.build())
 			.orElse(null);
 
-		return Stream.of(applicationRegisterSid, fileNumber).filter(Objects::nonNull).toList();
+		final CertificateApplicationIdentificationModel manifestNumber = Optional.ofNullable(passportStatus.getManifestNumber())
+			.map(x -> ImmutableCertificateApplicationIdentificationModel.builder()
+				.identificationCategoryText(CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT)
+				.identificationId(passportStatus.getManifestNumber())
+				.build())
+			.orElse(null);
+
+		return Stream.of(applicationRegisterSid, fileNumber, manifestNumber).filter(Objects::nonNull).toList();
 	}
 
 	@Nullable
@@ -169,6 +177,16 @@ public abstract class CertificateApplicationModelMapper {
 	@Named("findFileNumber")
 	protected String findFileNumber(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
 		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT);
+	}
+
+	/**
+	 * Finds the manifest number element within {@code certificateApplicationIdentifications}. Returns null
+	 * if not found or {@code certificateApplicationIdentifications} is null.
+	 */
+	@Nullable
+	@Named("findManifestNumber")
+	protected String findManifestNumber(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
+		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT);
 	}
 
 	/**

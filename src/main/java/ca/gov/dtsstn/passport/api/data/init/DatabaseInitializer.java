@@ -105,7 +105,11 @@ public class DatabaseInitializer {
 	protected PassportStatusEntity generateRandomPassportStatus(List<StatusCodeEntity> statusCodes) {
 		final var fileNumber = generateFileNumber();
 		final var givenName = generateGivenName();
+		final var manifestNumber = generateManifestNumber();
 		final var surname = generateSurname();
+
+		// include manifest number in 1/3 of statuses
+		final var includeManifestNumber = faker.number().numberBetween(0, 3) % 3 == 0;
 
 		return new PassportStatusEntityBuilder()
 			.id(generateId(fileNumber, givenName, surname))
@@ -114,6 +118,7 @@ public class DatabaseInitializer {
 			.email(generateEmail(givenName, surname))
 			.fileNumber(fileNumber)
 			.givenName(givenName)
+			.manifestNumber(includeManifestNumber ? manifestNumber : null)
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
@@ -124,6 +129,7 @@ public class DatabaseInitializer {
 		final var dupeString = "DUPE0000";
 		final var fileNumber = dupeString;
 		final var givenName = dupeString;
+		final var manifestNumber = dupeString;
 		final var surname = dupeString;
 
 		return new PassportStatusEntityBuilder()
@@ -133,6 +139,7 @@ public class DatabaseInitializer {
 			.email("%s.%s@example.com".formatted(dupeString, dupeString).toLowerCase())
 			.fileNumber(fileNumber)
 			.givenName(givenName)
+			.manifestNumber(manifestNumber)
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
@@ -149,6 +156,7 @@ public class DatabaseInitializer {
 			.email(email)
 			.fileNumber(fileNumber)
 			.givenName(givenName)
+			.manifestNumber(generateManifestNumber())
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
@@ -180,6 +188,10 @@ public class DatabaseInitializer {
 
 	protected String generateId(String fileNumber, String givenName, String surname) {
 		return UUID.nameUUIDFromBytes(("id-%s-%s-%s".formatted(fileNumber, givenName, surname)).getBytes()).toString();
+	}
+
+	protected String generateManifestNumber() {
+		return faker.random().hex(8);
 	}
 
 	protected String generateSurname() {
