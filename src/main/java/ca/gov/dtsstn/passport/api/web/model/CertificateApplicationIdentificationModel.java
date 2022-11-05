@@ -31,7 +31,7 @@ public interface CertificateApplicationIdentificationModel extends Serializable 
 
 	@JsonProperty("IdentificationCategoryText")
 	@NotNull(message = "IdentificationCategoryText is required; it must not be null")
-	@Schema(description = "A human readable description of the certificate application ID entry.", example = "Application Register SID")
+	@Schema(description = "A human readable description of the certificate application ID entry.", example = "Application Register SID", allowableValues = { "Application Register SID", "File Number", "Manifest Number" })
 	String getIdentificationCategoryText();
 
 	@JsonProperty("IdentificationID")
