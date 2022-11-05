@@ -122,6 +122,7 @@ public class DatabaseInitializer {
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
+			.version(faker.number().randomNumber())
 			.build();
 	}
 
@@ -143,6 +144,7 @@ public class DatabaseInitializer {
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
+			.version(faker.number().randomNumber())
 			.build();
 	}
 
@@ -160,6 +162,7 @@ public class DatabaseInitializer {
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
+			.version(faker.number().randomNumber())
 			.build();
 
 		log.trace("Creating fake passport team status: {}", passportStatus);

@@ -95,6 +95,7 @@ CREATE TABLE passport_status
 	surname VARCHAR(128) NOT NULL,
 	status_code_id VARCHAR(64) NOT NULL,
 	status_date DATE NOT NULL,
+	version BIGINT NOT NULL,
 
 	-- audit fields
 	created_by VARCHAR(64) NOT NULL,

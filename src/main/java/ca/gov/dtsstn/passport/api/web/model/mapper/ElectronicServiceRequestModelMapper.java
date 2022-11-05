@@ -33,6 +33,7 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "email", source = "client.personContactInformation.contactEmailId")
 	@Mapping(target = "givenName", source = "client.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
 	@Mapping(target = "surname", source = "client.personName.personSurname")
+	@Mapping(target = "version", constant = "0L") // TODO :: XXX :: GjB fix this when we have the correct NIEM field name
 	PassportStatus toDomain(@Nullable CreateElectronicServiceRequestModel createElectronicServiceRequest);
 
 	/**

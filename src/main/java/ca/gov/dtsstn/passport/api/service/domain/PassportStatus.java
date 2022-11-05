@@ -49,4 +49,7 @@ public interface PassportStatus extends AbstractDomainObject {
 	@Nullable
 	LocalDate getStatusDate();
 
+	@Nullable
+	Long getVersion();
+
 }
