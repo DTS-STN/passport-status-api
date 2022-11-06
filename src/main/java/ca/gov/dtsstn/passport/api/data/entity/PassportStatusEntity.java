@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.data.entity;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -186,7 +187,9 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("givenName", givenName)
 			.append("manifestNumber", manifestNumber)
 			.append("surname", surname)
-			.append("statusCode", statusCode)
+			.append("statusCode", Optional.ofNullable(statusCode)
+				.map(StatusCodeEntity::getCode)
+				.orElse(null))
 			.append("statusDate", statusDate)
 			.append("version", version)
 			.toString();
