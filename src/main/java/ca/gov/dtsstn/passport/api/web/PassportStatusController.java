@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.validation.Valid;
+import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,12 +81,15 @@ public class PassportStatusController {
 
 	private final PassportStatusService service;
 
+	private final SpringValidatorAdapter validator;
+
 	public PassportStatusController(
 			ApplicationEventPublisher eventPublisher,
 			GetCertificateApplicationRepresentationModelAssembler assembler,
 			CertificateApplicationModelMapper mapper,
 			PassportStatusJmsService passportStatusJmsService,
-			PassportStatusService service) {
+			PassportStatusService service,
+			SpringValidatorAdapter validator) {
 		log.info("Creating 'passportStatusController' bean");
 
 		Assert.notNull(assembler, "assembler is required; it must not be null");
@@ -94,12 +98,14 @@ public class PassportStatusController {
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
+		Assert.notNull(validator, "validator is required; it must not be null");
 
 		this.assembler = assembler;
 		this.eventPublisher = eventPublisher;
 		this.mapper = mapper;
 		this.passportStatusJmsService = passportStatusJmsService;
 		this.service = service;
+		this.validator = validator;
 	}
 
 	/**
@@ -119,10 +125,7 @@ public class PassportStatusController {
 	@Operation(summary = "Create a new passport status.", operationId = "passport-status-create")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	public void create(
-			Authentication authentication,
-
-			@Valid
-			@RequestBody
+			@RequestBody(required = true)
 			CreateCertificateApplicationRequestModel createCertificateApplicationRequest,
 
 			@RequestParam(defaultValue = "true", required = false)
@@ -133,6 +136,12 @@ public class PassportStatusController {
 			log.warn("Call to unsupported operation: create(async=false)");
 			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
 		}
+
+		// TODO :: GjB :: relax validation if status=INVALID
+		log.debug("Performing field validations on createCertificateApplicationRequest");
+		final var constraintViolations = validator.validate(createCertificateApplicationRequest);
+		if (!constraintViolations.isEmpty()) { throw new ConstraintViolationException(constraintViolations); }
+		log.debug("createCertificateApplicationRequest passed validation with no errors");
 
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 		log.debug("Queueing passport status: {}", passportStatus);
