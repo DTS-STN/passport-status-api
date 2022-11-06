@@ -19,4 +19,6 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 	@Query("SELECT ps FROM PassportStatus ps WHERE lower(fileNumber) = lower(?1) AND dateOfBirth = ?2 AND lower(remove_diacritics(givenName)) = lower(remove_diacritics(?3)) AND lower(remove_diacritics(surname)) = lower(remove_diacritics(?4))")
 	List<PassportStatusEntity> fileNumberSearch(String fileNumber, LocalDate dateOfBirth, String givenName, String surname);
 
+	List<PassportStatusEntity> findAllByApplicationRegisterSid(String applicationRegisterSid);
+
 }

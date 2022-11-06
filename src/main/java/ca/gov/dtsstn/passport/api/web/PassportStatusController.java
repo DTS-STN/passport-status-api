@@ -4,6 +4,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -40,6 +42,7 @@ import ca.gov.dtsstn.passport.api.event.PassportStatusSearchEvent;
 import ca.gov.dtsstn.passport.api.event.PassportStatusSearchEvent.Result;
 import ca.gov.dtsstn.passport.api.service.PassportStatusJmsService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
@@ -83,12 +86,15 @@ public class PassportStatusController {
 			CertificateApplicationModelMapper mapper,
 			PassportStatusJmsService passportStatusJmsService,
 			PassportStatusService service) {
+		log.info("Creating 'passportStatusController' bean");
+
 		Assert.notNull(assembler, "assembler is required; it must not be null");
 		Assert.notNull(eventPublisher, "eventPublisher is required; it must not be null;");
 		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(service, "service is requred; it must not be null");
+
 		this.assembler = assembler;
 		this.eventPublisher = eventPublisher;
 		this.mapper = mapper;
@@ -96,6 +102,12 @@ public class PassportStatusController {
 		this.service = service;
 	}
 
+	/**
+	 * Create a new {@link PassportStatus} in the system.
+	 *
+	 * TODO :: GjB :: in some rare cases, a status of {@code INVALID} for a specific {@code applicationRegisterSid} can be sent..
+	 * TODO :: GjB :: in these cases, we must relax validation and allow the invalid passport status to be stored 😒
+	 */
 	@PostMapping({ "" })
 	@ApiResponses.BadRequestError
 	@ApiResponses.AccessDeniedError
@@ -111,17 +123,20 @@ public class PassportStatusController {
 
 			@Valid
 			@RequestBody
-			CreateCertificateApplicationRequestModel passportStatusCreateRequestModel,
+			CreateCertificateApplicationRequestModel createCertificateApplicationRequest,
 
 			@RequestParam(defaultValue = "true", required = false)
 			@BooleanString(message = "async must be one of: 'true', 'false'")
 			@Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = { "false", "true" }, defaultValue = "true"))
 			String async) {
 		if (!BooleanUtils.toBoolean(async)) {
+			log.warn("Call to unsupported operation: create(async=false)");
 			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
 		}
 
-		passportStatusJmsService.send(mapper.toDomain(passportStatusCreateRequestModel));
+		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
+		log.debug("Queueing passport status: {}", passportStatus);
+		passportStatusJmsService.send(passportStatus);
 	}
 
 	@GetMapping({ "/{id}" })
@@ -151,16 +166,31 @@ public class PassportStatusController {
 		return assembler.toModel(service.readAll(pageable));
 	}
 
-	/*
-	 * Note: @Parameter(required = true) lets Swagger render correctly
-	 *       @RequestParam(required = false) lets JSR validation handle the validation (instead of Spring's web binder)
+	/**
+	 * Perform a passport status search using the following fields:
+	 *
+	 * <ul>
+	 *   <li>{@code dateOfBirth}
+	 *   <li>{@code fileNumber}
+	 *   <li>{@code givenName}
+	 *   <li>{@code surname}
+	 *
+	 * This endpoint will perform some logic on the search results as follows:
+	 *
+	 * <ol>
+	 *   <li>Perform a search using the provided parameters
+	 *   <li>Check for distinct {@code applicationRegisterSid}; throw exception if <strong>more than one</strong> value is found
+	 *   <li>If a distict {@code applicationRegisterSid} was found, perform a new search using the {@code applicationRegisterSid}
+	 *   <li>Sort the results by {@code PassportStatus.version}, extract newest passport status, wrap in a collection and return
+	 *
+	 * TODO :: GjB :: in some rare cases, a passport status may enter an {@code INVALID} state. We must handle this state appropriately.
 	 */
 	@GetMapping({ "/_search" })
 	@ApiResponses.BadRequestError
 	@ResponseStatus(code = HttpStatus.OK)
 	@ApiResponses.UnprocessableEntityError
-	@Operation(summary = "Search for a passport status by fileNumber, givenName, surname and dateOfBirth.", operationId = "passport-status-search")
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
+	@Operation(summary = "Search for a passport status by fileNumber, givenName, surname and dateOfBirth.", operationId = "passport-status-search")
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")
@@ -180,35 +210,44 @@ public class PassportStatusController {
 			@Parameter(description = "The surname of the passport applicant.", example = "Doe", required = true)
 			@RequestParam(required = false) String surname,
 
+			@Deprecated // This parameter will soon be removed
 			@Parameter(description = "If the query should return a single unique result.", required = false)
 			@RequestParam(defaultValue = "true") boolean unique) {
-		final var passportStatuses = service.fileNumberSearch(dateOfBirth, fileNumber, givenName, surname);
+		log.debug("Performing passport status search using terms {}", List.of(dateOfBirth, fileNumber, givenName, surname));
+		final var initialSearchResults = service.fileNumberSearch(dateOfBirth, fileNumber, givenName, surname);
+		log.debug("{} results returned for search terms {}", initialSearchResults.size(), List.of(dateOfBirth, fileNumber, givenName, surname));
 
-		if (unique && passportStatuses.size() > 1) {
-			log.warn("Search query returned non-unique results: {}", List.of(dateOfBirth, fileNumber, givenName, surname));
+		log.debug("Checking results for distinct applicationRegisterSids");
+		final var applicationRegisterSids = initialSearchResults.stream().map(PassportStatus::getApplicationRegisterSid).distinct().toList();
+		final var nApplicationRegisterSids = applicationRegisterSids.size();
+		log.debug("Number of distinct applicationRegisterSids: {}", nApplicationRegisterSids);
 
-			eventPublisher.publishEvent(PassportStatusSearchEvent.builder()
-				.dateOfBirth(dateOfBirth)
-				.fileNumber(fileNumber)
-				.givenName(givenName)
-				.surname(surname)
-				.result(Result.NON_UNIQUE)
-				.build());
+		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth).fileNumber(fileNumber).givenName(givenName).surname(surname);
 
-			throw new NonUniqueResourceException("Search query returned non-unique results");
+		if (nApplicationRegisterSids > 1) {
+			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, givenName, surname));
+			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).build());
+			throw new NonUniqueResourceException("Search query returned non-unique applicationRegisterSid result");
 		}
 
-		eventPublisher.publishEvent(PassportStatusSearchEvent.builder()
-			.dateOfBirth(dateOfBirth)
-			.fileNumber(fileNumber)
-			.givenName(givenName)
-			.surname(surname)
-			.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT)
-			.build());
+		log.debug("Performing applicationRegisterSid search");
+		final var passportStatuses = applicationRegisterSids.stream().findFirst().map(service::applicationRegisterSidSearch).orElse(Collections.emptyList());
+		final var passportStatus = passportStatuses.stream().sorted(byVersionDesc()).findFirst();
+		log.debug("applicationRegisterSid search produced {} results", passportStatuses.size());
+
+		/*
+		 * TODO :: GjB :: handle INVALID status by throwing exception here
+		 */
+
+		eventPublisher.publishEvent(searchEventBuilder.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT).build());
 
 		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, surname, unique)).withSelfRel();
-		final var collection = assembler.toCollectionModel(passportStatuses).add(selfLink);
+		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList())).add(selfLink);
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
+	}
+
+	protected Comparator<PassportStatus> byVersionDesc() {
+		return Comparator.comparingLong(PassportStatus::getVersion).reversed();
 	}
 
 }

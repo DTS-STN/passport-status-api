@@ -81,6 +81,13 @@ public class PassportStatusService {
 		return passportStatuses;
 	}
 
+	public List<PassportStatus> applicationRegisterSidSearch(String applicationRegisterSid) {
+		Assert.hasText(applicationRegisterSid, "applicationRegisterSid is required; it must not be null or blank");
+		final var passportStatuses = repository.findAllByApplicationRegisterSid(applicationRegisterSid).stream().map(mapper::fromEntity).toList();
+		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
+		return passportStatuses;
+	}
+
 	public List<PassportStatus> emailSearch(LocalDate dateOfBirth, String email, String givenName, String surname) {
 		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
 		Assert.hasText(email, "email is required; it must not be blank or null");

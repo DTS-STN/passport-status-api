@@ -132,14 +132,14 @@ public abstract class CertificateApplicationModelMapper {
 			.orElse(null);
 
 		final CertificateApplicationIdentificationModel fileNumber = Optional.ofNullable(passportStatus.getFileNumber())
-			.map(x -> ImmutableCertificateApplicationIdentificationModel.builder()
+			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
 				.identificationId(passportStatus.getFileNumber())
 				.build())
 			.orElse(null);
 
 		final CertificateApplicationIdentificationModel manifestNumber = Optional.ofNullable(passportStatus.getManifestNumber())
-			.map(x -> ImmutableCertificateApplicationIdentificationModel.builder()
+			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT)
 				.identificationId(passportStatus.getManifestNumber())
 				.build())
