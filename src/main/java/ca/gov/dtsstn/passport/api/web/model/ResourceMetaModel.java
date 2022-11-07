@@ -25,7 +25,7 @@ public interface ResourceMetaModel extends Serializable {
 
 	@JsonProperty("VersionID")
 	@NotBlank(message = "VersionID is required; it must not be null or blank")
-	@Digits(message = "VersionID must be a numberic string", integer = 16, fraction = 0)
+	@Digits(message = "VersionID must be a numeric string", integer = 16, fraction = 0)
 	@Schema(description = "The version of the resource content. Can be used to ensure that updates are based on the latest version of the resource.", example = "0000")
 	String getVersion();
 
