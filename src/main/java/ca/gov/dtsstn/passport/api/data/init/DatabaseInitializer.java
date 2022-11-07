@@ -182,7 +182,8 @@ public class DatabaseInitializer {
 	}
 
 	protected String generateFileNumber() {
-		return faker.random().hex(8);
+		// generates an 8 byte string that starts with a letter
+		return faker.letterify("?%s".formatted(faker.random().hex(7)), true);
 	}
 
 	protected String generateGivenName() {
