@@ -57,7 +57,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
-	@Mapping(target = "version", constant = "0L") // TODO :: XXX :: GjB fix this when we have the correct NIEM field name
+	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
 	@Nullable
@@ -70,6 +70,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "surname")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
+	@Mapping(target = "certificateApplication.resourceMeta.version", source = "version")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
 
 	/**

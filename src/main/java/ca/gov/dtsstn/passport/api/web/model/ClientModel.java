@@ -19,11 +19,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
+@Schema(name = "Client")
 @Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableClientModel.class)
-@Schema(name = "Client", description = "A client of ESDC benefits and programs.")
 public interface ClientModel extends Serializable {
-
 
 	@Valid
 	@Default

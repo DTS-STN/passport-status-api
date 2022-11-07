@@ -29,7 +29,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @JsonDeserialize(as = ImmutableCertificateApplicationModel.class)
 public interface CertificateApplicationModel extends Serializable {
 
-
 	@Valid
 	@Default
 	@JsonProperty("CertificateApplicationApplicant")
@@ -37,6 +36,15 @@ public interface CertificateApplicationModel extends Serializable {
 	@NotNull(message = "CertificateApplicationApplicant is required; it must not be null")
 	default CertificateApplicationApplicantModel getCertificateApplicationApplicant() {
 		return ImmutableCertificateApplicationApplicantModel.builder().build();
+	}
+
+	@Valid
+	@Default
+	@JsonProperty("ResourceMeta")
+	@JsonView({ Authorities.AuthenticatedView.class })
+	@NotNull(message = "ResourceMeta is required; it must not be null")
+	default ResourceMetaModel getResourceMeta() {
+		return ImmutableResourceMetaModel.builder().build();
 	}
 
 	@Valid
