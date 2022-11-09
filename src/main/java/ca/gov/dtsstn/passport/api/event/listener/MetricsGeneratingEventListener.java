@@ -67,9 +67,12 @@ public class MetricsGeneratingEventListener {
 			.map(StatusCode::getCode)
 			.ifPresent(code -> {
 				switch (code) {
-					case "APPROVED" -> meterRegistry.counter("passport_statuses.created.approved").increment();
-					case "IN_EXAMINATION" -> meterRegistry.counter("passport_statuses.created.in_examination").increment();
-					case "REJECTED" -> meterRegistry.counter("passport_statuses.created.rejected").increment();
+					case "FILE_PROCESSED" -> meterRegistry.counter("passport_statuses.created.file_processed").increment();
+					case "INVALID_FILE" -> meterRegistry.counter("passport_statuses.created.invalid_file").increment();
+					case "NOT_ACCEPTABLE_FOR_PROCESSING" -> meterRegistry.counter("passport_statuses.created.not_acceptable_for_processing").increment();
+					case "PASSPORT_ISSUED_SHIPPING_CANADA_POST" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_canada_post").increment();
+					case "PASSPORT_ISSUED_SHIPPING_FEDEX" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_fedex").increment();
+					case "PASSPORT_WILL_BE_ISSUED" -> meterRegistry.counter("passport_statuses.created.passport_will_be_issued").increment();
 					case "UNKNOWN" -> meterRegistry.counter("passport_statuses.created.unknown").increment();
 					default -> log.warn("Invalid status code encountered");
 				}

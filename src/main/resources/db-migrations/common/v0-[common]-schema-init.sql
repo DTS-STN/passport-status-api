@@ -66,7 +66,7 @@ CREATE TABLE status_code
 	id VARCHAR(64) NOT NULL,
 
 	cdo_code VARCHAR(8) NOT NULL,
-	code VARCHAR(16) NOT NULL,
+	code VARCHAR(64) NOT NULL,
 	description VARCHAR(256),
 	is_active BOOLEAN NOT NULL,
 
