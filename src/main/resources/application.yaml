@@ -50,6 +50,7 @@ management:
           - info
           - initdata
           - metrics
+          - prometheus
           - refresh
   trace:
     http:
