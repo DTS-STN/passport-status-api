@@ -12,6 +12,7 @@ import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
  * Checks that a string is a valid passport status code.
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
+ * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  */
 @Component
 public class PassportStatusCodeValidator implements ConstraintValidator<PassportStatusCode, String> {
