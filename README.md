@@ -90,6 +90,11 @@ application:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
+    includeUrls:                      # list of URLs to include, in ant path style
+      - /**
+    excludeUrls:                      # list of URLs to exclude, in ant path style
+      - /actuator/health/liveness
+      - /actuator/health/readiness
   security:
     cors:
       allowed-headers:                # list of headers that a pre-flight request can list as allowed for use during an actual request
