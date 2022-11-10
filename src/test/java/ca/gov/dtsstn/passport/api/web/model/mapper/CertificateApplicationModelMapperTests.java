@@ -43,8 +43,8 @@ import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
 @ExtendWith({ MockitoExtension.class })
 class CertificateApplicationModelMapperTests {
 
-	private final static String STATUS_CODE__UNKNOWN__ID = "8b4ecef5-9617-4dbc-91ca-ff24b2367b66";
-	private final static String STATUS_CODE__UNKNOWN__CDO_CODE = "-1";
+	private final static String STATUS_CODE__FILE_BEING_PROCESSED__ID = "57fe687e-50a6-411f-af63-2a659622127d";
+	private final static String STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE = "1";
 
 	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
@@ -183,7 +183,7 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToModel_nonnull() {
-		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE).build()));
 
 		final var applicationRegisterSid = "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf";
 		final var dateOfBirth = LocalDate.of(2004, 12, 8);
@@ -191,7 +191,7 @@ class CertificateApplicationModelMapperTests {
 		final var email = "user@example.com";
 		final var givenName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
 		final var surname = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
-		final var statusCodeId = STATUS_CODE__UNKNOWN__ID;
+		final var statusCodeId = STATUS_CODE__FILE_BEING_PROCESSED__ID;
 		final var statusDate = LocalDate.of(2000, 01, 01);
 
 		final var passportStatus = ImmutablePassportStatus.builder()
@@ -259,7 +259,7 @@ class CertificateApplicationModelMapperTests {
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
 			.extracting(CertificateApplicationStatusModel::getStatusCode)
-			.isEqualTo(STATUS_CODE__UNKNOWN__CDO_CODE);
+			.isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
@@ -277,7 +277,7 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToDomain_nonnull() throws Exception {
-		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__FILE_BEING_PROCESSED__ID).build()));
 
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -306,7 +306,7 @@ class CertificateApplicationModelMapperTests {
 			    }
 			  }
 			}
-		""".formatted(STATUS_CODE__UNKNOWN__CDO_CODE);
+		""".formatted(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
 
 		final var createCertificateApplicationRequest = objectMapper.readValue(json, CreateCertificateApplicationRequestModel.class);
 
@@ -338,7 +338,7 @@ class CertificateApplicationModelMapperTests {
 			.isEqualTo("Doe");
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusCodeId)
-			.isEqualTo(STATUS_CODE__UNKNOWN__ID);
+			.isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__ID);
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusDate)
 			.isEqualTo(LocalDate.of(2000, 01, 01));
@@ -349,28 +349,28 @@ class CertificateApplicationModelMapperTests {
 	@Test
 	void testToStatusCodeId() {
 		// arrange
-		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__UNKNOWN__ID).build()));
+		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__FILE_BEING_PROCESSED__ID).build()));
 
-		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(STATUS_CODE__UNKNOWN__CDO_CODE).build();
+		final var certificateApplicationStatusModel = ImmutableCertificateApplicationStatusModel.builder().statusCode(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE).build();
 
 		// act
 		final var act = mapper.toStatusCodeId(certificateApplicationStatusModel);
 
 		// assert
-		assertThat(act).isEqualTo(STATUS_CODE__UNKNOWN__ID);
+		assertThat(act).isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__ID);
 		verify(statusCodeService).readByCdoCode(any());
 	}
 
 	@Test
 	void testToStatusCdoCode() {
 		// arrange
-		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__UNKNOWN__CDO_CODE).build()));
+		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE).build()));
 
 		// act
-		final var act = mapper.toStatusCdoCode(STATUS_CODE__UNKNOWN__ID);
+		final var act = mapper.toStatusCdoCode(STATUS_CODE__FILE_BEING_PROCESSED__ID);
 
 		// assert
-		assertThat(act).isEqualTo(STATUS_CODE__UNKNOWN__CDO_CODE);
+		assertThat(act).isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
 		verify(statusCodeService).read(any());
 	}
 }
