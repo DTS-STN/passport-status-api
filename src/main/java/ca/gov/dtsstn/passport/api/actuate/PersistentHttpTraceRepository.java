@@ -86,8 +86,8 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> antPathMatcher.match(includeUrl.getPattern(), getPath(httpTrace)));
 	}
 
-	protected boolean isNotExcluded(HttpTrace httpTrace) {
-		return excludeUrls.stream().noneMatch(excludeUrl -> antPathMatcher.match(excludeUrl.getPattern(), getPath(httpTrace)));
+	protected boolean isExcluded(HttpTrace httpTrace) {
+		return excludeUrls.stream().anyMatch(excludeUrl -> antPathMatcher.match(excludeUrl.getPattern(), getPath(httpTrace)));
 	}
 
 	public void setCapacity(int capacity) {
@@ -106,7 +106,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 	}
 
 	public boolean shouldPersist(HttpTrace httpTrace) {
-		return isIncluded(httpTrace) && isNotExcluded(httpTrace);
+		return isIncluded(httpTrace) && !isExcluded(httpTrace);
 	}
 
 	@Mapper

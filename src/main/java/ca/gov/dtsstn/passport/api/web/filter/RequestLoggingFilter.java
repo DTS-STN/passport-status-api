@@ -27,7 +27,7 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 
 	@Override
 	protected boolean shouldLog(HttpServletRequest request) {
-		return enabled && isIncluded(request) && isNotExcluded(request);
+		return enabled && isIncluded(request) && !isExcluded(request);
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> includeUrl.matches(request));
 	}
 
-	protected boolean isNotExcluded(HttpServletRequest request) {
-		return excludeUrls.stream().noneMatch(excludeUrl -> excludeUrl.matches(request));
+	protected boolean isExcluded(HttpServletRequest request) {
+		return excludeUrls.stream().anyMatch(excludeUrl -> excludeUrl.matches(request));
 	}
 
 	public void setEnabled(boolean enabled) {
