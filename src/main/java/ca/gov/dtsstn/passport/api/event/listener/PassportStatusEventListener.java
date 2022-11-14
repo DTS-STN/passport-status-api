@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import ca.gov.dtsstn.passport.api.data.EventLogRepository;
 import ca.gov.dtsstn.passport.api.data.entity.EventLogEntityBuilder;
 import ca.gov.dtsstn.passport.api.data.entity.EventLogEntity.EventLogType;
+import ca.gov.dtsstn.passport.api.event.PassportStatusCreateConflictEvent;
 import ca.gov.dtsstn.passport.api.event.PassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.event.PassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.event.PassportStatusReadEvent;
@@ -39,6 +40,16 @@ public class PassportStatusEventListener {
 		this.objectMapper = new ObjectMapper()
 			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 			.findAndRegisterModules();
+	}
+
+	@Async
+	@EventListener({ PassportStatusCreateConflictEvent.class })
+	public void handleCreated(PassportStatusCreateConflictEvent event) throws JsonProcessingException {
+		eventLogRepository.save(new EventLogEntityBuilder()
+			.eventType(EventLogType.CREATE_STATUS_CONFLICT)
+			.description("Passport status create conflict")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 	}
 
 	@Async

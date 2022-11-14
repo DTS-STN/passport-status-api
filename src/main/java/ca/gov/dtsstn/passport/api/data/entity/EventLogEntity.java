@@ -143,6 +143,7 @@ public class EventLogEntity extends AbstractEntity {
 		 * PassportStatus create/delete/read/search/update events
 		 */
 
+		CREATE_STATUS_CONFLICT,
 		CREATE_STATUS_SUCCESS,
 		DELETE_STATUS_SUCCESS,
 		READ_STATUS_SUCCESS,
