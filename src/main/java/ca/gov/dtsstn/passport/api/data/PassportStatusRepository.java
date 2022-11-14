@@ -14,10 +14,20 @@ import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
  */
 public interface PassportStatusRepository extends JpaRepository<PassportStatusEntity, String> {
 
-	@Query("SELECT ps FROM PassportStatus ps WHERE lower(email) = lower(?1) AND dateOfBirth = ?2 AND lower(remove_diacritics(givenName)) = lower(remove_diacritics(?3)) AND lower(remove_diacritics(surname)) = lower(remove_diacritics(?4))")
+	@Query("""
+    SELECT ps FROM PassportStatus ps
+    WHERE lower(email) = lower(?1) AND dateOfBirth = ?2 AND
+    lower(remove_non_alpha_numeric(remove_diacritics(givenName))) = lower(remove_non_alpha_numeric(remove_diacritics(?3))) AND
+    lower(remove_non_alpha_numeric(remove_diacritics(surname))) = lower(remove_non_alpha_numeric(remove_diacritics(?4)))
+    """)
 	List<PassportStatusEntity> emailSearch(String email, LocalDate dateOfBirth, String givenName, String surname);
 
-	@Query("SELECT ps FROM PassportStatus ps WHERE lower(fileNumber) = lower(?1) AND dateOfBirth = ?2 AND lower(remove_diacritics(givenName)) = lower(remove_diacritics(?3)) AND lower(remove_diacritics(surname)) = lower(remove_diacritics(?4))")
+	@Query("""
+    SELECT ps FROM PassportStatus ps
+    WHERE lower(fileNumber) = lower(?1) AND dateOfBirth = ?2 AND
+    lower(remove_non_alpha_numeric(remove_diacritics(givenName))) = lower(remove_non_alpha_numeric(remove_diacritics(?3))) AND
+    lower(remove_non_alpha_numeric(remove_diacritics(surname))) = lower(remove_non_alpha_numeric(remove_diacritics(?4)))
+    """)
 	List<PassportStatusEntity> fileNumberSearch(String fileNumber, LocalDate dateOfBirth, String givenName, String surname);
 
 	List<PassportStatusEntity> findAllByApplicationRegisterSid(String applicationRegisterSid);
