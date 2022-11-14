@@ -112,3 +112,4 @@ CREATE INDEX ix_email ON passport_status(email);
 CREATE INDEX ix_file_number ON passport_status(file_number);
 CREATE INDEX ix_given_name ON passport_status(given_name);
 CREATE INDEX ix_surname ON passport_status(surname);
+CREATE UNIQUE INDEX uq_application_register_sid_version ON passport_status (application_register_sid, version);

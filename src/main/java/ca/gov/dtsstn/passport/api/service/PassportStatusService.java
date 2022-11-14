@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
+import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusCreateConflictEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusReadEvent;
@@ -44,6 +45,13 @@ public class PassportStatusService {
 	public PassportStatus create(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.isNull(passportStatus.getId(), "passportStatus.id must be null when creating new instance");
+
+		final var existingPassportStatus = repository.findByApplicationRegisterSidAndVersion(passportStatus.getApplicationRegisterSid(), passportStatus.getVersion()).map(mapper::fromEntity);
+		if (existingPassportStatus.isPresent()) {
+			eventPublisher.publishEvent(ImmutablePassportStatusCreateConflictEvent.of(existingPassportStatus.get()));
+			return existingPassportStatus.get();
+		}
+
 		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus))); // NOSONAR (nullable param)
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;

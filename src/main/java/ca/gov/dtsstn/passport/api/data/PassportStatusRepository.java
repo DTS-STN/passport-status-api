@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.data;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +21,7 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 	List<PassportStatusEntity> fileNumberSearch(String fileNumber, LocalDate dateOfBirth, String givenName, String surname);
 
 	List<PassportStatusEntity> findAllByApplicationRegisterSid(String applicationRegisterSid);
+
+	Optional<PassportStatusEntity> findByApplicationRegisterSidAndVersion(String applicationRegisterSid, Long version);
 
 }
