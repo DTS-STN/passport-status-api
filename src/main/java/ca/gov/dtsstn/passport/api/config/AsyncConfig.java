@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.config;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,7 @@ public class AsyncConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(AsyncConfig.class);
 
-	@PostConstruct
+	@jakarta.annotation.PostConstruct
 	public void postConstruct() {
 		log.info("Enabled async processing");
 	}

@@ -11,9 +11,11 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,7 +35,7 @@ import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
  * @author Greg Baker <gregory.j.baker@hrsdc-rhdcc.gc.ca>
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
@@ -61,6 +63,7 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@Bean SecurityFilterChain securityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
 		log.info("Configuring Spring Security");
 
@@ -82,25 +85,33 @@ public class WebSecurityConfig {
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-
 		// public resources
 		http.authorizeHttpRequests(authorize -> authorize
-			.antMatchers(HttpMethod.OPTIONS).permitAll()
+			.requestMatchers(HttpMethod.OPTIONS).permitAll()
+			// the following is required since spring security v6.0 for method security to work 🤷
+			.requestMatchers("/api/v1/**").permitAll());
+
+		// actuator resources
+		http.authorizeHttpRequests(authorize -> authorize
 			.requestMatchers(toLinks()).permitAll()
 			.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
 			.requestMatchers(to(HealthEndpoint.class)).permitAll()
-			.requestMatchers(to(InfoEndpoint.class)).permitAll());
-
-		// protected resources
-		http.authorizeHttpRequests(authorize -> authorize
+			.requestMatchers(to(InfoEndpoint.class)).permitAll()
 			.requestMatchers(toAnyEndpoint()).hasAuthority("Application.Manage"));
+
+		// springdoc / swagger resources
+		http.authorizeHttpRequests(authorize -> authorize
+			.requestMatchers("/").permitAll()
+			.requestMatchers("/swagger-ui/**").permitAll()
+			.requestMatchers("/v3/api-docs/**").permitAll());
 
 		return http.build();
 	}
 
 	@Bean WebSecurityCustomizer webSecurityCustomizer() {
 		log.debug("Adding /h2-console/** to Spring Security ignore list");
-		return web -> web.ignoring().antMatchers("/h2-console/**");
+		return web -> web.ignoring()
+			.requestMatchers("/h2-console/**");
 	}
 
 }

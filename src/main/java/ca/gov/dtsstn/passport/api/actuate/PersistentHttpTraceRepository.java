@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.actuate;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -11,9 +12,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.trace.http.HttpTrace;
-import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
-import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
+import org.springframework.boot.actuate.web.exchanges.HttpExchange;
+import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
+import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -34,7 +35,7 @@ import ca.gov.dtsstn.passport.api.data.entity.HttpRequestEntity;
  */
 @Repository
 @ConfigurationProperties("application.http-request-repository")
-public class PersistentHttpTraceRepository implements HttpTraceRepository {
+public class PersistentHttpTraceRepository implements HttpExchangeRepository {
 
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -42,7 +43,7 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
 	private final HttpTraceMapper httpTraceMapper = Mappers.getMapper(HttpTraceMapper.class);
 
-	private final InMemoryHttpTraceRepository inMemoryHttpTraceRepository;
+	private final InMemoryHttpExchangeRepository inMemoryHttpExchangeRepository;
 
 	private List<AntPathRequestMatcher> includeUrls = Collections.emptyList();
 
@@ -50,49 +51,49 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 
 	@Autowired // marks this constructor as the primary one spring will use
 	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository) {
-		this(httpRequestRepository, new InMemoryHttpTraceRepository());
+		this(httpRequestRepository, new InMemoryHttpExchangeRepository());
 	}
 
-	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository, InMemoryHttpTraceRepository inMemoryHttpTraceRepository) {
+	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository, InMemoryHttpExchangeRepository inMemoryHttpExchangeRepository) {
 		Assert.notNull(httpRequestRepository, "httpRequestRepository is required; it must not be null");
-		Assert.notNull(inMemoryHttpTraceRepository, "inMemoryHttpTraceRepository is required; it must not be null");
+		Assert.notNull(inMemoryHttpExchangeRepository, "inMemoryHttpExchangeRepository is required; it must not be null");
 
 		this.httpRequestRepository = httpRequestRepository;
-		this.inMemoryHttpTraceRepository = inMemoryHttpTraceRepository;
+		this.inMemoryHttpExchangeRepository = inMemoryHttpExchangeRepository;
 	}
 
 	@Override
-	public void add(HttpTrace httpTrace) {
-		Assert.notNull(httpTrace, "httpTrace is required; it must not be null");
+	public void add(HttpExchange httpExchange) {
+		Assert.notNull(httpExchange, "httpExchange is required; it must not be null");
 
-		inMemoryHttpTraceRepository.add(httpTrace);
+		inMemoryHttpExchangeRepository.add(httpExchange);
 
-		Optional.ofNullable(httpTrace)
+		Optional.ofNullable(httpExchange)
 			.filter(this::shouldPersist)
 			.map(httpTraceMapper::toEntity)
 			.ifPresent(httpRequestRepository::save);
 	}
 
 	@Override
-	public List<HttpTrace> findAll() {
-		return inMemoryHttpTraceRepository.findAll();
+	public List<HttpExchange> findAll() {
+		return inMemoryHttpExchangeRepository.findAll();
 	}
 
-	protected String getPath(HttpTrace httpTrace) {
-		return httpTrace.getRequest().getUri().getPath();
+	protected String getPath(HttpExchange httpExchange) {
+		return httpExchange.getRequest().getUri().getPath();
 	}
 
-	protected boolean isIncluded(HttpTrace httpTrace) {
-		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> antPathMatcher.match(includeUrl.getPattern(), getPath(httpTrace)));
+	protected boolean isIncluded(HttpExchange httpExchange) {
+		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> antPathMatcher.match(includeUrl.getPattern(), getPath(httpExchange)));
 	}
 
-	protected boolean isExcluded(HttpTrace httpTrace) {
-		return excludeUrls.stream().anyMatch(excludeUrl -> antPathMatcher.match(excludeUrl.getPattern(), getPath(httpTrace)));
+	protected boolean isExcluded(HttpExchange httpExchange) {
+		return excludeUrls.stream().anyMatch(excludeUrl -> antPathMatcher.match(excludeUrl.getPattern(), getPath(httpExchange)));
 	}
 
 	public void setCapacity(int capacity) {
 		Assert.isTrue(capacity >= 0, "application.http-request-repository.capacity must be greater than or equal to zero");
-		inMemoryHttpTraceRepository.setCapacity(capacity);
+		inMemoryHttpExchangeRepository.setCapacity(capacity);
 	}
 
 	public void setIncludeUrls(Collection<AntPathRequestMatcher> includeUrls) {
@@ -105,8 +106,8 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 		this.excludeUrls = List.copyOf(excludeUrls);
 	}
 
-	public boolean shouldPersist(HttpTrace httpTrace) {
-		return isIncluded(httpTrace) && !isExcluded(httpTrace);
+	public boolean shouldPersist(HttpExchange httpExchange) {
+		return isIncluded(httpExchange) && !isExcluded(httpExchange);
 	}
 
 	@Mapper
@@ -130,7 +131,13 @@ public class PersistentHttpTraceRepository implements HttpTraceRepository {
 		@Mapping(target = "createdDate", ignore = true)
 		@Mapping(target = "lastModifiedBy", ignore = true)
 		@Mapping(target = "lastModifiedDate", ignore = true)
-		public abstract HttpRequestEntity toEntity(@Nullable HttpTrace httpTrace);
+		public abstract HttpRequestEntity toEntity(@Nullable HttpExchange httpExchange);
+
+		@Nullable
+		public Long toLong(@Nullable Duration duration) {
+			if (duration == null) { return null; }
+			return duration.toMillis();
+		}
 
 		@Nullable
 		public String toString(@Nullable Map<String, List<String>> headers) throws JsonProcessingException {

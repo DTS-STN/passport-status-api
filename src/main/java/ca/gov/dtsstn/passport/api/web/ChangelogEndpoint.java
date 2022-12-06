@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 @Endpoint(id = "changelog")
-@ConfigurationProperties("application.endpoint.changelog")
 public class ChangelogEndpoint {
 
 	protected final ObjectMapper objectMapper;
@@ -57,6 +56,7 @@ public class ChangelogEndpoint {
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "text/plain;charset=UTF-8").body(body);
 	}
 
+	@Value("${application.endpoint.changelog.changelog-path}")
 	public void setChangelogPath(String changelogPath) {
 		Assert.hasText(changelogPath, "changelogPath is required; it must not be blank or null");
 		this.changelogPath = changelogPath;

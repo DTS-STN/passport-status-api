@@ -3,13 +3,13 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.constraints.PastOrPresent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.constraints.PastOrPresent;
 
 /**
  * Checks that a string represents a date in the past or present.

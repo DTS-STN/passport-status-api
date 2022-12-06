@@ -1,15 +1,10 @@
 package ca.gov.dtsstn.passport.api.data;
 
-import java.io.Serializable;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.id.UUIDGenerator;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.Type;
 
 /**
  * A Hibernate {@link IdentifierGenerator} that will generate a string-representation of a {@link UUID}.
@@ -30,25 +25,26 @@ public class UuidGenerator implements IdentifierGenerator {
 
 	public static final String STRATEGY = "ca.gov.dtsstn.passport.api.data.UuidGenerator";
 
-	private final UUIDGenerator delegate;
+	private final ValueGenerator valueGenerator;
 
 	public UuidGenerator() {
-		this(new UUIDGenerator());
+		this(UUID::randomUUID);
 	}
 
-	public UuidGenerator(UUIDGenerator delegate) {
-		this.delegate = delegate;
-	}
-
-	@Override
-	public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) {
-		delegate.configure(type, params, serviceRegistry);
+	public UuidGenerator(ValueGenerator valueGenerator) {
+		this.valueGenerator = valueGenerator;
 	}
 
 	@Override
-	public Serializable generate(SharedSessionContractImplementor session, Object object) {
-		final Serializable id = session.getEntityPersister(null, object).getClassMetadata().getIdentifier(object, session);
-		return Optional.ofNullable(id).orElseGet(() -> delegate.generate(session, object).toString());
+	public Object generate(SharedSessionContractImplementor session, Object object) {
+		final var id = session.getEntityPersister(null, object).getIdentifier(object, session);
+		return Optional.ofNullable(id).orElseGet(() -> valueGenerator.generateUuid().toString());
+	}
+
+	public interface ValueGenerator {
+
+		UUID generateUuid();
+
 	}
 
 }

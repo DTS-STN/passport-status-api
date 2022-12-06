@@ -2,12 +2,12 @@ package ca.gov.dtsstn.passport.api.data.entity;
 
 import java.time.Instant;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)

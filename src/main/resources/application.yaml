@@ -32,13 +32,25 @@ logging:
 #######################################################################################################################
 
 management:
+  dynatrace:
+    metrics:
+      export:
+        enabled: false
+        api-token: # must be set externally (ex: big-random-string)
+        uri: # must be set externally (ex: https://dynatrace.example.com/e/00000000-0000-0000-0000-000000000000/api/v2/metrics/ingest)
+        v2:
+          metric-key-prefix: passport-status-api
   endpoint:
+    env:
+      show-values: when-authorized
     health:
       probes:
         enabled: true
       show-components: always
       show-details: when-authorized
   endpoints:
+    jackson:
+      isolated-object-mapper: false
     web:
       exposure:
         include:
@@ -46,28 +58,20 @@ management:
           - changelog
           - env
           - health
-          - httptrace
+          - httpexchanges
           - info
           - initdata
           - metrics
           - prometheus
           - refresh
-  trace:
-    http:
+  httpexchanges:
+    recording:
       include:
         - principal
         - remote-address
         - request-headers
         - response-headers
         - time-taken
-  metrics:
-    export:
-      dynatrace:
-        enabled: false
-        api-token: # must be set externally (ex: big-random-string)
-        uri: # must be set externally (ex: https://dynatrace.example.com/e/00000000-0000-0000-0000-000000000000/api/v2/metrics/ingest)
-        v2:
-          metric-key-prefix: passport-status-api
 
 #######################################################################################################################
 #
@@ -116,7 +120,7 @@ spring:
         max-page-size: 500
   datasource:
     generate-unique-name: false
-    url: jdbc:h2:mem:testdb;COLLATION=ENGLISH STRENGTH PRIMARY;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;MODE=PostgreSQL
+    url: jdbc:h2:mem:testdb;BUILTIN_ALIAS_OVERRIDE=TRUE;COLLATION=ENGLISH STRENGTH PRIMARY;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;MODE=PostgreSQL
     hikari: # see https://github.com/brettwooldridge/HikariCP#frequently-used
       connection-timeout: 30000
       idle-timeout: 600000
@@ -196,6 +200,7 @@ application:
       connect-src: "'self' login.microsoftonline.com passport-status-api.dev.dev-rhp.dts-stn.com passport-status-api.staging.dev-rhp.dts-stn.com"
       img-src: "'self' data:"
       script-src: "'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw='"
+      style-src: "'self' 'sha256-4Su6mBWzEIFnH4pAGMOuaeBrstwJN4Z3pq/s1Kn4/KQ='"
     cors:
       allowed-headers:
         - '*'

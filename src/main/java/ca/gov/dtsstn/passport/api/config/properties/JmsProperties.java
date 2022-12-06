@@ -1,12 +1,13 @@
 package ca.gov.dtsstn.passport.api.config.properties;
 
-import javax.jms.Destination;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+
+import ca.gov.dtsstn.passport.api.config.properties.JmsProperties.DestinationProperties;
+import jakarta.jms.Destination;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)

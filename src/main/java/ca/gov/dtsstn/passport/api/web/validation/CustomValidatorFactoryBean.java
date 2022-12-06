@@ -1,9 +1,5 @@
 package ca.gov.dtsstn.passport.api.web.validation;
 
-import javax.validation.Configuration;
-import javax.validation.ConstraintViolation;
-import javax.validation.constraints.PastOrPresent;
-
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +11,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import jakarta.validation.Configuration;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.constraints.PastOrPresent;
 
 /**
  * A custom {@link LocalValidatorFactoryBean} that works with {@link JacksonPropertyNodeNameProvider}.
