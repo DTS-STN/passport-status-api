@@ -35,7 +35,7 @@ public interface CertificateApplicationIdentificationModel extends Serializable 
 	String getIdentificationCategoryText();
 
 	@JsonProperty("IdentificationID")
-	@Size(max = 32, message = "IdentificationID must be 32 characters or less")
+	@Size(max = 50, message = "IdentificationID must be 50 characters or less")
 	@Schema(description = "The value of the certificate application ID entry.", example = "ABCD1234")
 	String getIdentificationId();
 
