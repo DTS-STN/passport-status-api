@@ -1,6 +1,9 @@
 application:
   gcnotify:
     api-key: gcntfy-myproject-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
+    file-number-notification:
+      english-template-id: 00000000-0000-0000-0000-000000000000
+      french-template-id: 00000000-0000-0000-0000-000000000000
   security:
     oauth:
       client-id: 00000000-0000-0000-0000-000000000000

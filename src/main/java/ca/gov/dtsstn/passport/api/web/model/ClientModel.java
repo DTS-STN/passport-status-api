@@ -48,4 +48,12 @@ public interface ClientModel extends Serializable {
 		return ImmutablePersonContactInformationModel.builder().build();
 	}
 
+	@Valid
+	@Default
+	@JsonProperty("PersonPreferredLanguage")
+	@NotNull(message = "PersonPreferredLanguage is required; it must not be null")
+	default PersonPreferredLanguageModel getPersonPreferredLanguage() {
+		return ImmutablePersonPreferredLanguageModel.builder().build();
+	}
+
 }
