@@ -103,7 +103,7 @@ public class ElectronicServiceRequestController {
 					.fileNumber(passportStatus.getFileNumber())
 					.givenName(passportStatus.getGivenName())
 					.preferredLanguage(preferredLanguage)
-					.givenName(passportStatus.getSurname())
+					.surname(passportStatus.getSurname())
 					.build());
 			},
 			() -> eventPublisher.publishEvent(NotificationNotSentEvent.builder()
