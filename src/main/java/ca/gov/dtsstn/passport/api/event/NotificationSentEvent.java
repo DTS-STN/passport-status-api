@@ -20,7 +20,13 @@ public interface NotificationSentEvent extends Serializable {
 
 	String getEmail();
 
-	String getEsrf();
+	String getFileNumber();
+
+	String getGivenName();
+
+	String getPreferredLanguage();
+
+	String getSurname();
 
 	@Default
 	default Instant getTimestamp() {

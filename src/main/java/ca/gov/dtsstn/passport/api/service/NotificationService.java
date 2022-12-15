@@ -21,6 +21,8 @@ import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 @Service
 public class NotificationService {
 
+	public enum PreferredLanguage { ENGLISH, FRENCH }
+
 	private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
 	private final GcNotifyProperties gcNotifyProperties;
@@ -42,13 +44,13 @@ public class NotificationService {
 			.build();
 	}
 
-	public NotificationReceipt sendFileNumberNotification(PassportStatus passportStatus) {
+	public NotificationReceipt sendFileNumberNotification(PassportStatus passportStatus, PreferredLanguage preferredLanguage) {
 		Assert.notNull(passportStatus, "passportStatus is requird; it must not be null");
 		Assert.hasText(passportStatus.getEmail(), "email is required; it must not be blank or null");
 
 		final var email = Optional.ofNullable(passportStatus.getEmail()).orElseThrow(); // Optional<T> keeps sonar happy
-		final var templateId = gcNotifyProperties.fileNumberNotification().templateId();
-		final var personalization = Map.of("esrf", passportStatus.getFileNumber());
+		final var templateId = getTemplateId(preferredLanguage);
+		final var personalization = Map.of("fileNumber", passportStatus.getFileNumber(), "givenName", passportStatus.getGivenName(), "surname", passportStatus.getSurname());
 		log.trace("Request to send fileNumber notification email=[{}], parameters=[{}]", email, personalization);
 
 		final var request = Map.of("email_address", email, "template_id", templateId, "personalisation", personalization);
@@ -56,6 +58,14 @@ public class NotificationService {
 		log.debug("Notification sent to email [{}] using template [{}]", email, templateId);
 
 		return notificationReceipt;
+	}
+
+	private String getTemplateId(PreferredLanguage preferredLanguage) {
+		return switch (preferredLanguage) {
+			case ENGLISH -> gcNotifyProperties.fileNumberNotification().englishTemplateId();
+			case FRENCH -> gcNotifyProperties.fileNumberNotification().frenchTemplateId();
+			default -> throw new IllegalArgumentException("Unknown preferred language value " + preferredLanguage);
+		};
 	}
 
 }

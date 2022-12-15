@@ -19,8 +19,10 @@ import ca.gov.dtsstn.passport.api.event.NotificationRequestedEvent;
 import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
 import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
+import ca.gov.dtsstn.passport.api.service.NotificationService.PreferredLanguage;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.PersonPreferredLanguageModel.LanguageName;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,12 +67,14 @@ public class ElectronicServiceRequestController {
 		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getClient().getPersonBirthDate().getDate());
 		final var email = createElectronicServiceRequest.getClient().getPersonContactInformation().getContactEmailId();
 		final var givenName = createElectronicServiceRequest.getClient().getPersonName().getPersonGivenNames().get(0);
+		final var preferredLanguage = createElectronicServiceRequest.getClient().getPersonPreferredLanguage().getLanguageName();
 		final var surname = createElectronicServiceRequest.getClient().getPersonName().getPersonSurname();
 
 		eventPublisher.publishEvent(NotificationRequestedEvent.builder()
 			.dateOfBirth(dateOfBirth)
 			.email(email)
 			.givenName(givenName)
+			.preferredLanguage(preferredLanguage)
 			.surname(surname)
 			.build());
 
@@ -92,11 +96,14 @@ public class ElectronicServiceRequestController {
 
 		passportStatuses.stream().findFirst().ifPresentOrElse(
 			passportStatus -> {
-				notificationService.sendFileNumberNotification(passportStatus);
-
+				final var preferredLanguageEnum = mapPreferredLanguage(LanguageName.valueOf(preferredLanguage));
+				notificationService.sendFileNumberNotification(passportStatus, preferredLanguageEnum);
 				eventPublisher.publishEvent(NotificationSentEvent.builder()
 					.email(email)
-					.esrf(passportStatus.getFileNumber())
+					.fileNumber(passportStatus.getFileNumber())
+					.givenName(passportStatus.getGivenName())
+					.preferredLanguage(preferredLanguage)
+					.givenName(passportStatus.getSurname())
 					.build());
 			},
 			() -> eventPublisher.publishEvent(NotificationNotSentEvent.builder()
@@ -106,6 +113,14 @@ public class ElectronicServiceRequestController {
 				.surname(surname)
 				.reason("Search query returned zero results")
 				.build()));
+	}
+
+	private PreferredLanguage mapPreferredLanguage(LanguageName languageName) {
+		return switch (languageName) {
+			case ENGLISH -> PreferredLanguage.ENGLISH;
+			case FRENCH -> PreferredLanguage.FRENCH;
+			default -> throw new IllegalArgumentException("Unknown language language value " + languageName);
+		};
 	}
 
 }

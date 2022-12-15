@@ -31,8 +31,10 @@ public record GcNotifyProperties(
 		return Optional.ofNullable(readTimeout).orElse(Duration.ofSeconds(30));
 	}
 
+	@Validated
 	public record FileNumberNotificationProperties(
-		@NotBlank String templateId
+		@NotBlank String englishTemplateId,
+		@NotBlank String frenchTemplateId
 	) {}
 
 }

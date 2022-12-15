@@ -25,6 +25,8 @@ public interface NotificationRequestedEvent extends Serializable {
 
 	String getGivenName();
 
+	String getPreferredLanguage();
+
 	String getSurname();
 
 	@Default

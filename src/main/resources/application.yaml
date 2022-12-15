@@ -179,7 +179,8 @@ application:
     api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
     base-url: https://api.notification.canada.ca/v2/notifications/email
     file-number-notification:
-      template-id: 5768860b-6953-4e41-9f56-4e508f4fa9f3
+      english-template-id: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+      french-template-id: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
   http-request-repository:
     page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
     includeUrls:                      # list of URLs to include, in ant path style
