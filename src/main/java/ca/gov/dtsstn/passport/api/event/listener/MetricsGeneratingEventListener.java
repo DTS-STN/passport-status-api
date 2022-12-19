@@ -67,13 +67,12 @@ public class MetricsGeneratingEventListener {
 			.map(StatusCode::getCode)
 			.ifPresent(code -> {
 				switch (code) {
-					case "FILE_PROCESSED" -> meterRegistry.counter("passport_statuses.created.file_processed").increment();
-					case "INVALID_FILE" -> meterRegistry.counter("passport_statuses.created.invalid_file").increment();
+					case "APPLICATION_NO_LONGER_MEETS_CRITERIA" -> meterRegistry.counter("passport_statuses.created.application_no_longer_meets_criteria").increment();
+					case "FILE_BEING_PROCESSED" -> meterRegistry.counter("passport_statuses.created.file_being_processed").increment();
 					case "NOT_ACCEPTABLE_FOR_PROCESSING" -> meterRegistry.counter("passport_statuses.created.not_acceptable_for_processing").increment();
+					case "PASSPORT_ISSUED_READY_FOR_PICKUP" -> meterRegistry.counter("passport_statuses.created.passport_issued_ready_for_pickup").increment();
 					case "PASSPORT_ISSUED_SHIPPING_CANADA_POST" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_canada_post").increment();
 					case "PASSPORT_ISSUED_SHIPPING_FEDEX" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_fedex").increment();
-					case "PASSPORT_WILL_BE_ISSUED" -> meterRegistry.counter("passport_statuses.created.passport_will_be_issued").increment();
-					case "UNKNOWN" -> meterRegistry.counter("passport_statuses.created.unknown").increment();
 					default -> log.warn("Invalid status code [{}] encountered", code);
 				}
 			});
