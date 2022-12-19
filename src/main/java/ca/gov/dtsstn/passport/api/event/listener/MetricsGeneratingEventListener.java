@@ -74,7 +74,7 @@ public class MetricsGeneratingEventListener {
 					case "PASSPORT_ISSUED_SHIPPING_FEDEX" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_fedex").increment();
 					case "PASSPORT_WILL_BE_ISSUED" -> meterRegistry.counter("passport_statuses.created.passport_will_be_issued").increment();
 					case "UNKNOWN" -> meterRegistry.counter("passport_statuses.created.unknown").increment();
-					default -> log.warn("Invalid status code encountered");
+					default -> log.warn("Invalid status code [{}] encountered", code);
 				}
 			});
 	}
