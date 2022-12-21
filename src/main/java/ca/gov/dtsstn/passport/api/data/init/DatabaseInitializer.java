@@ -93,8 +93,16 @@ public class DatabaseInitializer {
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(1985, 01, 10), "sebastien.comeau@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stéphane", "Viau", LocalDate.of(2000, 01, 01), "stephane.viau@hrsdc-rhdcc.gc.ca", statusCodes));
 		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
+
+		log.info("Generating modified fake passport statuses (for testing exact search)");
+		stopWatch.reset(); stopWatch.start();
+		final var bobbyRoss = passportStatusRepository.save(generatePassportTeamPassportStatus("Bobby", "Ross", LocalDate.of(2000, 01, 01), "bob.ross@hrsdc-rhdcc.gc.ca", statusCodes));
+		final var bobRoss = generatePassportTeamPassportStatus("Bob", "Ross", LocalDate.of(2000, 01, 01), "bob.ross@hrsdc-rhdcc.gc.ca", statusCodes);
+		bobRoss.setApplicationRegisterSid(bobbyRoss.getApplicationRegisterSid());
+		bobRoss.setVersion(bobbyRoss.getVersion() + 1);
+		passportStatusRepository.save(bobRoss);
+		log.info("Passport modified fake data created in {}ms", stopWatch.getTime());
 	}
 
 	protected <T> List<List<T>> partition(List<T> passportStatuses, int size) {
