@@ -88,6 +88,7 @@ public class DatabaseInitializer {
 		log.info("Generating passport team fake passport statuses");
 		stopWatch.reset(); stopWatch.start();
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca", statusCodes));
+		passportStatusRepository.save(generatePassportTeamPassportStatus("Ken", "Blanchard", LocalDate.of(2000, 01, 01), "ken.blanchard@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", LocalDate.of(2000, 01, 01), "kristopher.charbonneau@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", LocalDate.of(2000, 01, 01), "maxim.lam@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(1985, 01, 10), "sebastien.comeau@hrsdc-rhdcc.gc.ca", statusCodes));

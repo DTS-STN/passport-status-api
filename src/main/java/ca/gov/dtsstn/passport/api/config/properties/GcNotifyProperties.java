@@ -16,7 +16,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties("application.gcnotify")
 public record GcNotifyProperties(
-	@NotBlank String apiKey,
+	@NotBlank String englishApiKey,
+	@NotBlank String frenchApiKey,
 	@NotBlank String baseUrl,
 	@Nullable Duration connectTimeout,
 	@NestedConfigurationProperty GcNotifyProperties.FileNumberNotificationProperties fileNumberNotification,

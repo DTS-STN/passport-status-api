@@ -9,7 +9,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 
 import ca.gov.dtsstn.passport.api.config.properties.GcNotifyProperties;
 import ca.gov.dtsstn.passport.api.service.domain.NotificationReceipt;
@@ -27,7 +26,7 @@ public class NotificationService {
 
 	private final GcNotifyProperties gcNotifyProperties;
 
-	private final RestTemplate restTemplate;
+	private final RestTemplateBuilder restTemplateBuilder;
 
 	public NotificationService(GcNotifyProperties gcNotifyProperties, RestTemplateBuilder restTemplateBuilder) {
 		log.info("Creating 'notificationService' bean");
@@ -36,17 +35,18 @@ public class NotificationService {
 		Assert.notNull(restTemplateBuilder, "restTemplateBuilder is required; it must not be null");
 
 		this.gcNotifyProperties = gcNotifyProperties;
-
-		this.restTemplate = restTemplateBuilder
-			.defaultHeader(HttpHeaders.AUTHORIZATION, "ApiKey-v1 %s".formatted(gcNotifyProperties.apiKey()))
-			.setConnectTimeout(gcNotifyProperties.connectTimeout())
-			.setReadTimeout(gcNotifyProperties.readTimeout())
-			.build();
+		this.restTemplateBuilder = restTemplateBuilder;
 	}
 
 	public NotificationReceipt sendFileNumberNotification(PassportStatus passportStatus, PreferredLanguage preferredLanguage) {
 		Assert.notNull(passportStatus, "passportStatus is requird; it must not be null");
 		Assert.hasText(passportStatus.getEmail(), "email is required; it must not be blank or null");
+
+		final var restTemplate = restTemplateBuilder
+			.defaultHeader(HttpHeaders.AUTHORIZATION, "ApiKey-v1 %s".formatted(getApiKey(preferredLanguage)))
+			.setConnectTimeout(gcNotifyProperties.connectTimeout())
+			.setReadTimeout(gcNotifyProperties.readTimeout())
+			.build();
 
 		final var email = Optional.ofNullable(passportStatus.getEmail()).orElseThrow(); // Optional<T> keeps sonar happy
 		final var templateId = getTemplateId(preferredLanguage);
@@ -64,6 +64,14 @@ public class NotificationService {
 		return switch (preferredLanguage) {
 			case ENGLISH -> gcNotifyProperties.fileNumberNotification().englishTemplateId();
 			case FRENCH -> gcNotifyProperties.fileNumberNotification().frenchTemplateId();
+			default -> throw new IllegalArgumentException("Unknown preferred language value " + preferredLanguage);
+		};
+	}
+
+	private String getApiKey(PreferredLanguage preferredLanguage) {
+		return switch (preferredLanguage) {
+			case ENGLISH -> gcNotifyProperties.englishApiKey();
+			case FRENCH -> gcNotifyProperties.frenchApiKey();
 			default -> throw new IllegalArgumentException("Unknown preferred language value " + preferredLanguage);
 		};
 	}
