@@ -53,7 +53,7 @@
 		<gitlog-maven-plugin.version>1.13.17</gitlog-maven-plugin.version>
 		<guava.version>31.1-jre</guava.version>
 		<icu4j.version>72.1</icu4j.version>
-		<immutables.version>2.9.2</immutables.version>
+		<immutables.version>2.9.3</immutables.version>
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
 		<springdoc.version>1.6.13</springdoc.version>
