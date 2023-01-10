@@ -18,9 +18,8 @@ import ca.gov.dtsstn.passport.api.event.NotificationNotSentEvent;
 import ca.gov.dtsstn.passport.api.event.NotificationRequestedEvent;
 import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
 import ca.gov.dtsstn.passport.api.service.NotificationService;
-import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.service.NotificationService.PreferredLanguage;
-import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
+import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonPreferredLanguageModel.LanguageName;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,9 +88,10 @@ public class ElectronicServiceRequestController {
 				.email(email)
 				.givenName(givenName)
 				.surname(surname)
-				.reason("Search query returned non-unique results"));
+				.reason("Search query returned non-unique results")
+				.build());
 
-			throw new NonUniqueResourceException("Search query returned non-unique results");
+			return; // 202 Accepted
 		}
 
 		passportStatuses.stream().findFirst().ifPresentOrElse(

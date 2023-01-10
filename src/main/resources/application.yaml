@@ -176,7 +176,8 @@ application:
     changelog:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   gcnotify:
-    api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+    english-api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+    french-api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
     base-url: https://api.notification.canada.ca/v2/notifications/email
     file-number-notification:
       english-template-id: 82eee16d-a836-4521-9314-441b7628e235
