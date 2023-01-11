@@ -11,7 +11,6 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,88 +38,85 @@ import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
-    private static OrRequestMatcher apiRequestMatcher = new OrRequestMatcher(
-            new AntPathRequestMatcher("/api/**"),
-            new AntPathRequestMatcher("/actuator/**"));
+	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-    @Autowired ApplicationProperties applicationProperties;
+	final OrRequestMatcher apiRequestMatcher = new OrRequestMatcher(
+		new AntPathRequestMatcher("/actuator/**"),
+		new AntPathRequestMatcher("/api/**"));
 
-    /**
-     * CORS configuration bean.
-     */
-    @Bean CorsConfiguration corsConfiguration() {
-        log.info("Creating 'corsConfiguration' bean");
-        final var corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedHeaders(applicationProperties.security().cors().allowedHeaders());
-        corsConfiguration.setAllowedMethods(applicationProperties.security().cors().allowedMethods());
-        corsConfiguration.setAllowedOrigins(applicationProperties.security().cors().allowedOrigins());
-        corsConfiguration.setExposedHeaders(applicationProperties.security().cors().exposedHeaders());
-        return corsConfiguration;
-    }
+	@Autowired ApplicationProperties applicationProperties;
 
-    @Bean CorsConfigurationSource corsConfigurationSource() {
-        log.info("Creating 'corsConfigurationSource' bean");
-        final var corsConfiguration = corsConfiguration();
-        final var corsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        return corsConfigurationSource;
-    }
+	/**
+	 * CORS configuration bean.
+	 */
+	@Bean CorsConfiguration corsConfiguration() {
+		log.info("Creating 'corsConfiguration' bean");
+		final var corsConfiguration = new CorsConfiguration();
+		corsConfiguration.setAllowedHeaders(applicationProperties.security().cors().allowedHeaders());
+		corsConfiguration.setAllowedMethods(applicationProperties.security().cors().allowedMethods());
+		corsConfiguration.setAllowedOrigins(applicationProperties.security().cors().allowedOrigins());
+		corsConfiguration.setExposedHeaders(applicationProperties.security().cors().exposedHeaders());
+		return corsConfiguration;
+	}
 
-    @Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
-            Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter)
-            throws Exception {
-        log.info("Configuring API Security");
+	@Bean CorsConfigurationSource corsConfigurationSource() {
+		log.info("Creating 'corsConfigurationSource' bean");
+		final var corsConfiguration = corsConfiguration();
+		final var corsConfigurationSource = new UrlBasedCorsConfigurationSource();
+		corsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+		return corsConfigurationSource;
+	}
 
-        http.requestMatcher(apiRequestMatcher)
-                .csrf().disable()
-                .authorizeHttpRequests(authorize -> authorize
-                        .antMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers(toLinks()).permitAll()
-                        .requestMatchers(to(ChangelogEndpoint.class)).permitAll()
-                        .requestMatchers(to(HealthEndpoint.class)).permitAll()
-                        .requestMatchers(to(InfoEndpoint.class)).permitAll()
-                        .requestMatchers(toAnyEndpoint()).hasAuthority("Application.Manage"));
+	@Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
+		log.info("Configuring API Security");
 
-        return commonFilterChain(authenticationErrorController, environment, http, jwtGrantedAuthoritiesConverter);
-    }
+		http.requestMatcher(apiRequestMatcher)
+			.csrf().disable()
+			.authorizeHttpRequests(authorize -> authorize
+				.antMatchers(HttpMethod.OPTIONS).permitAll()
+				.requestMatchers(toLinks()).permitAll()
+				.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
+				.requestMatchers(to(HealthEndpoint.class)).permitAll()
+				.requestMatchers(to(InfoEndpoint.class)).permitAll()
+				.requestMatchers(toAnyEndpoint()).hasAuthority("Application.Manage"));
 
-    @Bean SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
-            Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter)
-            throws Exception {
-        log.info("Configuring web Security");
+		return commonFilterChain(authenticationErrorController, http, jwtGrantedAuthoritiesConverter);
+	}
 
-        http.requestMatcher(new NegatedRequestMatcher(apiRequestMatcher)).headers()
-                .contentSecurityPolicy(applicationProperties.security().contentSecurityPolicy().toString()).and()
-                .frameOptions().sameOrigin()
-                .referrerPolicy(ReferrerPolicy.NO_REFERRER);
+	@Bean SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
+		log.info("Configuring web Security");
 
-        return commonFilterChain(authenticationErrorController, environment, http, jwtGrantedAuthoritiesConverter);
-    }
+		http.requestMatcher(new NegatedRequestMatcher(apiRequestMatcher))
+			.headers()
+				.contentSecurityPolicy(applicationProperties.security().contentSecurityPolicy().toString()).and()
+				.frameOptions().sameOrigin()
+				.referrerPolicy(ReferrerPolicy.NO_REFERRER);
 
-    SecurityFilterChain commonFilterChain(AuthenticationErrorHandler authenticationErrorController,
-            Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter)
-            throws Exception {
-        log.info("Configuring Spring Security");
+		return commonFilterChain(authenticationErrorController, http, jwtGrantedAuthoritiesConverter);
+	}
 
-        final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+	SecurityFilterChain commonFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
+		log.info("Configuring Spring Security");
 
-        http.cors().and()
-                .exceptionHandling()
-                .accessDeniedHandler(authenticationErrorController).and()
-                .oauth2ResourceServer()
-                .authenticationEntryPoint(authenticationErrorController)
-                .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and().and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
-        return http.build();
-    }
+		http
+			.cors().and()
+			.exceptionHandling()
+				.accessDeniedHandler(authenticationErrorController).and()
+			.oauth2ResourceServer()
+				.authenticationEntryPoint(authenticationErrorController)
+				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and().and()
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    @Bean WebSecurityCustomizer webSecurityCustomizer() {
-        log.debug("Adding /h2-console/** to Spring Security ignore list");
-        return web -> web.ignoring().antMatchers("/h2-console/**");
-    }
+		return http.build();
+	}
+
+	@Bean WebSecurityCustomizer webSecurityCustomizer() {
+		log.debug("Adding /h2-console/** to Spring Security ignore list");
+		return web -> web.ignoring().antMatchers("/h2-console/**");
+	}
 
 }
