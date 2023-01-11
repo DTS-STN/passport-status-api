@@ -44,14 +44,12 @@ public class WebSecurityConfig {
             new AntPathRequestMatcher("/api/**"),
             new AntPathRequestMatcher("/actuator/**"));
 
-    @Autowired
-    ApplicationProperties applicationProperties;
+    @Autowired ApplicationProperties applicationProperties;
 
     /**
      * CORS configuration bean.
      */
-    @Bean
-    CorsConfiguration corsConfiguration() {
+    @Bean CorsConfiguration corsConfiguration() {
         log.info("Creating 'corsConfiguration' bean");
         final var corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedHeaders(applicationProperties.security().cors().allowedHeaders());
@@ -61,8 +59,7 @@ public class WebSecurityConfig {
         return corsConfiguration;
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    @Bean CorsConfigurationSource corsConfigurationSource() {
         log.info("Creating 'corsConfigurationSource' bean");
         final var corsConfiguration = corsConfiguration();
         final var corsConfigurationSource = new UrlBasedCorsConfigurationSource();
@@ -70,8 +67,7 @@ public class WebSecurityConfig {
         return corsConfigurationSource;
     }
 
-    @Bean
-    SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
+    @Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
             Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter)
             throws Exception {
         log.info("Configuring API Security");
@@ -89,8 +85,7 @@ public class WebSecurityConfig {
         return commonFilterChain(authenticationErrorController, environment, http, jwtGrantedAuthoritiesConverter);
     }
 
-    @Bean
-    SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
+    @Bean SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController,
             Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter)
             throws Exception {
         log.info("Configuring web Security");
@@ -123,8 +118,7 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() {
+    @Bean WebSecurityCustomizer webSecurityCustomizer() {
         log.debug("Adding /h2-console/** to Spring Security ignore list");
         return web -> web.ignoring().antMatchers("/h2-console/**");
     }
