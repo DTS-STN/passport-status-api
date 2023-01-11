@@ -30,11 +30,11 @@
 
 
 	<properties>
-		<revision>0.0.0</revision>
+		<!-- application version corresponds to {buildDate-buildId-commitId} -->
+		<revision>00000000-00000-00000000</revision>
 
 		<!-- container image parameters -->
 
-		<image.registry>dtsdevcontainers.azurecr.io</image.registry>
 		<image.name>passport-status-api</image.name>
 
 		<!-- build configuration parameters -->
@@ -43,7 +43,7 @@
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 		<spring-boot.build-image.builder>gcr.io/paketo-buildpacks/builder:base</spring-boot.build-image.builder>
 		<spring-boot.build-image.runImage>gcr.io/paketo-buildpacks/run:full-cnb</spring-boot.build-image.runImage>
-		<spring-boot.build-image.imageName>${image.registry}/${image.name}</spring-boot.build-image.imageName>
+		<spring-boot.build-image.imageName>${image.name}</spring-boot.build-image.imageName>
 
 		<!-- dependency/plugin versions -->
 
