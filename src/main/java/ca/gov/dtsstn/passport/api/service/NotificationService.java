@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.config.CacheConfig;
 import ca.gov.dtsstn.passport.api.config.properties.GcNotifyProperties;
 import ca.gov.dtsstn.passport.api.service.domain.NotificationReceipt;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
@@ -38,6 +40,16 @@ public class NotificationService {
 		this.restTemplateBuilder = restTemplateBuilder;
 	}
 
+	/**
+	 * Sends an email notification (via GC Notify) to a target recipient.
+	 * <p>
+	 * This method is marked as {@code @Cacheable} to reduce the number of emails sent for
+	 * a given ESRF number. Think of it as a poor-man's rate-limiter/spam-reducer.
+	 *
+	 * @see application.yaml
+	 * @see CacheConfig#esrfEmailsCache
+	 */
+	@Cacheable(cacheNames = { "esrf-emails" }, key = "#passportStatus.fileNumber")
 	public NotificationReceipt sendFileNumberNotification(PassportStatus passportStatus, PreferredLanguage preferredLanguage) {
 		Assert.notNull(passportStatus, "passportStatus is requird; it must not be null");
 		Assert.hasText(passportStatus.getEmail(), "email is required; it must not be blank or null");

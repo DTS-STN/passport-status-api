@@ -165,6 +165,9 @@ application:
   caching:
     enabled: true
     caches:
+      esrf-emails:
+        expire-after-write: 1
+        time-unit: minutes
       status-codes:
         expire-after-write: 5
         time-unit: minutes
