@@ -20,6 +20,12 @@ public class CacheConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(CacheConfig.class);
 
+	@ConfigurationProperties("application.caching.caches.esrf-emails")
+	@Bean CaffeineCacheFactory esrfEmailsCache() {
+		log.info("Creating 'esrfEmailsCache' bean");
+		return new CaffeineCacheFactory("esrf-emails");
+	}
+
 	@ConfigurationProperties("application.caching.caches.status-codes")
 	@Bean CaffeineCacheFactory statusCodesCache() {
 		log.info("Creating 'statusCodesCache' bean");
