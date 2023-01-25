@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 
 import ca.gov.dtsstn.passport.api.event.NotificationNotSentEvent;
 import ca.gov.dtsstn.passport.api.event.NotificationRequestedEvent;
@@ -97,7 +99,23 @@ public class ElectronicServiceRequestController {
 		passportStatuses.stream().findFirst().ifPresentOrElse(
 			passportStatus -> {
 				final var preferredLanguageEnum = mapPreferredLanguage(LanguageName.valueOf(preferredLanguage));
-				notificationService.sendFileNumberNotification(passportStatus, preferredLanguageEnum);
+
+				try {
+					notificationService.sendFileNumberNotification(passportStatus, preferredLanguageEnum);
+				}
+				catch (final RestClientException exception) {
+					final var reason = Optional.ofNullable(exception.getMessage()).orElse(exception.getClass().getName());
+					eventPublisher.publishEvent(NotificationNotSentEvent.builder()
+						.dateOfBirth(dateOfBirth)
+						.email(email)
+						.givenName(givenName)
+						.surname(surname)
+						.reason(reason)
+						.build());
+
+					throw exception; // rethrow so it will be logged by the global exception handler
+				}
+
 				eventPublisher.publishEvent(NotificationSentEvent.builder()
 					.email(email)
 					.fileNumber(passportStatus.getFileNumber())
