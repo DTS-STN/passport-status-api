@@ -5,7 +5,7 @@ CREATE FUNCTION remove_diacritics(text)
   LANGUAGE sql
   IMMUTABLE PARALLEL SAFE STRICT
 AS $func$
-SELECT unaccent($1)
+SELECT public.unaccent($1)
 $func$;
 
 CREATE FUNCTION remove_non_alpha_numeric(text)
