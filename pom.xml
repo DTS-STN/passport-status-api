@@ -42,7 +42,7 @@
 		<java.version>17</java.version>
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 		<spring-boot.build-image.builder>gcr.io/paketo-buildpacks/builder:base</spring-boot.build-image.builder>
-		<spring-boot.build-image.runImage>gcr.io/paketo-buildpacks/run:full-cnb</spring-boot.build-image.runImage>
+		<spring-boot.build-image.runImage>gcr.io/paketo-buildpacks/run:base-cnb</spring-boot.build-image.runImage>
 		<spring-boot.build-image.imageName>${image.name}</spring-boot.build-image.imageName>
 
 		<!-- dependency/plugin versions -->
