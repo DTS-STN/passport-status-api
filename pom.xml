@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+	<!--
+		* Note: this pom uses 'CI friendly' versioning. For more info see:
+		* 	- https://maven.apache.org/maven-ci-friendly.html
+		*
+		* To build this project with a non-trivial version string, use the following command:
+		* 	- mvn -D revision={version} clean package
+		*
+		* To check for depdency updates, use the following commands:
+		* 	- mvn versions:display-property-updates
+	-->
+
 	<modelVersion>4.0.0</modelVersion>
 
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.8</version>
+		<version>2.7.9</version>
 	</parent>
 
 
@@ -47,7 +58,7 @@
 
 		<!-- dependency/plugin versions -->
 
-		<datafaker.version>1.7.0</datafaker.version>
+		<datafaker.version>1.8.0</datafaker.version>
 		<dependency-check-maven.version>7.4.4</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
@@ -56,7 +67,7 @@
 		<immutables.version>2.9.3</immutables.version>
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 		<snakeyaml.version>1.33</snakeyaml.version><!-- TODO remove when upgrading to Spring Boot 3.x -->
-		<spring-boot-configuration-processor.version>2.7.4</spring-boot-configuration-processor.version>
+		<spring-boot-configuration-processor.version>2.7.9</spring-boot-configuration-processor.version>
 		<springdoc.version>1.6.14</springdoc.version>
 	</properties>
 
