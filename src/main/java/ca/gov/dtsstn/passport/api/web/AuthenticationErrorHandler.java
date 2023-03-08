@@ -35,15 +35,11 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatusModel
 
 /**
  * This class functions as both a {@code RestControllerAdvice}, as well as a
- * Spring Security {@code AccessDeniedHandler} and
- * {@code AuthenticationEntryPoint}.
+ * Spring Security {@code AccessDeniedHandler} and {@code AuthenticationEntryPoint}.
  * <p>
- * The reason for the dual-responsibility is because of how Spring Security
- * handles rules configured in its
- * {@code SecurityFilterChain} vs {@code @PreAuthorize} annotated methods. The
- * former are handled as
- * {@code AccessDeniedHandler} and {@code AuthenticationEntryPoint}, the latter
- * as an {@code @ExceptionHandler}.
+ * The reason for the dual-responsibility is because of how Spring Security handles rules configured in its
+ * {@code SecurityFilterChain} vs {@code @PreAuthorize} annotated methods. The former are handled as
+ * {@code AccessDeniedHandler} and {@code AuthenticationEntryPoint}, the latter as an {@code @ExceptionHandler}.
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
@@ -94,8 +90,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 			AccessDeniedException accessDeniedException) throws IOException {
 		if (isAnonymous()) {
 			// Spring Security has this odd quirk whereby it will not throw an
-			// AuthenticationCredentialsNotFoundException if the current user is an
-			// anonymous user. 🤷
+			// AuthenticationCredentialsNotFoundException if the current user is an anonymous user. 🤷
 			// see: AbstractSecurityInterceptor.beforeInvocation(..) for reference
 			throw new AuthenticationCredentialsNotFoundException(accessDeniedException.getMessage());
 		}
@@ -107,17 +102,17 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 		log.error("Authentication Error: Code = 403, Remote Address = " + request.getRemoteAddr());
 
 		final var body = ImmutableErrorResponseModel.builder()
-				.operationOutcome(ImmutableOperationOutcomeModel.builder()
-						.addIssues(ImmutableIssueModel.builder()
-								.issueCode("API-0403")
-								.issueDetails("The server understands the request but refuses to authorize it.")
-								.build())
-						.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
-								.statusCode("403")
-								.statusDescriptionText("Forbidden")
-								.build())
-						.build())
-				.build();
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0403")
+					.issueDetails("The server understands the request but refuses to authorize it.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
+					.statusCode("403")
+					.statusDescriptionText("Forbidden")
+					.build())
+				.build())
+			.build();
 
 		sendResponse(response, HttpStatus.FORBIDDEN, body);
 	}
@@ -135,8 +130,8 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 
 	protected boolean isAnonymous() {
 		return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-				.map(Authentication::getAuthorities).orElse(Collections.emptyList()).stream()
-				.map(GrantedAuthority::getAuthority).anyMatch("ROLE_ANONYMOUS"::equals);
+			.map(Authentication::getAuthorities).orElse(Collections.emptyList()).stream()
+			.map(GrantedAuthority::getAuthority).anyMatch("ROLE_ANONYMOUS"::equals);
 	}
 
 }
