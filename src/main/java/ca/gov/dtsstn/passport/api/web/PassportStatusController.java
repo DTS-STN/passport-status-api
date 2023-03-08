@@ -16,21 +16,15 @@ import javax.validation.constraints.PastOrPresent;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +40,6 @@ import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
-import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.assembler.GetCertificateApplicationRepresentationModelAssembler;
@@ -111,8 +104,10 @@ public class PassportStatusController {
 	/**
 	 * Create a new {@link PassportStatus} in the system.
 	 *
-	 * TODO :: GjB :: in some rare cases, a status of {@code INVALID} for a specific {@code applicationRegisterSid} can be sent..
-	 * TODO :: GjB :: in these cases, we must relax validation and allow the invalid passport status to be stored 😒
+	 * TODO :: GjB :: in some rare cases, a status of {@code INVALID} for a specific
+	 * {@code applicationRegisterSid} can be sent..
+	 * TODO :: GjB :: in these cases, we must relax validation and allow the invalid
+	 * passport status to be stored 😒
 	 */
 	@PostMapping({ "" })
 	@ApiResponses.BadRequestError
@@ -125,22 +120,22 @@ public class PassportStatusController {
 	@Operation(summary = "Create a new passport status.", operationId = "passport-status-create")
 	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
 	public void create(
-			@RequestBody(required = true)
-			CreateCertificateApplicationRequestModel createCertificateApplicationRequest,
+			@RequestBody(required = true) CreateCertificateApplicationRequestModel createCertificateApplicationRequest,
 
-			@RequestParam(defaultValue = "true", required = false)
-			@BooleanString(message = "async must be one of: 'true', 'false'")
-			@Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = { "false", "true" }, defaultValue = "true"))
-			String async) {
+			@RequestParam(defaultValue = "true", required = false) @BooleanString(message = "async must be one of: 'true', 'false'") @Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = {
+					"false", "true" }, defaultValue = "true")) String async) {
 		if (!BooleanUtils.toBoolean(async)) {
 			log.warn("Call to unsupported operation: create(async=false)");
-			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
+			throw new UnsupportedOperationException(
+					"synchronous processing not yet implemented; please set async=true");
 		}
 
 		// TODO :: GjB :: relax validation if status=INVALID
 		log.debug("Performing field validations on createCertificateApplicationRequest");
 		final var constraintViolations = validator.validate(createCertificateApplicationRequest);
-		if (!constraintViolations.isEmpty()) { throw new ConstraintViolationException(constraintViolations); }
+		if (!constraintViolations.isEmpty()) {
+			throw new ConstraintViolationException(constraintViolations);
+		}
 		log.debug("createCertificateApplicationRequest passed validation with no errors");
 
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
@@ -148,51 +143,28 @@ public class PassportStatusController {
 		passportStatusJmsService.send(passportStatus);
 	}
 
-	@GetMapping({ "/{id}" })
-	@ResponseStatus(HttpStatus.OK)
-	@ApiResponses.AccessDeniedError
-	@ApiResponses.AuthenticationError
-	@ApiResponses.ResourceNotFoundError
-	@Authorities.HasPassportStatusRead
-	@SecurityRequirement(name = SpringDocConfig.HTTP)
-	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
-	@Operation(summary = "Retrieves a passport status by its internal database ID.", operationId = "passport-status-read")
-	public GetCertificateApplicationRepresentationModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[%s]".formatted(id)));
-	}
-
-	@GetMapping({ "" })
-	@ResponseStatus(HttpStatus.OK)
-	@ApiResponses.AccessDeniedError
-	@ApiResponses.AuthenticationError
-	@Authorities.HasPassportStatusReadAll
-	@SecurityRequirement(name = SpringDocConfig.HTTP)
-	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
-	@Operation(summary = "Retrieve a paged list of all passport statuses.", operationId = "passport-status-readall")
-	public PagedModel<GetCertificateApplicationRepresentationModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
-		return assembler.toModel(service.readAll(pageable));
-	}
-
 	/**
 	 * Perform a passport status search using the following fields:
 	 *
 	 * <ul>
-	 *   <li>{@code dateOfBirth}
-	 *   <li>{@code fileNumber}
-	 *   <li>{@code givenName}
-	 *   <li>{@code surname}
+	 * <li>{@code dateOfBirth}
+	 * <li>{@code fileNumber}
+	 * <li>{@code givenName}
+	 * <li>{@code surname}
 	 *
 	 * This endpoint will perform some logic on the search results as follows:
 	 *
 	 * <ol>
-	 *   <li>Perform a search using the provided parameters
-	 *   <li>Check for distinct {@code applicationRegisterSid}; throw exception if <strong>more than one</strong> value is found
-	 *   <li>If a distict {@code applicationRegisterSid} was found, perform a new search using the {@code applicationRegisterSid}
-	 *   <li>Sort the results by {@code PassportStatus.version}, extract newest passport status, wrap in a collection and return
+	 * <li>Perform a search using the provided parameters
+	 * <li>Check for distinct {@code applicationRegisterSid}; throw exception if
+	 * <strong>more than one</strong> value is found
+	 * <li>If a distict {@code applicationRegisterSid} was found, perform a new
+	 * search using the {@code applicationRegisterSid}
+	 * <li>Sort the results by {@code PassportStatus.version}, extract newest
+	 * passport status, wrap in a collection and return
 	 *
-	 * TODO :: GjB :: in some rare cases, a passport status may enter an {@code INVALID} state. We must handle this state appropriately.
+	 * TODO :: GjB :: in some rare cases, a passport status may enter an
+	 * {@code INVALID} state. We must handle this state appropriately.
 	 */
 	@GetMapping({ "/_search" })
 	@ApiResponses.BadRequestError
@@ -201,46 +173,41 @@ public class PassportStatusController {
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
 	@Operation(summary = "Search for a passport status by fileNumber, givenName, surname and dateOfBirth.", operationId = "passport-status-search")
 	public CollectionModel<GetCertificateApplicationRepresentationModel> search(
-			@DateTimeFormat(iso = ISO.DATE)
-			@NotNull(message = "dateOfBirth must not be null or blank")
-			@PastOrPresent(message = "dateOfBirth must be a date in the past")
-			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
-			@RequestParam(required = false) LocalDate dateOfBirth,
+			@DateTimeFormat(iso = ISO.DATE) @NotNull(message = "dateOfBirth must not be null or blank") @PastOrPresent(message = "dateOfBirth must be a date in the past") @Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true) @RequestParam(required = false) LocalDate dateOfBirth,
 
-			@NotBlank(message = "fileNumber must not be null or blank")
-			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
-			@RequestParam(required = false) String fileNumber,
+			@NotBlank(message = "fileNumber must not be null or blank") @Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true) @RequestParam(required = false) String fileNumber,
 
-			@NotBlank(message = "givenName must not be null or blank")
-			@Parameter(description = "The given name of the passport applicant.", example = "John", required = true)
-			@RequestParam(required = false) String givenName,
+			@NotBlank(message = "givenName must not be null or blank") @Parameter(description = "The given name of the passport applicant.", example = "John", required = true) @RequestParam(required = false) String givenName,
 
-			@NotBlank(message = "surname must not be null or blank")
-			@Parameter(description = "The surname of the passport applicant.", example = "Doe", required = true)
-			@RequestParam(required = false) String surname,
+			@NotBlank(message = "surname must not be null or blank") @Parameter(description = "The surname of the passport applicant.", example = "Doe", required = true) @RequestParam(required = false) String surname,
 
 			@Deprecated // This parameter will soon be removed
-			@Parameter(description = "If the query should return a single unique result.", required = false)
-			@RequestParam(defaultValue = "true") boolean unique) {
-		log.debug("Performing passport status search using terms {}", List.of(dateOfBirth, fileNumber, givenName, surname));
+			@Parameter(description = "If the query should return a single unique result.", required = false) @RequestParam(defaultValue = "true") boolean unique) {
+		log.debug("Performing passport status search using terms {}",
+				List.of(dateOfBirth, fileNumber, givenName, surname));
 		final var initialSearchResults = service.fileNumberSearch(dateOfBirth, fileNumber, givenName, surname);
-		log.debug("{} results returned for search terms {}", initialSearchResults.size(), List.of(dateOfBirth, fileNumber, givenName, surname));
+		log.debug("{} results returned for search terms {}", initialSearchResults.size(),
+				List.of(dateOfBirth, fileNumber, givenName, surname));
 
 		log.debug("Checking results for distinct applicationRegisterSids");
-		final var applicationRegisterSids = initialSearchResults.stream().map(PassportStatus::getApplicationRegisterSid).distinct().toList();
+		final var applicationRegisterSids = initialSearchResults.stream().map(PassportStatus::getApplicationRegisterSid)
+				.distinct().toList();
 		final var nApplicationRegisterSids = applicationRegisterSids.size();
 		log.debug("Number of distinct applicationRegisterSids: {}", nApplicationRegisterSids);
 
-		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth).fileNumber(fileNumber).givenName(givenName).surname(surname);
+		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth)
+				.fileNumber(fileNumber).givenName(givenName).surname(surname);
 
 		if (nApplicationRegisterSids > 1) {
-			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, givenName, surname));
+			log.warn("Search query returned non-unique applicationRegisterSid result: {}",
+					List.of(dateOfBirth, fileNumber, givenName, surname));
 			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).build());
 			throw new NonUniqueResourceException("Search query returned non-unique applicationRegisterSid result");
 		}
 
 		log.debug("Performing applicationRegisterSid search");
-		final var passportStatuses = applicationRegisterSids.stream().findFirst().map(service::applicationRegisterSidSearch).orElse(Collections.emptyList());
+		final var passportStatuses = applicationRegisterSids.stream().findFirst()
+				.map(service::applicationRegisterSidSearch).orElse(Collections.emptyList());
 		final var passportStatus = passportStatuses.stream().sorted(byVersionDesc()).findFirst();
 		log.debug("applicationRegisterSid search produced {} results", passportStatuses.size());
 
@@ -248,10 +215,13 @@ public class PassportStatusController {
 		 * TODO :: GjB :: handle INVALID status by throwing exception here
 		 */
 
-		eventPublisher.publishEvent(searchEventBuilder.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT).build());
+		eventPublisher
+				.publishEvent(searchEventBuilder.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT).build());
 
-		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, surname, unique)).withSelfRel();
-		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList())).add(selfLink);
+		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, surname, unique))
+				.withSelfRel();
+		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList()))
+				.add(selfLink);
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}
 

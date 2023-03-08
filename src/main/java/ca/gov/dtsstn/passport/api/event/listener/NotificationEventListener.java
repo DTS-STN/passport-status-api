@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.event.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
  */
 @Component
 public class NotificationEventListener {
+	private final Logger log = LoggerFactory.getLogger(NotificationEventListener.class);
 
 	private final EventLogRepository eventLogRepository;
 
@@ -31,38 +34,44 @@ public class NotificationEventListener {
 		this.eventLogRepository = eventLogRepository;
 
 		this.objectMapper = new ObjectMapper()
-			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-			.findAndRegisterModules();
+				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+				.findAndRegisterModules();
 	}
 
 	@Async
 	@EventListener({ NotificationNotSentEvent.class })
 	public void handleNotificationNotSentEvent(NotificationNotSentEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-			.eventType(EventLogType.GET_ESRF_FAIL)
-			.description("ESRF notification failure")
-			.details(objectMapper.writeValueAsString(event))
-			.build());
+				.eventType(EventLogType.GET_ESRF_FAIL)
+				.description("ESRF notification failure")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+		log.info("Event: Get ESRF fail");
 	}
 
 	@Async
 	@EventListener({ NotificationRequestedEvent.class })
 	public void handleNotificationRequestedEvent(NotificationRequestedEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-			.eventType(EventLogType.GET_ESRF_REQUEST)
-			.description("ESRF notification requested")
-			.details(objectMapper.writeValueAsString(event))
-			.build());
+				.eventType(EventLogType.GET_ESRF_REQUEST)
+				.description("ESRF notification requested")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+		log.info("Event: ESRF notification requested");
 	}
 
 	@Async
 	@EventListener({ NotificationSentEvent.class })
 	public void handleNotificationSentEvent(NotificationSentEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-			.eventType(EventLogType.GET_ESRF_SUCCESS)
-			.description("ESRF notification success")
-			.details(objectMapper.writeValueAsString(event))
-			.build());
+				.eventType(EventLogType.GET_ESRF_SUCCESS)
+				.description("ESRF notification success")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
+
+		log.info("Event: ESRF notification success");
 	}
 
 }
