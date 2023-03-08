@@ -68,18 +68,17 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 		log.error("Authentication Error: Code = 401, Remote Address = " + request.getRemoteAddr());
 
 		final var body = ImmutableErrorResponseModel.builder()
-				.operationOutcome(ImmutableOperationOutcomeModel.builder()
-						.addIssues(ImmutableIssueModel.builder()
-								.issueCode("API-0401")
-								.issueDetails(
-										"The request lacks valid authentication credentials for the requested resource.")
-								.build())
-						.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
-								.statusCode("401")
-								.statusDescriptionText("Unauthorized")
-								.build())
-						.build())
-				.build();
+			.operationOutcome(ImmutableOperationOutcomeModel.builder()
+				.addIssues(ImmutableIssueModel.builder()
+					.issueCode("API-0401")
+					.issueDetails("The request lacks valid authentication credentials for the requested resource.")
+					.build())
+				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
+					.statusCode("401")
+					.statusDescriptionText("Unauthorized")
+					.build())
+				.build())
+			.build();
 
 		sendResponse(response, HttpStatus.UNAUTHORIZED, body);
 	}

@@ -34,18 +34,18 @@ public class NotificationEventListener {
 		this.eventLogRepository = eventLogRepository;
 
 		this.objectMapper = new ObjectMapper()
-				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.findAndRegisterModules();
+			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+			.findAndRegisterModules();
 	}
 
 	@Async
 	@EventListener({ NotificationNotSentEvent.class })
 	public void handleNotificationNotSentEvent(NotificationNotSentEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.GET_ESRF_FAIL)
-				.description("ESRF notification failure")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.GET_ESRF_FAIL)
+			.description("ESRF notification failure")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: Get ESRF fail");
 	}
@@ -54,10 +54,10 @@ public class NotificationEventListener {
 	@EventListener({ NotificationRequestedEvent.class })
 	public void handleNotificationRequestedEvent(NotificationRequestedEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.GET_ESRF_REQUEST)
-				.description("ESRF notification requested")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.GET_ESRF_REQUEST)
+			.description("ESRF notification requested")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: ESRF notification requested");
 	}
@@ -66,10 +66,10 @@ public class NotificationEventListener {
 	@EventListener({ NotificationSentEvent.class })
 	public void handleNotificationSentEvent(NotificationSentEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.GET_ESRF_SUCCESS)
-				.description("ESRF notification success")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.GET_ESRF_SUCCESS)
+			.description("ESRF notification success")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: ESRF notification success");
 	}

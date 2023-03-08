@@ -38,18 +38,18 @@ public class PassportStatusEventListener {
 		this.eventLogRepository = eventLogRepository;
 
 		this.objectMapper = new ObjectMapper()
-				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.findAndRegisterModules();
+			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+			.findAndRegisterModules();
 	}
 
 	@Async
 	@EventListener({ PassportStatusCreateConflictEvent.class })
 	public void handleCreated(PassportStatusCreateConflictEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.CREATE_STATUS_CONFLICT)
-				.description("Passport status create conflict")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.CREATE_STATUS_CONFLICT)
+			.description("Passport status create conflict")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: status create conflict");
 	}
@@ -58,10 +58,10 @@ public class PassportStatusEventListener {
 	@EventListener({ PassportStatusCreatedEvent.class })
 	public void handleCreated(PassportStatusCreatedEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.CREATE_STATUS_SUCCESS)
-				.description("Passport status create success")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.CREATE_STATUS_SUCCESS)
+			.description("Passport status create success")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: status created");
 	}
@@ -70,10 +70,10 @@ public class PassportStatusEventListener {
 	@EventListener
 	public void handleRead(PassportStatusReadEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.READ_STATUS_SUCCESS)
-				.description("Passport status read success")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.READ_STATUS_SUCCESS)
+			.description("Passport status read success")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: status read");
 	}
@@ -82,10 +82,10 @@ public class PassportStatusEventListener {
 	@EventListener({ PassportStatusUpdatedEvent.class })
 	public void handleUpdated(PassportStatusUpdatedEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.UPDATE_STATUS_SUCCESS)
-				.description("Passport status update success")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.UPDATE_STATUS_SUCCESS)
+			.description("Passport status update success")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		log.info("Event: status updated");
 	}
@@ -94,10 +94,10 @@ public class PassportStatusEventListener {
 	@EventListener({ PassportStatusDeletedEvent.class })
 	public void handleDeleted(PassportStatusDeletedEvent event) throws JsonProcessingException {
 		eventLogRepository.save(new EventLogEntityBuilder()
-				.eventType(EventLogType.DELETE_STATUS_SUCCESS)
-				.description("Passport status delete success")
-				.details(objectMapper.writeValueAsString(event))
-				.build());
+			.eventType(EventLogType.DELETE_STATUS_SUCCESS)
+			.description("Passport status delete success")
+			.details(objectMapper.writeValueAsString(event))
+			.build());
 
 		// Setting this as warning, since deletion should only be happening as part of
 		// our retention policy so if this pops up unexpectedly we don't want to lose it
@@ -110,22 +110,22 @@ public class PassportStatusEventListener {
 	public void handleSearch(PassportStatusSearchEvent event) throws JsonProcessingException {
 		switch (event.getResult()) {
 			case HIT -> eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_HIT)
-					.description("Passport status search hit")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
+				.eventType(EventLogType.SEARCH_STATUS_HIT)
+				.description("Passport status search hit")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
 
 			case MISS -> eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_MISS)
-					.description("Passport status search miss")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
+				.eventType(EventLogType.SEARCH_STATUS_MISS)
+				.description("Passport status search miss")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
 
 			case NON_UNIQUE -> eventLogRepository.save(new EventLogEntityBuilder()
-					.eventType(EventLogType.SEARCH_STATUS_NON_UNIQUE)
-					.description("Passport status search non-unique")
-					.details(objectMapper.writeValueAsString(event))
-					.build());
+				.eventType(EventLogType.SEARCH_STATUS_NON_UNIQUE)
+				.description("Passport status search non-unique")
+				.details(objectMapper.writeValueAsString(event))
+				.build());
 
 			default -> log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
 		}
