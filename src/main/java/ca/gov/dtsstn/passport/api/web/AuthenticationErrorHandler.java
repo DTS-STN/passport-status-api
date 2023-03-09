@@ -65,7 +65,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 		// statement for our analytics teams, where if this happens and the IP isn't on
 		// our expected subnet we'll know something's going wrong within the VNET or
 		// wider hub/spoke.
-		log.error("Authentication Error: Code = 401, Remote Address = " + request.getRemoteAddr());
+		log.warn("Authentication Error: Code = 401, Remote Address = " + request.getRemoteAddr());
 
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
@@ -98,7 +98,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 		// statement for our analytics teams, where if this happens and the IP isn't on
 		// our expected subnet we'll know something's going wrong within the VNET or
 		// wider hub/spoke.
-		log.error("Authentication Error: Code = 403, Remote Address = " + request.getRemoteAddr());
+		log.warn("Authentication Error: Code = 403, Remote Address = " + request.getRemoteAddr());
 
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()

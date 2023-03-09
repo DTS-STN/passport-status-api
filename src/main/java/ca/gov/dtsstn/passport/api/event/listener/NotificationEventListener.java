@@ -23,7 +23,7 @@ import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
  */
 @Component
 public class NotificationEventListener {
-	private final Logger log = LoggerFactory.getLogger(NotificationEventListener.class);
+	private static final Logger log = LoggerFactory.getLogger(NotificationEventListener.class);
 
 	private final EventLogRepository eventLogRepository;
 
@@ -47,7 +47,7 @@ public class NotificationEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: Get ESRF fail");
+		log.info("Event: Get ESRF fail - " + event.getReason());
 	}
 
 	@Async
@@ -59,7 +59,7 @@ public class NotificationEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: ESRF notification requested");
+		log.info("Event: ESRF notification requested - " + event.getEmail());
 	}
 
 	@Async
@@ -71,7 +71,7 @@ public class NotificationEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: ESRF notification success");
+		log.info("Event: ESRF notification success - " + event.getEmail());
 	}
 
 }

@@ -51,7 +51,7 @@ public class PassportStatusEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: status create conflict");
+		log.info("Event: status create conflict - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -63,7 +63,7 @@ public class PassportStatusEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: status created");
+		log.info("Event: status created - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -75,7 +75,7 @@ public class PassportStatusEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: status read");
+		log.info("Event: status read - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -87,7 +87,7 @@ public class PassportStatusEventListener {
 			.details(objectMapper.writeValueAsString(event))
 			.build());
 
-		log.info("Event: status updated");
+		log.info("Event: status updated - Updated ID: " + event.getUpdatedEntity().getId());
 	}
 
 	@Async
@@ -102,7 +102,7 @@ public class PassportStatusEventListener {
 		// Setting this as warning, since deletion should only be happening as part of
 		// our retention policy so if this pops up unexpectedly we don't want to lose it
 		// in the noise.
-		log.warn("Event: status deleted");
+		log.warn("Event: status deleted - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -130,7 +130,7 @@ public class PassportStatusEventListener {
 			default -> log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
 		}
 
-		log.info("Event: Search result - " + event.getResult().toString());
+		log.info("Event: Search result - Result: " + event.getResult().toString());
 	}
 
 }
