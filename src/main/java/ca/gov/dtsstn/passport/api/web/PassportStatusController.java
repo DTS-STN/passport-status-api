@@ -16,21 +16,15 @@ import javax.validation.constraints.PastOrPresent;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +40,6 @@ import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.exception.NonUniqueResourceException;
-import ca.gov.dtsstn.passport.api.web.exception.ResourceNotFoundException;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.assembler.GetCertificateApplicationRepresentationModelAssembler;
@@ -146,33 +139,6 @@ public class PassportStatusController {
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 		log.debug("Queueing passport status: {}", passportStatus);
 		passportStatusJmsService.send(passportStatus);
-	}
-
-	@GetMapping({ "/{id}" })
-	@ResponseStatus(HttpStatus.OK)
-	@ApiResponses.AccessDeniedError
-	@ApiResponses.AuthenticationError
-	@ApiResponses.ResourceNotFoundError
-	@Authorities.HasPassportStatusRead
-	@SecurityRequirement(name = SpringDocConfig.HTTP)
-	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@ApiResponse(responseCode = "200", description = "Returns an instance of a passport status.")
-	@Operation(summary = "Retrieves a passport status by its internal database ID.", operationId = "passport-status-read")
-	public GetCertificateApplicationRepresentationModel get(@Parameter(description = "The internal database ID that represents the passport status.") @PathVariable String id) {
-		return service.read(id).map(assembler::toModel).orElseThrow(() -> new ResourceNotFoundException("Could not find the passport status with id=[%s]".formatted(id)));
-	}
-
-	@GetMapping({ "" })
-	@ResponseStatus(HttpStatus.OK)
-	@ApiResponses.AccessDeniedError
-	@ApiResponses.AuthenticationError
-	@Authorities.HasPassportStatusReadAll
-	@SecurityRequirement(name = SpringDocConfig.HTTP)
-	@SecurityRequirement(name = SpringDocConfig.OAUTH)
-	@ApiResponse(responseCode = "200", description = "Retrieves all the passport statuses available to the user.")
-	@Operation(summary = "Retrieve a paged list of all passport statuses.", operationId = "passport-status-readall")
-	public PagedModel<GetCertificateApplicationRepresentationModel> getAll(Authentication authentication, @SortDefault({ "fileNumber" }) @ParameterObject Pageable pageable) {
-		return assembler.toModel(service.readAll(pageable));
 	}
 
 	/**

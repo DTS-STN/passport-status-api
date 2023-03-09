@@ -50,6 +50,8 @@ public class PassportStatusEventListener {
 			.description("Passport status create conflict")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: status create conflict - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -60,6 +62,8 @@ public class PassportStatusEventListener {
 			.description("Passport status create success")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: status created - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -70,6 +74,8 @@ public class PassportStatusEventListener {
 			.description("Passport status read success")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: status read - ID: " + event.getEntity().getId());
 	}
 
 	@Async
@@ -80,6 +86,8 @@ public class PassportStatusEventListener {
 			.description("Passport status update success")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: status updated - Updated ID: " + event.getUpdatedEntity().getId());
 	}
 
 	@Async
@@ -90,12 +98,17 @@ public class PassportStatusEventListener {
 			.description("Passport status delete success")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		// Setting this as warning, since deletion should only be happening as part of
+		// our retention policy so if this pops up unexpectedly we don't want to lose it
+		// in the noise.
+		log.warn("Event: status deleted - ID: " + event.getEntity().getId());
 	}
 
 	@Async
 	@EventListener({ PassportStatusSearchEvent.class })
 	public void handleSearch(PassportStatusSearchEvent event) throws JsonProcessingException {
-		switch(event.getResult()){
+		switch (event.getResult()) {
 			case HIT -> eventLogRepository.save(new EventLogEntityBuilder()
 				.eventType(EventLogType.SEARCH_STATUS_HIT)
 				.description("Passport status search hit")
@@ -114,8 +127,10 @@ public class PassportStatusEventListener {
 				.details(objectMapper.writeValueAsString(event))
 				.build());
 
-			default ->  log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
+			default -> log.warn("PassportStatusSearchEvent {} result is not implemented", event.getResult());
 		}
+
+		log.info("Event: Search result - Result: " + event.getResult().toString());
 	}
 
 }

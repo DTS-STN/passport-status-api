@@ -58,7 +58,15 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 
 	@Override
 	@ExceptionHandler({ AuthenticationException.class })
-	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException authException) throws IOException {
+
+		// The only authentication we have is from Interop, so this is a canary log
+		// statement for our analytics teams, where if this happens and the IP isn't on
+		// our expected subnet we'll know something's going wrong within the VNET or
+		// wider hub/spoke.
+		log.warn("Authentication Error: Code = 401, Remote Address = " + request.getRemoteAddr());
+
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
@@ -77,13 +85,20 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler, Authenti
 
 	@Override
 	@ExceptionHandler({ AccessDeniedException.class })
-	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+	public void handle(HttpServletRequest request, HttpServletResponse response,
+			AccessDeniedException accessDeniedException) throws IOException {
 		if (isAnonymous()) {
 			// Spring Security has this odd quirk whereby it will not throw an
 			// AuthenticationCredentialsNotFoundException if the current user is an anonymous user. 🤷
 			// see: AbstractSecurityInterceptor.beforeInvocation(..) for reference
 			throw new AuthenticationCredentialsNotFoundException(accessDeniedException.getMessage());
 		}
+
+		// The only authentication we have is from Interop, so this is a canary log
+		// statement for our analytics teams, where if this happens and the IP isn't on
+		// our expected subnet we'll know something's going wrong within the VNET or
+		// wider hub/spoke.
+		log.warn("Authentication Error: Code = 403, Remote Address = " + request.getRemoteAddr());
 
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()

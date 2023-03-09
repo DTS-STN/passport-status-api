@@ -1,5 +1,7 @@
 package ca.gov.dtsstn.passport.api.event.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
  */
 @Component
 public class NotificationEventListener {
+	private static final Logger log = LoggerFactory.getLogger(NotificationEventListener.class);
 
 	private final EventLogRepository eventLogRepository;
 
@@ -43,6 +46,8 @@ public class NotificationEventListener {
 			.description("ESRF notification failure")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: Get ESRF fail - " + event.getReason());
 	}
 
 	@Async
@@ -53,6 +58,8 @@ public class NotificationEventListener {
 			.description("ESRF notification requested")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: ESRF notification requested - " + event.getEmail());
 	}
 
 	@Async
@@ -63,6 +70,8 @@ public class NotificationEventListener {
 			.description("ESRF notification success")
 			.details(objectMapper.writeValueAsString(event))
 			.build());
+
+		log.info("Event: ESRF notification success - " + event.getEmail());
 	}
 
 }
