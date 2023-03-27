@@ -1,12 +1,9 @@
 package ca.gov.dtsstn.passport.api.config;
 
-import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.to;
-import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toAnyEndpoint;
-import static org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest.toLinks;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +19,7 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,10 +37,6 @@ import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
 public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
-
-	final OrRequestMatcher apiRequestMatcher = new OrRequestMatcher(
-		new AntPathRequestMatcher("/actuator/**"),
-		new AntPathRequestMatcher("/api/**"));
 
 	@Autowired ApplicationProperties applicationProperties;
 
@@ -68,27 +62,30 @@ public class WebSecurityConfig {
 	}
 
 	@Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
-		log.info("Configuring API Security");
+		log.info("Configuring API security");
 
-		http.requestMatcher(apiRequestMatcher)
+		http.requestMatcher(actuatorOrApiRequest())
 			.csrf().disable()
 			.authorizeHttpRequests(authorize -> authorize
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.requestMatchers(toLinks()).permitAll()
-				.requestMatchers(to(ChangelogEndpoint.class)).permitAll()
-				.requestMatchers(to(HealthEndpoint.class)).permitAll()
-				.requestMatchers(to(InfoEndpoint.class)).permitAll()
-				.requestMatchers(toAnyEndpoint()).hasAuthority("Application.Manage"));
+				.requestMatchers(EndpointRequest.toLinks()).permitAll()
+				.requestMatchers(EndpointRequest.to(ChangelogEndpoint.class)).permitAll()
+				.requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+				.requestMatchers(EndpointRequest.to(InfoEndpoint.class)).permitAll()
+				.requestMatchers(actuatorRequest()).hasAuthority("Application.Manage"));
 
 		return commonFilterChain(authenticationErrorController, http, jwtGrantedAuthoritiesConverter);
 	}
 
 	@Bean SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
-		log.info("Configuring web Security");
+		log.info("Configuring non-API web security");
 
-		http.requestMatcher(new NegatedRequestMatcher(apiRequestMatcher))
+		final var contentSecurityPolicy = applicationProperties.security().contentSecurityPolicy().toString();
+		final var nonActuatorOrApiRequestMatcher = new NegatedRequestMatcher(actuatorOrApiRequest());
+
+		http.requestMatcher(nonActuatorOrApiRequestMatcher)
 			.headers()
-				.contentSecurityPolicy(applicationProperties.security().contentSecurityPolicy().toString()).and()
+				.contentSecurityPolicy(contentSecurityPolicy).and()
 				.frameOptions().sameOrigin()
 				.referrerPolicy(ReferrerPolicy.NO_REFERRER);
 
@@ -117,6 +114,27 @@ public class WebSecurityConfig {
 	@Bean WebSecurityCustomizer webSecurityCustomizer() {
 		log.debug("Adding /h2-console/** to Spring Security ignore list");
 		return web -> web.ignoring().antMatchers("/h2-console/**");
+	}
+
+	/**
+	 * A request matcher that will match all Spring Boot actuator and all API requests.
+	 */
+	protected RequestMatcher actuatorOrApiRequest() {
+		return new OrRequestMatcher(actuatorRequest(), apiRequest());
+	}
+
+	/**
+	 * A request matcher that will match all Spring Boot actuator requests.
+	 */
+	protected RequestMatcher actuatorRequest() {
+		return EndpointRequest.toAnyEndpoint();
+	}
+
+	/**
+	 * A request matcher that will match all API requests.
+	 */
+	protected RequestMatcher apiRequest() {
+		return new AntPathRequestMatcher("/api/**");
 	}
 
 }
