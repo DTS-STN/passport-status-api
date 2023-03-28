@@ -2,8 +2,6 @@ package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
-
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
@@ -13,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import ca.gov.dtsstn.passport.api.web.validation.ValueOfEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)

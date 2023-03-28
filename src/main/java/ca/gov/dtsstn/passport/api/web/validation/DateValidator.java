@@ -3,10 +3,10 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Checks that a string is a valid ISO 8601 compliant date.

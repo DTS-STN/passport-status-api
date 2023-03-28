@@ -32,13 +32,18 @@ logging:
 #######################################################################################################################
 
 management:
+  authorized-role: Application.Manage
   endpoint:
+    env:
+      show-values: when-authorized
     health:
       probes:
         enabled: true
       show-components: always
       show-details: when-authorized
   endpoints:
+    jackson:
+      isolated-object-mapper: false
     web:
       exposure:
         include:
@@ -46,14 +51,14 @@ management:
           - changelog
           - env
           - health
-          - httptrace
+          - httpexchanges
           - info
           - initdata
           - metrics
           - prometheus
           - refresh
-  trace:
-    http:
+  httpexchanges:
+    recording:
       include:
         - principal
         - remote-address
@@ -180,16 +185,16 @@ application:
       changelog-path: changelog.json  # classpath location of the changelog.json file generated during build
   gcnotify:
     english-api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
-    french-api-key: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+    french-api-key:  # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
     base-url: https://api.notification.canada.ca/v2/notifications/email
     file-number-notification:
       english-template-id: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
-      french-template-id: # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
+      french-template-id:  # must be set externally (ex: 00000000-0000-0000-0000-000000000000)
   http-request-repository:
-    page-size: 100                    # number of http request/response trace requests to return from /actuator/httptrace
-    includeUrls:                      # list of URLs to include, in ant path style
+    page-size: 100 # number of http request/response trace requests to return from /actuator/httptrace
+    includeUrls:   # list of URLs to include, in ant path style
       - /**
-    excludeUrls:                      # list of URLs to exclude, in ant path style
+    excludeUrls:   # list of URLs to exclude, in ant path style
       - /actuator/health/liveness
       - /actuator/health/readiness
   jms:
@@ -198,7 +203,7 @@ application:
   security:
     content-security-policy:
       default-src: "'self'"
-      connect-src: "'self' login.microsoftonline.com passport-status-api.dev.dev-rhp.dts-stn.com passport-status-api.staging.dev-rhp.dts-stn.com"
+      connect-src: "'self' login.microsoftonline.com"
       img-src: "'self' data:"
       script-src: "'self' 'sha256-4IiDsMH+GkJlxivIDNfi6qk0O5HPtzyvNwVT3Wt8TIw='"
     cors:
@@ -219,13 +224,13 @@ application:
       tenant-id: # must be set externally (sample: 00000000-0000-0000-0000-000000000000)
       token-url: https://login.microsoftonline.com/${application.security.oauth.tenant-id}/oauth2/v2.0/token
   request-logging-filter:
-    enabled: false                    # whether to enable the request logging filter
-    includeUrls:                      # list of URLs to include, in ant path style
+    enabled: false # whether to enable the request logging filter
+    includeUrls:   # list of URLs to include, in ant path style
       - /**
-    excludeUrls:                      # list of URLs to exclude, in ant path style
+    excludeUrls:   # list of URLs to exclude, in ant path style
       - /actuator/health/liveness
       - /actuator/health/readiness
-    include-headers: true             # whether the request headers should be included in the log message
-    include-payload: true             # whether the request payload (body) should be included in the log message
-    include-query-string: true        # whether the query string should be included in the log message
-    max-payload-length: 10240         # the maximum length (in bytes) of the payload body to be included in the log messagehttp
+    include-headers: true      # whether the request headers should be included in the log message
+    include-payload: true      # whether the request payload (body) should be included in the log message
+    include-query-string: true # whether the query string should be included in the log message
+    max-payload-length: 10240  # the maximum length (in bytes) of the payload body to be included in the log message

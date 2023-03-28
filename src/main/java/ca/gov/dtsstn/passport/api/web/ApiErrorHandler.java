@@ -3,10 +3,6 @@ package ca.gov.dtsstn.passport.api.web;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -14,6 +10,7 @@ import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -39,6 +36,9 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableOperationOutcomeStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.IssueModel;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
 
 /**
  * API global error handler.
@@ -52,7 +52,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	private static final Logger log = LoggerFactory.getLogger(ApiErrorHandler.class);
 
 	@Override
-	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
@@ -71,7 +71,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	 * (ie: when the incoming JSON is malformed)
 	 */
 	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
@@ -93,7 +93,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	 * (ie: {@code POST} to {@code /api/v1/passport-statuses} with an invalid date of birth in the request body)
 	 */
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
@@ -108,7 +108,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
@@ -126,7 +126,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var body = ImmutableErrorResponseModel.builder()
 			.operationOutcome(ImmutableOperationOutcomeModel.builder()
 				.addIssues(ImmutableIssueModel.builder()
@@ -144,7 +144,7 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		final var fieldName = ClassUtils.isAssignableValue(MethodArgumentTypeMismatchException.class, ex)
 			? ((MethodArgumentTypeMismatchException) ex).getName() : ex.getPropertyName();
 

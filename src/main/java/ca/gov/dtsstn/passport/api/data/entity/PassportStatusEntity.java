@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

@@ -2,8 +2,6 @@ package ca.gov.dtsstn.passport.api.service.domain.mapper;
 
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.util.Assert;
 import ca.gov.dtsstn.passport.api.data.entity.StatusCodeEntity;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
+import jakarta.annotation.PostConstruct;
 
 /**
  * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)

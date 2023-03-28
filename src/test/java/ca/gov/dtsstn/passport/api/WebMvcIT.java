@@ -29,7 +29,7 @@ class WebMvcIT {
 	@Test void testSwaggerRedirect() throws Exception {
 		mvc.perform(get("/"))
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/swagger-ui.html"));
+			.andExpect(redirectedUrl("/swagger-ui/index.html"));
 	}
 
 }
