@@ -1,9 +1,9 @@
 package ca.gov.dtsstn.passport.api.web.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Checks that a string represents a boolean value.

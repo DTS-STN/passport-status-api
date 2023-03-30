@@ -8,8 +8,9 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,9 +18,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,16 +32,13 @@ import ca.gov.dtsstn.passport.api.web.ChangelogEndpoint;
  * @author Greg Baker <gregory.j.baker@hrsdc-rhdcc.gc.ca>
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
 	@Autowired ApplicationProperties applicationProperties;
 
-	/**
-	 * CORS configuration bean.
-	 */
 	@Bean CorsConfiguration corsConfiguration() {
 		log.info("Creating 'corsConfiguration' bean");
 		final var corsConfiguration = new CorsConfiguration();
@@ -61,80 +57,86 @@ public class WebSecurityConfig {
 		return corsConfigurationSource;
 	}
 
-	@Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
+
+	/**
+	 * Security configuration for actuator and API endpoints.
+	 */
+	@Bean SecurityFilterChain apiSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, Environment environment, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
 		log.info("Configuring API security");
-
-		http.requestMatcher(actuatorOrApiRequest())
-			.csrf().disable()
-			.authorizeHttpRequests(authorize -> authorize
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.requestMatchers(EndpointRequest.toLinks()).permitAll()
-				.requestMatchers(EndpointRequest.to(ChangelogEndpoint.class)).permitAll()
-				.requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
-				.requestMatchers(EndpointRequest.to(InfoEndpoint.class)).permitAll()
-				.requestMatchers(actuatorRequest()).hasAuthority("Application.Manage"));
-
-		return commonFilterChain(authenticationErrorController, http, jwtGrantedAuthoritiesConverter);
-	}
-
-	@Bean SecurityFilterChain webSecurityFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
-		log.info("Configuring non-API web security");
-
-		final var contentSecurityPolicy = applicationProperties.security().contentSecurityPolicy().toString();
-		final var nonActuatorOrApiRequestMatcher = new NegatedRequestMatcher(actuatorOrApiRequest());
-
-		http.requestMatcher(nonActuatorOrApiRequestMatcher)
-			.headers()
-				.contentSecurityPolicy(contentSecurityPolicy).and()
-				.frameOptions().sameOrigin()
-				.referrerPolicy(ReferrerPolicy.NO_REFERRER);
-
-		return commonFilterChain(authenticationErrorController, http, jwtGrantedAuthoritiesConverter);
-	}
-
-	SecurityFilterChain commonFilterChain(AuthenticationErrorHandler authenticationErrorController, HttpSecurity http, JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter) throws Exception {
-		log.info("Configuring Spring Security");
 
 		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
-		http
+		final var actuatorRequest = EndpointRequest.toAnyEndpoint();
+		final var apiRequest = AntPathRequestMatcher.antMatcher("/api/**");
+
+		http.securityMatcher(new OrRequestMatcher(actuatorRequest, apiRequest))
 			.cors().and()
+			.csrf().disable()
 			.exceptionHandling()
-				.accessDeniedHandler(authenticationErrorController).and()
+				.accessDeniedHandler(authenticationErrorController)
+				.and()
 			.oauth2ResourceServer()
 				.authenticationEntryPoint(authenticationErrorController)
-				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and().and()
+				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and()
+				.and()
 			.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.authorizeHttpRequests()
+			// allow XHR preflight checks
+			.requestMatchers(HttpMethod.OPTIONS).permitAll()
+
+			/*
+			 * actuator requests
+			 */
+			.requestMatchers(EndpointRequest.toLinks()).permitAll()
+			.requestMatchers(EndpointRequest.to(ChangelogEndpoint.class)).permitAll()
+			.requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+			.requestMatchers(EndpointRequest.to(InfoEndpoint.class)).permitAll()
+			.requestMatchers(actuatorRequest).hasAuthority(environment.getProperty("management.authorized-role"))
+
+			/*
+			 * API requests (using permitAll() because these are to be secured with @PreAuthorize)
+			 */
+			.requestMatchers(apiRequest).permitAll()
+
+			// lock 'er down
+			.anyRequest().denyAll();
+
+		return http.build();
+	}
+
+	/**
+	 * Security configuration for non-actuator and non-API endpoints (ex: h2-console and swagger).
+	 */
+	@Bean SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+		log.info("Configuring non-API web security");
+
+		final var contentSecurityPolicy = applicationProperties.security().contentSecurityPolicy().toString();
+		final var openApiRequest = new OrRequestMatcher(AntPathRequestMatcher.antMatcher("/swagger-ui/**"), AntPathRequestMatcher.antMatcher("/v3/api-docs/**"));
+
+		http
+			.cors().and()
+			.csrf().and()
+			.headers()
+				.contentSecurityPolicy(contentSecurityPolicy).and()
+				.frameOptions().sameOrigin()
+				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and()
+				.and()
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.authorizeHttpRequests()
+			.requestMatchers("/").permitAll()
+			.requestMatchers(openApiRequest).permitAll()
+			.anyRequest().denyAll();
 
 		return http.build();
 	}
 
 	@Bean WebSecurityCustomizer webSecurityCustomizer() {
-		log.debug("Adding /h2-console/** to Spring Security ignore list");
-		return web -> web.ignoring().antMatchers("/h2-console/**");
+		log.info("Adding /h2-console/** to Spring Security ignore list");
+		return web -> web.ignoring().requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"));
 	}
-
-	/**
-	 * A request matcher that will match all Spring Boot actuator and all API requests.
-	 */
-	protected RequestMatcher actuatorOrApiRequest() {
-		return new OrRequestMatcher(actuatorRequest(), apiRequest());
-	}
-
-	/**
-	 * A request matcher that will match all Spring Boot actuator requests.
-	 */
-	protected RequestMatcher actuatorRequest() {
-		return EndpointRequest.toAnyEndpoint();
-	}
-
-	/**
-	 * A request matcher that will match all API requests.
-	 */
-	protected RequestMatcher apiRequest() {
-		return new AntPathRequestMatcher("/api/**");
-	}
-
 }

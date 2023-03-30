@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Checks that a collection of {@link CertificateApplicationIdentificationModel} has both

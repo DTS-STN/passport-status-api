@@ -2,14 +2,14 @@ package ca.gov.dtsstn.passport.api.data.entity;
 
 import java.time.Instant;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import org.immutables.builder.Builder;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

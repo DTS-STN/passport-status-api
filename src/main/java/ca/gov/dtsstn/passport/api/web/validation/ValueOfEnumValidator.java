@@ -3,8 +3,8 @@ package ca.gov.dtsstn.passport.api.web.validation;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, String> {
 
