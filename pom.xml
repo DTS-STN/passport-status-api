@@ -68,7 +68,7 @@
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 		<snakeyaml.version>1.33</snakeyaml.version><!-- TODO remove when upgrading to Spring Boot 3.x -->
 		<spring-boot-configuration-processor.version>3.0.5</spring-boot-configuration-processor.version>
-		<springdoc.version>2.0.4</springdoc.version>
+		<springdoc.version>2.1.0</springdoc.version>
 	</properties>
 
 
