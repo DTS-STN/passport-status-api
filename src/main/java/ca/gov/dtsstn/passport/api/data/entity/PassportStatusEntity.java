@@ -40,7 +40,10 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Column(length = 64, nullable = false)
 	private String surname;
 
-	@ManyToOne()
+	@ManyToOne
+	private SourceCodeEntity sourceCode;
+
+	@ManyToOne
 	private StatusCodeEntity statusCode;
 
 	@Column(nullable = false)
@@ -68,6 +71,7 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable String givenName,
 			@Nullable String manifestNumber,
 			@Nullable String surname,
+			@Nullable SourceCodeEntity sourceCode,
 			@Nullable StatusCodeEntity statusCode,
 			@Nullable LocalDate statusDate,
 			@Nullable Long version) {
@@ -79,6 +83,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.givenName = givenName;
 		this.manifestNumber = manifestNumber;
 		this.surname = surname;
+		this.sourceCode = sourceCode;
 		this.statusCode = statusCode;
 		this.statusDate = statusDate;
 		this.version = version;
@@ -140,8 +145,16 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.surname = surname;
 	}
 
+	public SourceCodeEntity getSourceCode() {
+		return this.sourceCode;
+	}
+
 	public StatusCodeEntity getStatusCode() {
 		return this.statusCode;
+	}
+
+	public void setSourceCode(SourceCodeEntity sourceCode) {
+		this.sourceCode = sourceCode;
 	}
 
 	public void setStatusCode(StatusCodeEntity statusCode) {
@@ -187,6 +200,9 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("givenName", givenName)
 			.append("manifestNumber", manifestNumber)
 			.append("surname", surname)
+			.append("sourceCode", Optional.ofNullable(sourceCode)
+				.map(SourceCodeEntity::getCode)
+				.orElse(null))
 			.append("statusCode", Optional.ofNullable(statusCode)
 				.map(StatusCodeEntity::getCode)
 				.orElse(null))
