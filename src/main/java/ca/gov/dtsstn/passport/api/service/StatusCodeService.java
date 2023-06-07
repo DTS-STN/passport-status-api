@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -23,12 +24,14 @@ import ca.gov.dtsstn.passport.api.service.domain.mapper.StatusCodeMapper;
 @CacheConfig(cacheNames = { "status-codes" })
 public class StatusCodeService {
 
-	private final StatusCodeMapper mapper = Mappers.getMapper(StatusCodeMapper.class);
+	private final StatusCodeMapper mapper;
 
 	private final StatusCodeRepository repository;
 
-	public StatusCodeService(StatusCodeRepository repository) {
+	public StatusCodeService(@Lazy StatusCodeMapper mapper, StatusCodeRepository repository) {
+		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(repository, "repository is required; it must not be null");
+		this.mapper = mapper;
 		this.repository = repository;
 	}
 
