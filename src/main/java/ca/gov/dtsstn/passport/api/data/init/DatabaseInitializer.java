@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
+import ca.gov.dtsstn.passport.api.data.entity.SourceCodeEntityBuilder;
 import ca.gov.dtsstn.passport.api.data.entity.StatusCodeEntity;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.mapper.StatusCodeMapper;
@@ -39,7 +40,10 @@ import net.datafaker.Faker;
 @ConfigurationProperties("application.database-initializer")
 public class DatabaseInitializer {
 
+
 	private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
+
+	private static final String IRIS_ID = "327c25eb-e3f4-492e-bd47-4feb20189e78";
 
 	private final Faker faker = new Faker(Locale.CANADA_FRENCH, new Random(0L));
 
@@ -128,6 +132,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(includeManifestNumber ? manifestNumber : null)
+			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
@@ -150,6 +155,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(manifestNumber)
+			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
@@ -168,6 +174,7 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(generateManifestNumber())
+			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
 			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
