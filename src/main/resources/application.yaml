@@ -173,6 +173,9 @@ application:
       esrf-emails:
         expire-after-write: 1
         time-unit: minutes
+      source-codes:
+        expire-after-write: 5
+        time-unit: minutes
       status-codes:
         expire-after-write: 5
         time-unit: minutes

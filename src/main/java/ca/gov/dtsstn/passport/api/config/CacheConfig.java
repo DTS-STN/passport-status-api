@@ -26,6 +26,12 @@ public class CacheConfig {
 		return new CaffeineCacheFactory("esrf-emails");
 	}
 
+	@ConfigurationProperties("application.caching.caches.source-codes")
+	@Bean CaffeineCacheFactory sourceCodesCache() {
+		log.info("Creating 'sourceCodesCache' bean");
+		return new CaffeineCacheFactory("source-codes");
+	}
+
 	@ConfigurationProperties("application.caching.caches.status-codes")
 	@Bean CaffeineCacheFactory statusCodesCache() {
 		log.info("Creating 'statusCodesCache' bean");
