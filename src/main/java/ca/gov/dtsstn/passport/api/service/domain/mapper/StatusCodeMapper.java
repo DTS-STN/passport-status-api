@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -19,6 +20,7 @@ import jakarta.annotation.PostConstruct;
 @Mapper(componentModel = "spring")
 public abstract class StatusCodeMapper {
 
+	@Autowired
 	protected StatusCodeService statusCodeService;
 
 	@PostConstruct
@@ -40,11 +42,5 @@ public abstract class StatusCodeMapper {
 	@Nullable
 	@Mapping(target = "isNew", ignore = true)
 	public abstract StatusCodeEntity toEntity(@Nullable StatusCode passportStatus);
-
-	@Autowired
-	public void setStatusCodeService(StatusCodeService statusCodeService) {
-		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
-		this.statusCodeService = statusCodeService;
-	}
 
 }
