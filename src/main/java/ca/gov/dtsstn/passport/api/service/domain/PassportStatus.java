@@ -41,6 +41,9 @@ public interface PassportStatus extends AbstractDomainObject {
 	String getManifestNumber();
 
 	@Nullable
+	String getSourceCodeId();
+
+	@Nullable
 	String getSurname();
 
 	@Nullable

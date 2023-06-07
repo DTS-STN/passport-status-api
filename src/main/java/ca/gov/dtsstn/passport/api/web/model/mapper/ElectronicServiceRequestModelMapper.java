@@ -27,6 +27,7 @@ public interface ElectronicServiceRequestModelMapper {
 	@Mapping(target = "lastModifiedBy", ignore = true)
 	@Mapping(target = "lastModifiedDate", ignore = true)
 	@Mapping(target = "manifestNumber", ignore = true)
+	@Mapping(target = "sourceCodeId", ignore = true) // TODO :: GjB :: remove this when exposing source field in API models
 	@Mapping(target = "statusCodeId", ignore = true)
 	@Mapping(target = "statusDate", ignore = true)
 	@Mapping(target = "dateOfBirth", source = "client.personBirthDate.date")

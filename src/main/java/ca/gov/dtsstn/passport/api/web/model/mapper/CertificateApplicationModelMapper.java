@@ -55,6 +55,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "givenName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
 	@Mapping(target = "manifestNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findManifestNumber" })
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
+	@Mapping(target = "sourceCodeId", ignore = true) // TODO :: GjB :: remove this when exposing source field in API models
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")

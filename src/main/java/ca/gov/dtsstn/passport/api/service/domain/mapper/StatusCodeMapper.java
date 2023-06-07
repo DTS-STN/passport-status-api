@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
@@ -37,10 +36,10 @@ public abstract class StatusCodeMapper {
 	}
 
 	@Nullable
-	public abstract StatusCode fromEntity(@Nullable StatusCodeEntity passportStatus);
+	public abstract StatusCode fromEntity(@Nullable StatusCodeEntity statusCode);
 
 	@Nullable
 	@Mapping(target = "isNew", ignore = true)
-	public abstract StatusCodeEntity toEntity(@Nullable StatusCode passportStatus);
+	public abstract StatusCodeEntity toEntity(@Nullable StatusCode statusCode);
 
 }

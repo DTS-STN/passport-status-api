@@ -9,25 +9,24 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import ca.gov.dtsstn.passport.api.data.StatusCodeRepository;
-import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
-import ca.gov.dtsstn.passport.api.service.domain.mapper.StatusCodeMapper;
+import ca.gov.dtsstn.passport.api.data.SourceCodeRepository;
+import ca.gov.dtsstn.passport.api.service.domain.SourceCode;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.SourceCodeMapper;
 
 /**
- * Service class to handle {@link StatusCode} interactions.
+ * Service class to handle {@link SourceCode} interactions.
  *
- * @author Sébastien Comeau (sebastien.comeau@hrsdc-rhdcc.gc.ca)
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Service
-@CacheConfig(cacheNames = { "status-codes" })
-public class StatusCodeService {
+@CacheConfig(cacheNames = { "source-codes" })
+public class SourceCodeService {
 
-	private final StatusCodeMapper mapper;
+	private final SourceCodeMapper mapper;
 
-	private final StatusCodeRepository repository;
+	private final SourceCodeRepository repository;
 
-	public StatusCodeService(@Lazy StatusCodeMapper mapper, StatusCodeRepository repository) {
+	public SourceCodeService(@Lazy SourceCodeMapper mapper, SourceCodeRepository repository) {
 		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(repository, "repository is required; it must not be null");
 		this.mapper = mapper;
@@ -35,24 +34,24 @@ public class StatusCodeService {
 	}
 
 	@Cacheable(key = "{ 'id', #id }")
-	public Optional<StatusCode> read(String id) {
+	public Optional<SourceCode> read(String id) {
 		Assert.hasText(id, "id is required; it must not be null or blank");
 		return repository.findById(id).map(mapper::fromEntity);
 	}
 
 	@Cacheable(key = "{ 'cdoCode', #cdoCode }")
-	public Optional<StatusCode> readByCdoCode(String cdoCode) {
+	public Optional<SourceCode> readByCdoCode(String cdoCode) {
 		Assert.notNull(cdoCode, "cdoCode is required; it must not be null");
 		return repository.findByCdoCode(cdoCode).map(mapper::fromEntity);
 	}
 
 	@Cacheable(key = "{ 'all' }")
-	public List<StatusCode> readAll() {
+	public List<SourceCode> readAll() {
 		return repository.findAll().stream().map(mapper::fromEntity).toList();
 	}
 
 	@Cacheable(key = "{ 'isActive', #isActive }")
-	public List<StatusCode> readAllByIsActive(boolean isActive) {
+	public List<SourceCode> readAllByIsActive(boolean isActive) {
 		return repository.findAllByIsActive(isActive).stream().map(mapper::fromEntity).toList();
 	}
 

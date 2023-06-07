@@ -16,6 +16,7 @@ import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusCreatedEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusDeletedEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusReadEvent;
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusUpdatedEvent;
+import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.mapper.PassportStatusMapper;
 
@@ -26,6 +27,8 @@ import ca.gov.dtsstn.passport.api.service.domain.mapper.PassportStatusMapper;
  */
 @Service
 public class PassportStatusService {
+
+	private static final String IRIS_ID = "327c25eb-e3f4-492e-bd47-4feb20189e78";
 
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -52,7 +55,10 @@ public class PassportStatusService {
 			return existingPassportStatus.get();
 		}
 
-		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(passportStatus))); // NOSONAR (nullable param)
+		// TODO :: GjB :: remove this when exposing source field in API models
+		final var tmpPassportStatus = ImmutablePassportStatus.copyOf(passportStatus).withSourceCodeId(IRIS_ID);
+
+		final var createdPassportStatus = mapper.fromEntity(repository.save(mapper.toEntity(tmpPassportStatus))); // NOSONAR (nullable param)
 		eventPublisher.publishEvent(ImmutablePassportStatusCreatedEvent.of(createdPassportStatus));
 		return createdPassportStatus;
 	}
@@ -68,7 +74,11 @@ public class PassportStatusService {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 		Assert.notNull(passportStatus.getId(), "passportStatus.id must not be null when updating existing instance");
 		final var originalPassportStatus = repository.findById(passportStatus.getId()).orElseThrow(); // NOSONAR (nullable param)
-		final var updatedPassportStatus = mapper.fromEntity(repository.save(mapper.update(passportStatus, originalPassportStatus)));
+
+		// TODO :: GjB :: remove this when exposing source field in API models
+		final var tmpPassportStatus = ImmutablePassportStatus.copyOf(passportStatus).withSourceCodeId(IRIS_ID);
+
+		final var updatedPassportStatus = mapper.fromEntity(repository.save(mapper.update(tmpPassportStatus, originalPassportStatus)));
 		eventPublisher.publishEvent(ImmutablePassportStatusUpdatedEvent.of(mapper.fromEntity(originalPassportStatus), updatedPassportStatus));
 		return updatedPassportStatus;
 	}
