@@ -16,9 +16,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutableStatusCode;
@@ -49,11 +51,15 @@ class CertificateApplicationModelMapperTests {
 	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
 	@Mock
-  	private StatusCodeService statusCodeService;
+	private SourceCodeService sourceCodeService;
+
+	@Mock
+	private StatusCodeService statusCodeService;
 
 	@BeforeEach
 	void setUp() {
-		mapper.setStatusCodeService(statusCodeService);
+		ReflectionTestUtils.setField(mapper, "sourceCodeService", sourceCodeService);
+		ReflectionTestUtils.setField(mapper, "statusCodeService", statusCodeService);
 	}
 
 	@Test
@@ -178,7 +184,7 @@ class CertificateApplicationModelMapperTests {
 
 	@Test
 	void testToModel_null() {
-		assertThat(mapper.toModel(null)).isEqualTo(null);
+		assertThat(mapper.toModel(null)).isNull();
 	}
 
 	@Test

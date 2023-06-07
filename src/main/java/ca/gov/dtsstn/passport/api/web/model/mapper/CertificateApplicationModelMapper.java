@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.SourceCode;
 import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
@@ -27,6 +29,8 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.SourceCodeModel;
+import jakarta.annotation.PostConstruct;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -34,12 +38,16 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdent
 @Mapper(componentModel = "spring")
 public abstract class CertificateApplicationModelMapper {
 
-	protected StatusCodeService statusCodeService;
+	@Autowired
+	protected SourceCodeService sourceCodeService;
 
 	@Autowired
-	public void setStatusCodeService(StatusCodeService statusCodeService) {
+	protected StatusCodeService statusCodeService;
+
+	@PostConstruct
+	public void postConstruct() {
+		Assert.notNull(sourceCodeService, "sourceCodeService is required; it must not be null");
 		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
-		this.statusCodeService = statusCodeService;
 	}
 
 	@Nullable
@@ -55,7 +63,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "givenName", source = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", qualifiedByName = { "getFirstElement" })
 	@Mapping(target = "manifestNumber", source = "certificateApplication.certificateApplicationIdentifications", qualifiedByName = { "findManifestNumber" })
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
-	@Mapping(target = "sourceCodeId", ignore = true) // TODO :: GjB :: remove this when exposing source field in API models
+	@Mapping(target = "sourceCodeId", source = "certificateApplication.resourceMeta.sourceCode", qualifiedByName = { "toSourceCodeId" })
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
@@ -85,29 +93,57 @@ public abstract class CertificateApplicationModelMapper {
 	}
 
 	/**
-	 * Map a {@link CertificateApplicationApplicantModel} to a {@link StatusCode.getId}. Returns {@code null} if
-	 * {@code certificateApplicationStatusModel} is null or the status code cannot be found.
+	 * Map a {@link SourceCodeModel} to a {@link SourceCode#getId}.
+	 * Returns {@code null} if {@code SourceCodeModel} is {@code null} or the source code cannot be found.
+	 */
+	@Nullable
+	@Named("toSourceCodeId")
+	protected String toSourceCodeId(@Nullable SourceCodeModel sourceCode) {
+		return Optional.ofNullable(sourceCode)
+			.map(SourceCodeModel::getReferenceDataId)
+			.flatMap(sourceCodeService::readByCdoCode)
+			.map(SourceCode::getId)
+			.orElse(null);
+	}
+
+	/**
+	 * Map a {@link PassportStatus#getSourceCodeId} to a {@link cdoCode}.
+	 * Returns {@code null} if {@code sourceCodeId} is {@code null} or the source cannot be found.
+	 */
+	@Nullable
+	@Named("toSourceCdoCode")
+	protected String toSourceCdoCode(@Nullable String sourceCodeId) {
+		return Optional.ofNullable(sourceCodeId)
+			.flatMap(sourceCodeService::read)
+			.map(SourceCode::getCdoCode)
+			.orElse(null);
+	}
+
+
+	/**
+	 * Map a {@link CertificateApplicationApplicantModel} to a {@link StatusCode#getId}.
+	 * Returns {@code null} if {@code certificateApplicationStatusModel} is {@code null} or the status code cannot be found.
 	 */
 	@Nullable
 	@Named("toStatusCodeId")
 	protected String toStatusCodeId(@Nullable CertificateApplicationStatusModel certificateApplicationStatus) {
 		return Optional.ofNullable(certificateApplicationStatus)
 			.map(CertificateApplicationStatusModel::getStatusCode)
-			.map(statusCodeService::readByCdoCode)
-			.map(statusCode -> statusCode.map(StatusCode::getId).orElse(null))
+			.flatMap(statusCodeService::readByCdoCode)
+			.map(StatusCode::getId)
 			.orElse(null);
 	}
 
-	/**
-	 * Map a {@link PassportStatus.StatusCodeId} to a {@link CertificateApplicationStatusModel}. Returns {@code null} if
-	 * {@code passportStatus} is null or the status cannot be found.
+	 /**
+	 * Map a {@link PassportStatus#getStatusCodeId()} to a {@link cdoCode}.
+	 * Returns {@code null} if {@code passportStatus} is {@code null} or the status cannot be found.
 	 */
 	@Nullable
 	@Named("toStatusCdoCode")
 	protected String toStatusCdoCode(@Nullable String statusCodeId) {
 		return Optional.ofNullable(statusCodeId)
-			.map(statusCodeService::read)
-			.map(statusCode -> statusCode.map(StatusCode::getCdoCode).orElse(null))
+			.flatMap(statusCodeService::read)
+			.map(StatusCode::getCdoCode)
 			.orElse(null);
 	}
 

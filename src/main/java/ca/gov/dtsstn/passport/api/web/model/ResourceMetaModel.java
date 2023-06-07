@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 
+import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
@@ -10,8 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -27,5 +30,13 @@ public interface ResourceMetaModel extends Serializable {
 	@Digits(message = "VersionID must be a numeric string", integer = 16, fraction = 0)
 	@Schema(description = "The version of the resource content. Can be used to ensure that updates are based on the latest version of the resource.", example = "0000")
 	String getVersion();
+
+	@Valid
+	@Default
+	@JsonProperty("SourceCode")
+	@NotNull(message = "SourceCode is required; it must not be null")
+	default  SourceCodeModel getSourceCode() {
+		return ImmutableSourceCodeModel.builder().build();
+	}
 
 }
