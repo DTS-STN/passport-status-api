@@ -8,6 +8,7 @@ import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 
 import ca.gov.dtsstn.passport.api.event.ImmutableNotificationNotSentEvent.Builder;
+import jakarta.annotation.Nullable;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -18,6 +19,9 @@ public interface NotificationNotSentEvent extends Serializable {
 	static Builder builder() {
 		return ImmutableNotificationNotSentEvent.builder();
 	}
+
+	@Nullable
+	Iterable<String> getApplicationRegisterSids();
 
 	LocalDate getDateOfBirth();
 

@@ -21,6 +21,7 @@ import ca.gov.dtsstn.passport.api.event.NotificationRequestedEvent;
 import ca.gov.dtsstn.passport.api.event.NotificationSentEvent;
 import ca.gov.dtsstn.passport.api.service.NotificationService;
 import ca.gov.dtsstn.passport.api.service.NotificationService.PreferredLanguage;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonPreferredLanguageModel.LanguageName;
@@ -85,7 +86,10 @@ public class ElectronicServiceRequestController {
 		if (passportStatuses.size() > 1) {
 			log.warn("Search query returned non-unique results: {}", createElectronicServiceRequest);
 
+			final var applicationRegisterSids = passportStatuses.stream().map(PassportStatus::getApplicationRegisterSid).toList();
+
 			eventPublisher.publishEvent(NotificationNotSentEvent.builder()
+				.applicationRegisterSids(applicationRegisterSids)
 				.dateOfBirth(dateOfBirth)
 				.email(email)
 				.givenName(givenName)
@@ -120,6 +124,7 @@ public class ElectronicServiceRequestController {
 					.email(email)
 					.fileNumber(passportStatus.getFileNumber())
 					.givenName(passportStatus.getGivenName())
+					.passportStatus(passportStatus)
 					.preferredLanguage(preferredLanguage)
 					.surname(passportStatus.getSurname())
 					.build());

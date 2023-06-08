@@ -7,6 +7,8 @@ import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 
 import ca.gov.dtsstn.passport.api.event.ImmutableNotificationSentEvent.Builder;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import jakarta.annotation.Nullable;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -23,6 +25,9 @@ public interface NotificationSentEvent extends Serializable {
 	String getFileNumber();
 
 	String getGivenName();
+
+	@Nullable
+	PassportStatus getPassportStatus();
 
 	String getPreferredLanguage();
 
