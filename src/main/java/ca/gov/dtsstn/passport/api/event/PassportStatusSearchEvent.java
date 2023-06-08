@@ -9,6 +9,7 @@ import org.immutables.value.Value.Immutable;
 import org.springframework.lang.Nullable;
 
 import ca.gov.dtsstn.passport.api.event.ImmutablePassportStatusSearchEvent.Builder;
+import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -21,6 +22,9 @@ public interface PassportStatusSearchEvent extends Serializable {
 	static Builder builder() {
 		return ImmutablePassportStatusSearchEvent.builder();
 	}
+
+	@Nullable
+	Iterable<String> getApplicationRegisterSids();
 
 	@Nullable
 	LocalDate getDateOfBirth();
@@ -38,6 +42,9 @@ public interface PassportStatusSearchEvent extends Serializable {
 	String getSurname();
 
 	Result getResult();
+
+	@Nullable
+	PassportStatus getPassportStatus();
 
 	@Default
 	default Instant getTimestamp() {

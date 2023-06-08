@@ -102,9 +102,6 @@ public class PassportStatusController {
 
 	/**
 	 * Create a new {@link PassportStatus} in the system.
-	 *
-	 * TODO :: GjB :: in some rare cases, a status of {@code INVALID} for a specific {@code applicationRegisterSid} can be sent..
-	 * TODO :: GjB :: in these cases, we must relax validation and allow the invalid passport status to be stored 😒
 	 */
 	@PostMapping({ "" })
 	@ApiResponses.BadRequestError
@@ -129,7 +126,6 @@ public class PassportStatusController {
 			throw new UnsupportedOperationException("synchronous processing not yet implemented; please set async=true");
 		}
 
-		// TODO :: GjB :: relax validation if status=INVALID
 		log.debug("Performing field validations on createCertificateApplicationRequest");
 		final var constraintViolations = validator.validate(createCertificateApplicationRequest);
 		if (!constraintViolations.isEmpty()) { throw new ConstraintViolationException(constraintViolations); }
@@ -156,8 +152,6 @@ public class PassportStatusController {
 	 *   <li>Check for distinct {@code applicationRegisterSid}; throw exception if <strong>more than one</strong> value is found
 	 *   <li>If a distict {@code applicationRegisterSid} was found, perform a new search using the {@code applicationRegisterSid}
 	 *   <li>Sort the results by {@code PassportStatus.version}, extract newest passport status, wrap in a collection and return
-	 *
-	 * TODO :: GjB :: in some rare cases, a passport status may enter an {@code INVALID} state. We must handle this state appropriately.
 	 */
 	@GetMapping({ "/_search" })
 	@ApiResponses.BadRequestError
@@ -200,20 +194,24 @@ public class PassportStatusController {
 
 		if (nApplicationRegisterSids > 1) {
 			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, givenName, surname));
-			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).build());
+			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).applicationRegisterSids(applicationRegisterSids).build());
 			throw new NonUniqueResourceException("Search query returned non-unique applicationRegisterSid result");
 		}
 
 		log.debug("Performing applicationRegisterSid search");
 		final var passportStatuses = applicationRegisterSids.stream().findFirst().map(service::applicationRegisterSidSearch).orElse(Collections.emptyList());
 		final var passportStatus = passportStatuses.stream().sorted(byVersionDesc()).findFirst();
-		log.debug("applicationRegisterSid search produced {} results", passportStatuses.size());
+		log.debug("applicationRegisterSid search produced {} results; newest status: {}", passportStatuses.size(), passportStatus);
 
-		/*
-		 * TODO :: GjB :: handle INVALID status by throwing exception here
-		 */
-
-		eventPublisher.publishEvent(searchEventBuilder.result(passportStatuses.isEmpty() ? Result.MISS : Result.HIT).build());
+		if (passportStatuses.isEmpty()) {
+			searchEventBuilder.result(Result.MISS);
+			eventPublisher.publishEvent(searchEventBuilder.build());
+		}
+		else {
+			searchEventBuilder.result(Result.HIT);
+			passportStatus.ifPresent(searchEventBuilder::passportStatus);
+			eventPublisher.publishEvent(searchEventBuilder.build());
+		}
 
 		final var selfLink = linkTo(methodOn(getClass()).search(dateOfBirth, fileNumber, givenName, surname, unique)).withSelfRel();
 		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList())).add(selfLink);
