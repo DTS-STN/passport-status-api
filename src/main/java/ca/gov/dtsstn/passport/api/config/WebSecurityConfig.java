@@ -71,19 +71,14 @@ public class WebSecurityConfig {
 		final var apiRequest = AntPathRequestMatcher.antMatcher("/api/**");
 
 		http.securityMatcher(new OrRequestMatcher(actuatorRequest, apiRequest))
-			.cors().and()
-			.csrf().disable()
-			.exceptionHandling()
-				.accessDeniedHandler(authenticationErrorController)
-				.and()
-			.oauth2ResourceServer()
+			.csrf(csrf -> csrf.disable())
+			.exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(authenticationErrorController))
+			.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 				.authenticationEntryPoint(authenticationErrorController)
-				.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter).and()
-				.and()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)))
+			.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		http.authorizeHttpRequests()
+		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 			// allow XHR preflight checks
 			.requestMatchers(HttpMethod.OPTIONS).permitAll()
 
@@ -102,7 +97,7 @@ public class WebSecurityConfig {
 			.requestMatchers(apiRequest).permitAll()
 
 			// lock 'er down
-			.anyRequest().denyAll();
+			.anyRequest().denyAll());
 
 		return http.build();
 	}
@@ -113,24 +108,20 @@ public class WebSecurityConfig {
 	@Bean SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
 		log.info("Configuring non-API web security");
 
-		final var contentSecurityPolicy = applicationProperties.security().contentSecurityPolicy().toString();
+		final var policyDirectives = applicationProperties.security().contentSecurityPolicy().toString();
 		final var openApiRequest = new OrRequestMatcher(AntPathRequestMatcher.antMatcher("/swagger-ui/**"), AntPathRequestMatcher.antMatcher("/v3/api-docs/**"));
 
 		http
-			.cors().and()
-			.csrf().and()
-			.headers()
-				.contentSecurityPolicy(contentSecurityPolicy).and()
-				.frameOptions().sameOrigin()
-				.referrerPolicy(ReferrerPolicy.NO_REFERRER).and()
-				.and()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			.headers(headers -> headers
+				.contentSecurityPolicy(contentSecurityPolicy -> contentSecurityPolicy.policyDirectives(policyDirectives))
+				.frameOptions(frameOptions -> frameOptions.sameOrigin())
+				.referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicy.NO_REFERRER)))
+			.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		http.authorizeHttpRequests()
+		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 			.requestMatchers("/").permitAll()
 			.requestMatchers(openApiRequest).permitAll()
-			.anyRequest().denyAll();
+			.anyRequest().denyAll());
 
 		return http.build();
 	}

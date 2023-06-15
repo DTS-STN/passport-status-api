@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.7</version>
+		<version>3.1.0</version>
 	</parent>
 
 
@@ -58,12 +58,12 @@
 
 		<!-- dependency/plugin versions -->
 
-		<datafaker.version>1.9.0</datafaker.version>
-		<dependency-check-maven.version>7.4.4</dependency-check-maven.version>
-		<duplicate-finder-maven-plugin.version>1.5.1</duplicate-finder-maven-plugin.version>
+		<datafaker.version>2.0.0</datafaker.version>
+		<dependency-check-maven.version>8.3.1</dependency-check-maven.version>
+		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
-		<guava.version>32.0.0-jre</guava.version>
-		<icu4j.version>73.1</icu4j.version>
+		<guava.version>32.0.1-jre</guava.version>
+		<icu4j.version>73.2</icu4j.version>
 		<immutables.version>2.9.3</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<snakeyaml.version>2.0</snakeyaml.version><!-- https://www.cve.org/CVERecord?id=CVE-2022-1471 -->
