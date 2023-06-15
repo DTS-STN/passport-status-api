@@ -44,7 +44,7 @@ public abstract class AbstractEntity implements Persistable<String>, Serializabl
 	@Id
 	@GeneratedValue(generator = "uuid-generator")
 	@Column(length = 64, nullable = false, updatable = false)
-	@GenericGenerator(name = "uuid-generator", strategy = UuidGenerator.STRATEGY)
+	@GenericGenerator(name = "uuid-generator", type = UuidGenerator.class)
 	protected String id;
 
 	@CreatedBy

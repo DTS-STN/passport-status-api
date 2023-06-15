@@ -23,9 +23,7 @@ import org.hibernate.id.IdentifierGenerator;
  */
 public class UuidGenerator implements IdentifierGenerator {
 
-	public static final String STRATEGY = "ca.gov.dtsstn.passport.api.data.UuidGenerator";
-
-	private final ValueGenerator valueGenerator;
+	private final transient ValueGenerator valueGenerator;
 
 	public UuidGenerator() {
 		this(UUID::randomUUID);
