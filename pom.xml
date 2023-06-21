@@ -58,7 +58,7 @@
 
 		<!-- dependency/plugin versions -->
 
-		<datafaker.version>2.0.0</datafaker.version>
+		<datafaker.version>2.0.1</datafaker.version>
 		<dependency-check-maven.version>8.3.1</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
