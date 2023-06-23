@@ -17,7 +17,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -37,9 +37,7 @@ import net.datafaker.Faker;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Component
-@ConfigurationProperties("application.database-initializer")
 public class DatabaseInitializer {
-
 
 	private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
@@ -234,11 +232,13 @@ public class DatabaseInitializer {
 		return diacriticsPattern.matcher(Normalizer.normalize(string, Normalizer.Form.NFD)).replaceAll("");
 	}
 
+	@Value("${application.database-initializer.generated-statuses-number}")
 	public void setGeneratedStatusesNumber(int generatedStatusesNumber) {
 		Assert.isTrue(generatedStatusesNumber >= 0, "application.dev.database-initializer.generated-statuses-number must be greater than or equal to zero");
 		this.generatedStatusesNumber = generatedStatusesNumber;
 	}
 
+	@Value("${application.database-initializer.duplicate-statuses-number}")
 	public void setDuplicateStatusesNumber(int duplicateStatusesNumber) {
 		Assert.isTrue(duplicateStatusesNumber >= 0, "application.dev.database-initializer.duplicate-statuses-number must be greater than or equal to zero");
 		this.duplicateStatusesNumber = duplicateStatusesNumber;
