@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.1</version>
+		<version>3.1.2</version>
 	</parent>
 
 
@@ -67,7 +67,7 @@
 		<immutables.version>2.9.3</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<snakeyaml.version>2.0</snakeyaml.version><!-- https://www.cve.org/CVERecord?id=CVE-2022-1471 -->
-		<spring-boot-configuration-processor.version>3.0.5</spring-boot-configuration-processor.version>
+		<spring-boot-configuration-processor.version>3.1.2</spring-boot-configuration-processor.version>
 		<springdoc.version>2.1.0</springdoc.version>
 	</properties>
 
