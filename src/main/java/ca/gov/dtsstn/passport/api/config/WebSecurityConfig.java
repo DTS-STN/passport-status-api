@@ -80,7 +80,7 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 			// allow XHR preflight checks
-			.requestMatchers(HttpMethod.OPTIONS).permitAll()
+			.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS)).permitAll()
 
 			/*
 			 * actuator requests
@@ -119,7 +119,7 @@ public class WebSecurityConfig {
 			.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-			.requestMatchers("/").permitAll()
+			.requestMatchers(AntPathRequestMatcher.antMatcher("/")).permitAll()
 			.requestMatchers(openApiRequest).permitAll()
 			.anyRequest().denyAll());
 
