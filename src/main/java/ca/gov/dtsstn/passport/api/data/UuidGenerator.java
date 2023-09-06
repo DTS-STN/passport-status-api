@@ -21,6 +21,7 @@ import org.hibernate.id.IdentifierGenerator;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
+@SuppressWarnings({ "serial" })
 public class UuidGenerator implements IdentifierGenerator {
 
 	private final transient ValueGenerator valueGenerator;
