@@ -120,6 +120,7 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 			.requestMatchers(AntPathRequestMatcher.antMatcher("/")).permitAll()
+			.requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll()
 			.requestMatchers(openApiRequest).permitAll()
 			.anyRequest().denyAll());
 
