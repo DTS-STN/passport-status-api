@@ -58,13 +58,13 @@
 
 		<!-- dependency/plugin versions -->
 
-		<datafaker.version>2.0.1</datafaker.version>
+		<datafaker.version>2.0.2</datafaker.version>
 		<dependency-check-maven.version>8.4.0</dependency-check-maven.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
-		<guava.version>32.1.2-jre</guava.version>
+		<guava.version>32.1.3-jre</guava.version>
 		<icu4j.version>73.2</icu4j.version>
-		<immutables.version>2.9.3</immutables.version>
+		<immutables.version>2.10.0</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<snakeyaml.version>2.0</snakeyaml.version><!-- https://www.cve.org/CVERecord?id=CVE-2022-1471 -->
 		<spring-boot-configuration-processor.version>3.1.2</spring-boot-configuration-processor.version>
