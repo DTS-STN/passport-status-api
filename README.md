@@ -151,11 +151,11 @@ provides Maven and Java 21. To build and push this container image:
 
 ``` sh
 az login
-az acr login --name dtsdevcontainers --subscription mts
-docker build --tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest - < docker/Dockerfile-MavenBuild
-docker tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
-docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:latest
-docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
+az acr login --name dtsrhpdevscedacr --subscription mts
+docker build --tag dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest - < docker/Dockerfile-MavenBuild
+docker tag dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
+docker push dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest
+docker push dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
 ```
 
 ### Listing existing tags
@@ -164,8 +164,8 @@ To get a list of existing tags so you can correctly specify the version above:
 
 ``` sh
 az login
-az acr login --name dtsdevcontainers --subscription mts
-az acr repository show-tags --name dtsdevcontainers --subscription mts --repository passport-status-api-builder
+az acr login --name dtsrhpdevscedacr --subscription mts
+az acr repository show-tags --name dtsrhpdevscedacr --subscription mts --repository passport-status-api-builder
 ```
 
 ## Obtaining a bearer token to use for authenticated requests
