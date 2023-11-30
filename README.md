@@ -34,7 +34,7 @@ end users.
 
 The Passport Status API requires the following toolchain to build and run:
 
-- Java 17
+- Java 21
 - Maven 3.x
 - (optional) Docker, podman, Cloud Native Buildpacks, or compatible container runtime
 
@@ -147,15 +147,15 @@ by Git** so you can put all kinds of secrets in there!! 🍞
 ## Builder container image
 
 To build the application in TeamCity, a custom builder image must be used that
-provides Maven and Java 17. To build and push this container image:
+provides Maven and Java 21. To build and push this container image:
 
 ``` sh
 az login
-az acr login --name dtsdevcontainers --subscription mts
-docker build --tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest - < docker/Dockerfile-MavenBuild
-docker tag dtsdevcontainers.azurecr.io/passport-status-api-builder:latest dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.8-java17
-docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:latest
-docker push dtsdevcontainers.azurecr.io/passport-status-api-builder:v{version}-maven3.8-java17
+az acr login --name dtsrhpdevscedacr --subscription mts
+docker build --tag dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest - < docker/Dockerfile-MavenBuild
+docker tag dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
+docker push dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:latest
+docker push dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:v{version}-maven3.9-java21
 ```
 
 ### Listing existing tags
@@ -164,8 +164,8 @@ To get a list of existing tags so you can correctly specify the version above:
 
 ``` sh
 az login
-az acr login --name dtsdevcontainers --subscription mts
-az acr repository show-tags --name dtsdevcontainers --subscription mts --repository passport-status-api-builder
+az acr login --name dtsrhpdevscedacr --subscription mts
+az acr repository show-tags --name dtsrhpdevscedacr --subscription mts --repository passport-status-api-builder
 ```
 
 ## Obtaining a bearer token to use for authenticated requests

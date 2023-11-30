@@ -1,6 +1,6 @@
 # Dockerfile to create a Maven image that can be used in TeamCity
-# > docker build --file Dockerfile-MavenBuild . --tag dtsdevcontainers.azurecr.io/passport-status-api-builder:v1-mvn3.8-java17
-FROM docker.io/maven:3.9-eclipse-temurin-17
+# > docker build --file Dockerfile-MavenBuild . --tag dtsrhpdevscedacr.azurecr.io/passport-status-api-builder:v1-mvn3.9-java17
+FROM docker.io/maven:3.9-eclipse-temurin-21
 
 # Install docker...
 # (see https://docs.docker.com/engine/install/ubuntu/)
