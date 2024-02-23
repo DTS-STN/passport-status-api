@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.2</version>
+		<version>3.2.3</version>
 	</parent>
 
 
@@ -61,7 +61,7 @@
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
 		<guava.version>33.0.0-jre</guava.version>
 		<icu4j.version>74.2</icu4j.version>
-		<immutables.version>2.10.0</immutables.version>
+		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<spring-boot-configuration-processor.version>3.2.2</spring-boot-configuration-processor.version>
 		<springdoc.version>2.3.0</springdoc.version>
