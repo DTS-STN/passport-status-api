@@ -59,12 +59,12 @@
 		<datafaker.version>2.1.0</datafaker.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
-		<guava.version>33.0.0-jre</guava.version>
+		<guava.version>33.1.0-jre</guava.version>
 		<icu4j.version>74.2</icu4j.version>
 		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
-		<spring-boot-configuration-processor.version>3.2.2</spring-boot-configuration-processor.version>
-		<springdoc.version>2.3.0</springdoc.version>
+		<spring-boot-configuration-processor.version>3.2.3</spring-boot-configuration-processor.version>
+		<springdoc.version>2.4.0</springdoc.version>
 	</properties>
 
 
