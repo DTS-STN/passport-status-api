@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.3</version>
+		<version>3.2.4</version>
 	</parent>
 
 
@@ -63,7 +63,7 @@
 		<icu4j.version>74.2</icu4j.version>
 		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
-		<spring-boot-configuration-processor.version>3.2.3</spring-boot-configuration-processor.version>
+		<spring-boot-configuration-processor.version>3.2.4</spring-boot-configuration-processor.version>
 		<springdoc.version>2.4.0</springdoc.version>
 	</properties>
 
