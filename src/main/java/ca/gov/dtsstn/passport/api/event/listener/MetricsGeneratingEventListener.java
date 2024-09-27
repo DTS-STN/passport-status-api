@@ -73,6 +73,7 @@ public class MetricsGeneratingEventListener {
 					case "PASSPORT_ISSUED_READY_FOR_PICKUP" -> meterRegistry.counter("passport_statuses.created.passport_issued_ready_for_pickup").increment();
 					case "PASSPORT_ISSUED_SHIPPING_CANADA_POST" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_canada_post").increment();
 					case "PASSPORT_ISSUED_SHIPPING_FEDEX" -> meterRegistry.counter("passport_statuses.created.passport_issued_shipping_fedex").increment();
+					case "PASSPORT_IS_PRINTING" -> meterRegistry.counter("passport_statuses.created.passport_is_printing").increment();
 					default -> log.warn("Invalid status code [{}] encountered", code);
 				}
 			});
