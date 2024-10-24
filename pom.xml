@@ -63,7 +63,7 @@
 		<icu4j.version>75.1</icu4j.version>
 		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.6.2</mapstruct.version>
-		<spring-boot-configuration-processor.version>3.3.4</spring-boot-configuration-processor.version>
+		<spring-boot-configuration-processor.version>3.3.5</spring-boot-configuration-processor.version>
 		<springdoc.version>2.6.0</springdoc.version>
 	</properties>
 
