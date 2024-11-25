@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.3.5</version>
 	</parent>
 
 
@@ -56,14 +56,14 @@
 
 		<!-- dependency/plugin versions -->
 
-		<datafaker.version>2.3.1</datafaker.version>
+		<datafaker.version>2.4.2</datafaker.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
 		<guava.version>33.3.1-jre</guava.version>
-		<icu4j.version>75.1</icu4j.version>
+		<icu4j.version>76.1</icu4j.version>
 		<immutables.version>2.10.1</immutables.version>
-		<mapstruct.version>1.6.2</mapstruct.version>
-		<spring-boot-configuration-processor.version>3.3.4</spring-boot-configuration-processor.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
+		<spring-boot-configuration-processor.version>3.4.0</spring-boot-configuration-processor.version>
 		<springdoc.version>2.6.0</springdoc.version>
 	</properties>
 
