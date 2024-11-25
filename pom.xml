@@ -64,7 +64,7 @@
 		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<spring-boot-configuration-processor.version>3.4.0</spring-boot-configuration-processor.version>
-		<springdoc.version>2.6.0</springdoc.version>
+		<springdoc.version>2.7.0</springdoc.version>
 	</properties>
 
 
