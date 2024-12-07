@@ -25,6 +25,10 @@ spring:
 application:
   database-initializer:
     run-on-startup: true
+  feature-flags:
+    hide-manifest: # Map of status codes to boolean values. Default is false.
+      'PASSPORT_ISSUED_SHIPPING_CANADA_POST': true
+      'PASSPORT_ISSUED_SHIPPING_FEDEX': false
   gcnotify:
     english-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
     french-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
