@@ -11,12 +11,14 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties("application")
 @EnableConfigurationProperties({
+	FeatureFlagsProperties.class,
 	GcNotifyProperties.class,
 	JmsProperties.class,
 	SecurityProperties.class,
 	SwaggerUiProperties.class
 })
 public record ApplicationProperties(
+	@NestedConfigurationProperty FeatureFlagsProperties featureFlags,
 	@NestedConfigurationProperty GcNotifyProperties gcnotify,
 	@NestedConfigurationProperty JmsProperties jms,
 	@NestedConfigurationProperty SecurityProperties security,

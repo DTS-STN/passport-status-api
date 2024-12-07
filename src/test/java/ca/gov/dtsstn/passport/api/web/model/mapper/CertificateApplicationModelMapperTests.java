@@ -3,6 +3,7 @@ package ca.gov.dtsstn.passport.api.web.model.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -273,7 +274,7 @@ class CertificateApplicationModelMapperTests {
 			.extracting(StatusDateModel::getDate)
 			.isEqualTo(statusDate.toString());
 
-		verify(statusCodeService).read(any());
+		verify(statusCodeService, times(2)).read(any());
 	}
 
 	@Test
