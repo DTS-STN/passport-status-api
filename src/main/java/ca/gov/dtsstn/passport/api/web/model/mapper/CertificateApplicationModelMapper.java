@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
+import ca.gov.dtsstn.passport.api.config.properties.FeatureFlagsProperties;
 import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
@@ -37,6 +38,9 @@ import jakarta.annotation.PostConstruct;
  */
 @Mapper(componentModel = "spring")
 public abstract class CertificateApplicationModelMapper {
+
+	@Autowired
+	private FeatureFlagsProperties featureFlagsProperties;
 
 	@Autowired
 	protected SourceCodeService sourceCodeService;
@@ -162,6 +166,8 @@ public abstract class CertificateApplicationModelMapper {
 	protected List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications(@Nullable PassportStatus passportStatus) {
 		if (passportStatus == null) { return null; }
 
+    boolean displayManifest = !isStatusManifestHidden(passportStatus);
+
 		final CertificateApplicationIdentificationModel applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid())
 			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
@@ -177,13 +183,25 @@ public abstract class CertificateApplicationModelMapper {
 			.orElse(null);
 
 		final CertificateApplicationIdentificationModel manifestNumber = Optional.ofNullable(passportStatus.getManifestNumber())
-			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
-				.identificationCategoryText(CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT)
-				.identificationId(passportStatus.getManifestNumber())
-				.build())
-			.orElse(null);
+          .filter(xxx -> displayManifest)
+					.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
+						.identificationCategoryText(CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT)
+						.identificationId(passportStatus.getManifestNumber())
+						.build())
+					.orElse(null);
 
 		return Stream.of(applicationRegisterSid, fileNumber, manifestNumber).filter(Objects::nonNull).toList();
+	}
+
+	private boolean isStatusManifestHidden(@Nullable PassportStatus passportStatus) {
+		return Optional.ofNullable(passportStatus)
+				.map(PassportStatus::getStatusCodeId)
+				.flatMap(statusCodeService::read)
+				.map(StatusCode::getCode)
+				.map(code -> {
+					return featureFlagsProperties.getHiddenManifests().contains(code);
+				})
+        .orElse(false);
 	}
 
 	@Nullable

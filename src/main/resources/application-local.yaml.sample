@@ -25,6 +25,9 @@ spring:
 application:
   database-initializer:
     run-on-startup: true
+  feature-flags:
+    # List of statuses, whose manifests should not be sent to the client.
+    hidden-manifests: ['PASSPORT_ISSUED_SHIPPING_CANADA_POST'] 
   gcnotify:
     english-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
     french-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
