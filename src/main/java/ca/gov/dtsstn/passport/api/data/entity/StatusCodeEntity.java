@@ -16,7 +16,7 @@ import jakarta.persistence.Entity;
 @Entity(name = "StatusCode")
 public class StatusCodeEntity extends AbstractEntity {
 
-	@Column(length = 16, nullable = false)
+	@Column(length = 64, nullable = false)
 	private String code;
 
 	@Column(length = 8, nullable = false)

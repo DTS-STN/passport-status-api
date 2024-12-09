@@ -166,6 +166,8 @@ public abstract class CertificateApplicationModelMapper {
 	protected List<CertificateApplicationIdentificationModel> getCertificateApplicationIdentifications(@Nullable PassportStatus passportStatus) {
 		if (passportStatus == null) { return null; }
 
+    boolean displayManifest = !isStatusManifestHidden(passportStatus);
+
 		final CertificateApplicationIdentificationModel applicationRegisterSid = Optional.ofNullable(passportStatus.getApplicationRegisterSid())
 			.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
@@ -180,9 +182,8 @@ public abstract class CertificateApplicationModelMapper {
 				.build())
 			.orElse(null);
 
-		final CertificateApplicationIdentificationModel manifestNumber = hideManifestNumber(passportStatus) 
-			? null
-			:	Optional.ofNullable(passportStatus.getManifestNumber())
+		final CertificateApplicationIdentificationModel manifestNumber = Optional.ofNullable(passportStatus.getManifestNumber())
+          .filter(xxx -> displayManifest)
 					.map(xxx -> ImmutableCertificateApplicationIdentificationModel.builder()
 						.identificationCategoryText(CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT)
 						.identificationId(passportStatus.getManifestNumber())
@@ -192,15 +193,15 @@ public abstract class CertificateApplicationModelMapper {
 		return Stream.of(applicationRegisterSid, fileNumber, manifestNumber).filter(Objects::nonNull).toList();
 	}
 
-	private boolean hideManifestNumber(@Nullable PassportStatus passportStatus) {
+	private boolean isStatusManifestHidden(@Nullable PassportStatus passportStatus) {
 		return Optional.ofNullable(passportStatus)
 				.map(PassportStatus::getStatusCodeId)
 				.flatMap(statusCodeService::read)
 				.map(StatusCode::getCode)
 				.map(code -> {
-					return Optional.ofNullable(featureFlagsProperties.getHideManifest().get(code)).orElse(false);
+					return featureFlagsProperties.getHiddenManifests().contains(code);
 				})
-				.orElse(false);
+        .orElse(false);
 	}
 
 	@Nullable

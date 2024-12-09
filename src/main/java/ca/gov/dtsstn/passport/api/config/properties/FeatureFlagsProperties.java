@@ -1,21 +1,21 @@
 package ca.gov.dtsstn.passport.api.config.properties;
 
-import java.util.Map;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
  * @author Ken Blanchard (ken.blanchard@hrsdc-rhdcc.gc.ca)
  */
 @ConfigurationProperties("application.feature-flags")
 public class FeatureFlagsProperties {
-	private Map<String, Boolean> hideManifest = Map.of();
+	private List<String> hiddenManifests = List.of();
 
-  public Map<String, Boolean> getHideManifest() {
-      return hideManifest;
+  public List<String> getHiddenManifests() {
+      return hiddenManifests;
   }
 
-  public void setHideManifest(Map<String, Boolean> map) {
-      this.hideManifest = map;
+  public void setHiddenManifests(List<String> list) {
+      this.hiddenManifests = list;
   }
 }
