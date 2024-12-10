@@ -29,8 +29,8 @@ application:
     # List of statuses, whose manifests should not be sent to the client.
     hidden-manifests: ['PASSPORT_ISSUED_SHIPPING_CANADA_POST'] 
   gcnotify:
-    english-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
-    french-api-key: gcntfy-project-00000000-0000-0000-0000-000000000000-00000000-0000-0000-0000-000000000000
+    english-api-key: 00000000-0000-0000-0000-000000000000
+    french-api-key: 00000000-0000-0000-0000-000000000000
     file-number-notification:
       english-template-id: 82eee16d-a836-4521-9314-441b7628e235
       french-template-id: 6d294617-7eb6-47ca-adb3-bd3b19f6bdc3
