@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
-import java.sql.Timestamp;
+import static java.time.temporal.ChronoUnit.MILLIS;
+
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -78,13 +79,13 @@ public class DatabaseInitializer {
 		stopWatch.reset(); stopWatch.start();
 		final var randomPassportStatuses = Stream.generate(() -> generateRandomPassportStatus(statusCodes)).limit(generatedStatusesNumber).toList();
 		partition(randomPassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Fake random data created in {}ms", stopWatch.getTime());
+		log.info("Fake random data created in {}ms", stopWatch.getDuration().get(MILLIS));
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
 		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(statusCodes)).limit(duplicateStatusesNumber).toList();
 		partition(duplicatePassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Duplicate fake data created in {}ms", stopWatch.getTime());
+		log.info("Duplicate fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
 
 		// TODO :: GjB :: use properties for these
 		log.info("Generating passport team fake passport statuses");
@@ -96,7 +97,7 @@ public class DatabaseInitializer {
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(1985, 01, 10), "sebastien.comeau@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca", statusCodes));
 		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca", statusCodes));
-		log.info("Passport team fake data created in {}ms", stopWatch.getTime());
+		log.info("Passport team fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
 
 		log.info("Generating modified fake passport statuses (for testing exact search)");
 		stopWatch.reset(); stopWatch.start();
@@ -105,7 +106,7 @@ public class DatabaseInitializer {
 		bobRoss.setApplicationRegisterSid(bobbyRoss.getApplicationRegisterSid());
 		bobRoss.setVersion(bobbyRoss.getVersion() + 1);
 		passportStatusRepository.save(bobRoss);
-		log.info("Passport modified fake data created in {}ms", stopWatch.getTime());
+		log.info("Passport modified fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
 	}
 
 	protected <T> List<List<T>> partition(List<T> passportStatuses, int size) {
@@ -123,7 +124,6 @@ public class DatabaseInitializer {
 		final var includeManifestNumber = faker.number().numberBetween(0, 3) % 3 == 0;
 
 		return new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, givenName, surname))
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(generateDateOfBirth())
 			.email(generateEmail(givenName, surname))
@@ -146,7 +146,6 @@ public class DatabaseInitializer {
 		final var surname = dupeString;
 
 		return new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, givenName, surname))
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(LocalDate.of(2000, 01, 01))
 			.email("%s.%s@example.com".formatted(dupeString, dupeString).toLowerCase())
@@ -165,7 +164,6 @@ public class DatabaseInitializer {
 		final var fileNumber = generateFileNumber();
 
 		final var passportStatus = new PassportStatusEntityBuilder()
-			.id(generateId(fileNumber, givenName, surname))
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(dateOfBirth)
 			.email(email)
@@ -188,7 +186,7 @@ public class DatabaseInitializer {
 	}
 
 	protected LocalDate generateDateOfBirth() {
-		return faker.date().birthday().toLocalDateTime().toLocalDate();
+		return faker.timeAndDate().birthday();
 	}
 
 	protected String generateEmail(final String givenName, final String surname) {
@@ -202,10 +200,6 @@ public class DatabaseInitializer {
 
 	protected String generateGivenName() {
 		return faker.name().firstName();
-	}
-
-	protected String generateId(String fileNumber, String givenName, String surname) {
-		return UUID.nameUUIDFromBytes(("id-%s-%s-%s".formatted(fileNumber, givenName, surname)).getBytes()).toString();
 	}
 
 	protected String generateManifestNumber() {
@@ -223,9 +217,9 @@ public class DatabaseInitializer {
 
 	protected LocalDate generateStatusDate(LocalDate start, LocalDate end) {
 		final var zoneOffset = OffsetDateTime.now().getOffset();
-		final var startDate = Timestamp.from(start.atStartOfDay().toInstant(zoneOffset));
-		final var endDate = Timestamp.from(end.atStartOfDay().toInstant(zoneOffset));
-		return faker.date().between(startDate, endDate).toLocalDateTime().toLocalDate();
+		final var startDate = start.atStartOfDay().toInstant(zoneOffset);
+		final var endDate = end.atStartOfDay().toInstant(zoneOffset);
+		return faker.timeAndDate().between(startDate, endDate).atOffset(zoneOffset).toLocalDate();
 	}
 
 	protected String stripDiacritics(String string) {

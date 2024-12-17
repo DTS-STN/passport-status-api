@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -97,7 +98,7 @@ class ElectronicServiceRequestControllerTests {
 		final var eventCaptor = ArgumentCaptor.forClass(Object.class);
 		verify(eventPublisher, times(2)).publishEvent(eventCaptor.capture());
 
-		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asList()
+		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asInstanceOf(LIST)
 			// verify that the correct event types were fired
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationRequestedEvent.class, event))
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationNotSentEvent.class, event))
@@ -122,7 +123,7 @@ class ElectronicServiceRequestControllerTests {
 		final var eventCaptor = ArgumentCaptor.forClass(Object.class);
 		verify(eventPublisher, times(2)).publishEvent(eventCaptor.capture());
 
-		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asList()
+		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asInstanceOf(LIST)
 			// verify that the correct event types were fired
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationRequestedEvent.class, event))
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationNotSentEvent.class, event))
@@ -148,7 +149,7 @@ class ElectronicServiceRequestControllerTests {
 		verify(eventPublisher, times(2)).publishEvent(eventCaptor.capture());
 
 		// verify that the correct event types were fired
-		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asList()
+		assertThat(eventCaptor).extracting(ArgumentCaptor::getAllValues).asInstanceOf(LIST)
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationRequestedEvent.class, event))
 			.anyMatch(event -> ClassUtils.isAssignableValue(NotificationSentEvent.class, event));
 	}

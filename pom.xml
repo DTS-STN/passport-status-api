@@ -59,7 +59,6 @@
 		<datafaker.version>2.4.2</datafaker.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
-		<guava.version>33.3.1-jre</guava.version>
 		<icu4j.version>76.1</icu4j.version>
 		<immutables.version>2.10.1</immutables.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
@@ -80,7 +79,6 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

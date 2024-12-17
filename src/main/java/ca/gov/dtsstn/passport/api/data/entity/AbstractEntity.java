@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,11 +14,10 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 
-import ca.gov.dtsstn.passport.api.data.UuidGenerator;
+import ca.gov.dtsstn.passport.api.data.annotation.EntityId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -42,9 +40,8 @@ import jakarta.persistence.Transient;
 public abstract class AbstractEntity implements Persistable<String>, Serializable {
 
 	@Id
-	@GeneratedValue(generator = "uuid-generator")
+	@EntityId
 	@Column(length = 64, nullable = false, updatable = false)
-	@GenericGenerator(name = "uuid-generator", type = UuidGenerator.class)
 	protected String id;
 
 	@CreatedBy
@@ -141,7 +138,7 @@ public abstract class AbstractEntity implements Persistable<String>, Serializabl
 		if (obj == null) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
 
-		final AbstractEntity other = (AbstractEntity) obj;
+		final var other = (AbstractEntity) obj;
 
 		return Objects.equals(id, other.id);
 	}
