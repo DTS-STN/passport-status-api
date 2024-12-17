@@ -16,7 +16,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -50,21 +49,6 @@ import jakarta.validation.Path;
 public class ApiErrorHandler extends ResponseEntityExceptionHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(ApiErrorHandler.class);
-
-	@Override
-	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		final var body = ImmutableErrorResponseModel.builder()
-			.operationOutcome(ImmutableOperationOutcomeModel.builder()
-				.addAllIssues(ex.getFieldErrors().stream().map(this::toIssue).toList())
-				.operationOutcomeStatus(ImmutableOperationOutcomeStatusModel.builder()
-					.statusCode("400")
-					.statusDescriptionText("Bad request") // NOSONAR (repeated string)
-					.build())
-				.build())
-			.build();
-
-		return handleExceptionInternal(ex, body, headers, status, request);
-	}
 
 	/**
 	 * A {@link HttpMessageNotReadableException} is thrown the {@link HttpMessageConverter#read(Class, HttpInputMessage)} method fails.
