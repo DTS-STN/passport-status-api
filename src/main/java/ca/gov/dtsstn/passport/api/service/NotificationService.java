@@ -56,8 +56,8 @@ public class NotificationService {
 
 		final var restTemplate = restTemplateBuilder
 			.defaultHeader(HttpHeaders.AUTHORIZATION, "ApiKey-v1 %s".formatted(getApiKey(preferredLanguage)))
-			.setConnectTimeout(gcNotifyProperties.connectTimeout())
-			.setReadTimeout(gcNotifyProperties.readTimeout())
+			.connectTimeout(gcNotifyProperties.connectTimeout())
+			.readTimeout(gcNotifyProperties.readTimeout())
 			.build();
 
 		final var email = Optional.ofNullable(passportStatus.getEmail()).orElseThrow(); // Optional<T> keeps sonar happy

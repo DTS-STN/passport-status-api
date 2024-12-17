@@ -2,6 +2,7 @@ package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -232,7 +233,7 @@ class CertificateApplicationModelMapperTests {
 			.isEqualTo(dateOfBirth.toString());
 		assertThat(getCertificateApplicationRepresentation) // check applicationRegisterSid field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
-			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asList()
+			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asInstanceOf(LIST)
 			.contains(ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.APPLICATION_REGISTER_SID_CATEGORY_TEXT)
 				.identificationId(applicationRegisterSid)
@@ -245,7 +246,7 @@ class CertificateApplicationModelMapperTests {
 			.isEqualTo(email);
 		assertThat(getCertificateApplicationRepresentation) // check fileNumber field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
-			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asList()
+			.extracting(CertificateApplicationModel::getCertificateApplicationIdentifications).asInstanceOf(LIST)
 			.contains(ImmutableCertificateApplicationIdentificationModel.builder()
 				.identificationCategoryText(CertificateApplicationIdentificationModel.FILE_NUMBER_CATEGORY_TEXT)
 				.identificationId(fileNumber)
@@ -254,7 +255,7 @@ class CertificateApplicationModelMapperTests {
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
 			.extracting(CertificateApplicationApplicantModel::getPersonName)
-			.extracting(PersonNameModel::getPersonGivenNames).asList()
+			.extracting(PersonNameModel::getPersonGivenNames).asInstanceOf(LIST)
 			.contains(givenName);
 		assertThat(getCertificateApplicationRepresentation) // check surname field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
@@ -289,7 +290,7 @@ class CertificateApplicationModelMapperTests {
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
 		// cheating a little here because doing anything with NIEM sucks.. 😳
-		final String json = """
+		final var json = """
 			{
 			  "CertificateApplication": {
 			    "CertificateApplicationApplicant": {
