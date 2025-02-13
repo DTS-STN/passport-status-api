@@ -66,12 +66,28 @@ VALUES
 
 -- Alter status table for new codes + new timeline date fields
 ALTER TABLE passport_status
-ADD COLUMN delivery_method_code_id VARCHAR(64),
-ADD COLUMN service_level_code_id VARCHAR(64),
-ADD COLUMN app_received_date DATE,
-ADD COLUMN app_reviewed_date DATE,
-ADD COLUMN app_printed_date DATE,
-ADD COLUMN app_completed_date DATE;
+ADD COLUMN delivery_method_code_id VARCHAR(64)
+AFTER status_code_id;
+
+ALTER TABLE passport_status
+ADD COLUMN service_level_code_id VARCHAR(64)
+AFTER delivery_method_code_id;
+
+ALTER TABLE passport_status
+ADD COLUMN app_received_date DATE
+AFTER delivery_method_code_id;
+
+ALTER TABLE passport_status
+ADD COLUMN app_reviewed_date DATE
+AFTER app_received_date;
+
+ALTER TABLE passport_status
+ADD COLUMN app_printed_date DATE
+AFTER app_reviewed_date;
+
+ALTER TABLE passport_status
+ADD COLUMN app_completed_date DATE
+AFTER app_printed_date;
 
 -- Add initial values to old applications, then add foreign key.
 UPDATE passport_status 
@@ -94,6 +110,10 @@ SET app_received_date = '0001-01-01';
 
 -- Set new required fields to NOT NULL
 ALTER TABLE passport_status
-ALTER COLUMN delivery_method_code_id SET NOT NULL,
-ALTER COLUMN service_level_code_id SET NOT NULL,
+ALTER COLUMN delivery_method_code_id SET NOT NULL;
+
+ALTER TABLE passport_status
+ALTER COLUMN service_level_code_id SET NOT NULL;
+
+ALTER TABLE passport_status
 ALTER COLUMN app_received_date SET NOT NULL;

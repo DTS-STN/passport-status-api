@@ -38,4 +38,15 @@ public class CacheConfig {
 		return new CaffeineCacheFactory("status-codes");
 	}
 
+  @ConfigurationProperties("application.caching.caches.delivery-method-codes")
+	@Bean CaffeineCacheFactory deliveryMethodCodesCache() {
+		log.info("Creating 'deliveryMethodCodesCache' bean");
+		return new CaffeineCacheFactory("delivery-method-codes");
+	}
+
+  @ConfigurationProperties("application.caching.caches.service-level-codes")
+	@Bean CaffeineCacheFactory serviceLevelCodesCache() {
+		log.info("Creating 'serviceLevelCodesCache' bean");
+		return new CaffeineCacheFactory("service-level-codes");
+	}
 }

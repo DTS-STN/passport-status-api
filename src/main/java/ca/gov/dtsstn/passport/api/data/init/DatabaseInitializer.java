@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -111,13 +109,13 @@ public class DatabaseInitializer {
 		stopWatch.reset(); stopWatch.start();
 		final var randomPassportStatuses = Stream.generate(() -> generateRandomPassportStatus(statusCodes, sourceCodes, deliveryMethodCodes, serviceLevelCodes)).limit(generatedStatusesNumber).toList();
 		partition(randomPassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Fake random data created in {}ms", stopWatch.getDuration().get(MILLIS));
+		log.info("Fake random data created in {}ms", stopWatch.getDuration().toMillis());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(statusCodes)).limit(duplicateStatusesNumber).toList();
+		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(sourceCodes, statusCodes, deliveryMethodCodes, serviceLevelCodes)).limit(duplicateStatusesNumber).toList();
 		partition(duplicatePassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Duplicate fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
+		log.info("Duplicate fake data created in {}ms", stopWatch.getDuration().toMillis());
 	}
 
 	protected <T> List<List<T>> partition(List<T> passportStatuses, int size) {
@@ -162,12 +160,18 @@ public class DatabaseInitializer {
 			.build();
 	}
 
-	protected PassportStatusEntity generateDuplicatePassportStatus(List<StatusCodeEntity> statusCodes) {
+	protected PassportStatusEntity generateDuplicatePassportStatus(List<SourceCodeEntity> sourceCodes, List<StatusCodeEntity> statusCodes, List<DeliveryMethodCodeEntity> deliveryMethodCodes, List<ServiceLevelCodeEntity> serviceLevelCodes) {
 		final var dupeString = "DUPE0000";
 		final var fileNumber = dupeString;
 		final var givenName = dupeString;
 		final var manifestNumber = dupeString;
 		final var surname = dupeString;
+
+    // Generate timeline data such that there's a 50% chance each step of the way.
+    final var receivedDate = generateDate(LocalDate.of(2020, 01, 01), LocalDate.now());
+    final var reviewedDate = (faker.number().numberBetween(1,3) % 2 == 0) ? generateDate(receivedDate, LocalDate.now()) : null;
+    final var printedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (reviewedDate != null)) ? generateDate(reviewedDate, LocalDate.now()) : null;
+    final var completedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (printedDate != null)) ? generateDate(printedDate, LocalDate.now()) : null;
 
 		return new PassportStatusEntityBuilder()
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
@@ -176,33 +180,18 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(manifestNumber)
-			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
+			.sourceCode(generateSourceCode(sourceCodes))
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
+      .deliveryMethodCode(generateDeliveryMethodCode(deliveryMethodCodes))
+      .serviceLevelCode(generateServiceLevelCode(serviceLevelCodes))
+      .appReceivedDate(receivedDate)
+      .appReviewedDate(reviewedDate)
+      .appPrintedDate(printedDate)
+      .appCompletedDate(completedDate)
 			.statusDate(generateDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.version(faker.number().randomNumber())
 			.build();
-	}
-
-	protected PassportStatusEntity generatePassportTeamPassportStatus(String givenName, String surname, LocalDate dateOfBirth, String email, List<StatusCodeEntity> statusCodes) {
-		final var fileNumber = generateFileNumber();
-
-		final var passportStatus = new PassportStatusEntityBuilder()
-			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
-			.dateOfBirth(dateOfBirth)
-			.email(email)
-			.fileNumber(fileNumber)
-			.givenName(givenName)
-			.manifestNumber(generateManifestNumber())
-			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
-			.surname(surname)
-			.statusCode(generateStatusCode(statusCodes))
-			.statusDate(generateDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
-			.version(faker.number().randomNumber())
-			.build();
-
-		log.trace("Creating fake passport team status: {}", passportStatus);
-		return passportStatus;
 	}
 
 	protected String generateApplicationRegisterSid(String fileNumber, String givenName, String surname) {
