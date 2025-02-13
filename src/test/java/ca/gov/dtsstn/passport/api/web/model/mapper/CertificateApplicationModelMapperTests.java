@@ -22,6 +22,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.service.DeliveryMethodCodeService;
+import ca.gov.dtsstn.passport.api.service.ServiceLevelCodeService;
 import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
@@ -58,10 +60,18 @@ class CertificateApplicationModelMapperTests {
 	@Mock
 	private StatusCodeService statusCodeService;
 
+  @Mock
+	private DeliveryMethodCodeService deliveryMethodCodeService;
+
+  @Mock
+  private ServiceLevelCodeService serviceLevelCodeService;
+
 	@BeforeEach
 	void setUp() {
 		ReflectionTestUtils.setField(mapper, "sourceCodeService", sourceCodeService);
 		ReflectionTestUtils.setField(mapper, "statusCodeService", statusCodeService);
+		ReflectionTestUtils.setField(mapper, "deliveryMethodCodeService", deliveryMethodCodeService);
+		ReflectionTestUtils.setField(mapper, "serviceLevelCodeService", serviceLevelCodeService);
 	}
 
 	@Test
