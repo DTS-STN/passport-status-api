@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
+import ca.gov.dtsstn.passport.api.web.validation.PassportDeliveryMethodCode;
+import ca.gov.dtsstn.passport.api.web.validation.PassportServiceLevelCode;
 import ca.gov.dtsstn.passport.api.web.validation.PassportStatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -36,6 +38,20 @@ public interface CertificateApplicationStatusModel extends Serializable {
 	@Schema(description = "The certificate application status code.", example = "1")
 	String getStatusCode();
 
+  @JsonProperty("DeliveryMethodCode")
+	@PassportDeliveryMethodCode(message = "DeliveryMethodCode is invalid or unknown")
+	@Size(max = 3, message = "DeliveryMethodCode must be 3 characters or less")
+	@NotBlank(message = "DeliveryMethodCode is required; it must not null or blank")
+	@Schema(description = "The certificate application delivery method code.", example = "1")
+	String getDeliveryMethodCode();
+
+  @JsonProperty("ServiceLevelCode")
+	@PassportServiceLevelCode(message = "ServiceLevelCode is invalid or unknown")
+	@Size(max = 3, message = "ServiceLevelCode must be 3 characters or less")
+	@NotBlank(message = "ServiceLevelCode is required; it must not null or blank")
+	@Schema(description = "The certificate application service level code.", example = "1")
+	String getServiceLevelCode();
+
 	@Valid
 	@Default
 	@JsonProperty("StatusDate")
@@ -45,4 +61,36 @@ public interface CertificateApplicationStatusModel extends Serializable {
 		return ImmutableStatusDateModel.builder().build();
 	}
 
+  @Valid
+	@Default
+	@JsonProperty("AppReceivedDate")
+	@JsonView({ Authorities.AuthenticatedView.class })
+	@NotNull(message = "AppReceivedDate is required; it must not be null")
+	default AppReceivedDateModel getAppReceivedDate() {
+		return ImmutableAppReceivedDateModel.builder().build();
+	}
+
+  @Valid
+	@Default
+	@JsonProperty("AppReviewedDate")
+	@JsonView({ Authorities.AuthenticatedView.class })
+	default AppReviewedDateModel getAppReviewedDate() {
+		return ImmutableAppReviewedDateModel.builder().build();
+	}
+
+  @Valid
+	@Default
+	@JsonProperty("AppPrintedDate")
+	@JsonView({ Authorities.AuthenticatedView.class })
+	default AppPrintedDateModel getAppPrintedDate() {
+		return ImmutableAppPrintedDateModel.builder().build();
+	}
+  
+  @Valid
+	@Default
+	@JsonProperty("AppCompletedDate")
+	@JsonView({ Authorities.AuthenticatedView.class })
+	default AppCompletedDateModel getAppCompletedDate() {
+		return ImmutableAppCompletedDateModel.builder().build();
+	}
 }

@@ -46,11 +46,29 @@ public class PassportStatusEntity extends AbstractEntity {
 	@ManyToOne
 	private StatusCodeEntity statusCode;
 
+  @ManyToOne
+  private DeliveryMethodCodeEntity deliveryMethodCode;
+
+  @ManyToOne
+  private ServiceLevelCodeEntity serviceLevelCode;
+
 	@Column(nullable = false)
 	private LocalDate statusDate;
 
 	@Column(nullable = false)
 	private Long version;
+
+  @Column(nullable = false)
+  private LocalDate appReceivedDate;
+
+  @Column(nullable = true)
+  private LocalDate appReviewedDate;
+
+  @Column(nullable = true)
+  private LocalDate appPrintedDate;
+
+  @Column(nullable = true)
+  private LocalDate appCompletedDate;
 
 	public PassportStatusEntity() {
 		super();
@@ -73,8 +91,14 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable String surname,
 			@Nullable SourceCodeEntity sourceCode,
 			@Nullable StatusCodeEntity statusCode,
+      @Nullable DeliveryMethodCodeEntity deliveryMethodCode,
+      @Nullable ServiceLevelCodeEntity serviceLevelCode,
 			@Nullable LocalDate statusDate,
-			@Nullable Long version) {
+			@Nullable Long version,
+      @Nullable LocalDate appReceivedDate,
+      @Nullable LocalDate appReviewedDate,
+      @Nullable LocalDate appPrintedDate,
+      @Nullable LocalDate appCompletedDate) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
 		this.dateOfBirth = dateOfBirth;
@@ -85,8 +109,14 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.surname = surname;
 		this.sourceCode = sourceCode;
 		this.statusCode = statusCode;
+    this.deliveryMethodCode = deliveryMethodCode;
+    this.serviceLevelCode = serviceLevelCode;
 		this.statusDate = statusDate;
 		this.version = version;
+    this.appReceivedDate = appReceivedDate;
+    this.appReviewedDate = appReviewedDate;
+    this.appPrintedDate = appPrintedDate;
+    this.appCompletedDate = appCompletedDate;
 	}
 
 	public String getApplicationRegisterSid() {
@@ -161,6 +191,22 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.statusCode = statusCode;
 	}
 
+  public DeliveryMethodCodeEntity getDeliveryMethodCode() {
+    return deliveryMethodCode;
+  }
+
+  public void setDeliveryMethodCode(DeliveryMethodCodeEntity deliveryMethodCode) {
+    this.deliveryMethodCode = deliveryMethodCode;
+  }
+
+  public ServiceLevelCodeEntity getServiceLevelCode() {
+		return serviceLevelCode;
+	}
+
+	public void setServiceLevelCode(ServiceLevelCodeEntity serviceLevelCode) {
+		this.serviceLevelCode = serviceLevelCode;
+	}
+
 	public LocalDate getStatusDate() {
 		return statusDate;
 	}
@@ -175,6 +221,38 @@ public class PassportStatusEntity extends AbstractEntity {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public LocalDate getAppReceivedDate() {
+		return appReceivedDate;
+	}
+
+	public void setAppReceivedDate(LocalDate appReceivedDate) {
+		this.appReceivedDate = appReceivedDate;
+	}
+
+	public LocalDate getAppReviewedDate() {
+		return appReviewedDate;
+	}
+
+	public void setAppReviewedDate(LocalDate appReviewedDate) {
+		this.appReviewedDate = appReviewedDate;
+	}
+
+	public LocalDate getAppPrintedDate() {
+		return appPrintedDate;
+	}
+
+	public void setAppPrintedDate(LocalDate appPrintedDate) {
+		this.appPrintedDate = appPrintedDate;
+	}
+
+	public LocalDate getAppCompletedDate() {
+		return appCompletedDate;
+	}
+
+	public void setAppCompletedDate(LocalDate appCompletedDate) {
+		this.appCompletedDate = appCompletedDate;
 	}
 
 	@Override
@@ -210,5 +288,4 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("version", version)
 			.toString();
 	}
-
 }
