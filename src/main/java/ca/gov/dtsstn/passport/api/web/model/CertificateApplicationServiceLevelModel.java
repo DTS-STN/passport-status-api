@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
+import ca.gov.dtsstn.passport.api.web.validation.PassportDeliveryMethodCode;
+import ca.gov.dtsstn.passport.api.web.validation.PassportServiceLevelCode;
 import ca.gov.dtsstn.passport.api.web.validation.PassportStatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -23,25 +25,16 @@ import jakarta.validation.constraints.Size;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "CertificateApplicationStatus")
+@Schema(name = "CertificateApplicationDeliveryMethod")
 @Style(validationMethod = ValidationMethod.NONE)
-@JsonDeserialize(as = ImmutableCertificateApplicationStatusModel.class)
-public interface CertificateApplicationStatusModel extends Serializable {
+@JsonDeserialize(as = ImmutableCertificateApplicationServiceLevelModel.class)
+public interface CertificateApplicationServiceLevelModel extends Serializable {
 
+  @JsonProperty("ServiceLevelCode")
+	@PassportServiceLevelCode(message = "ServiceLevelCode is invalid or unknown")
+	@Size(max = 3, message = "ServiceLevelCode must be 3 characters or less")
+	@NotBlank(message = "ServiceLevelCode is required; it must not null or blank")
+	@Schema(description = "The certificate application service level code.", example = "1")
+	String getServiceLevelCode();
 
-	@JsonProperty("StatusCode")
-	@PassportStatusCode(message = "StatusCode is invalid or unknown")
-	@Size(max = 3, message = "StatusCode must be 3 characters or less")
-	@NotBlank(message = "StatusCode is required; it must not null or blank")
-	@Schema(description = "The certificate application status code.", example = "1")
-	String getStatusCode();
-
-	@Valid
-	@Default
-	@JsonProperty("StatusDate")
-	@JsonView({ Authorities.AuthenticatedView.class })
-	@NotNull(message = "StatusDate is required; it must not be null")
-	default StatusDateModel getStatusDate() {
-		return ImmutableStatusDateModel.builder().build();
-	}
 }

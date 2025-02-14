@@ -75,7 +75,7 @@ AFTER delivery_method_code_id;
 
 ALTER TABLE passport_status
 ADD COLUMN app_received_date DATE
-AFTER delivery_method_code_id;
+AFTER service_level_code_id;
 
 ALTER TABLE passport_status
 ADD COLUMN app_reviewed_date DATE

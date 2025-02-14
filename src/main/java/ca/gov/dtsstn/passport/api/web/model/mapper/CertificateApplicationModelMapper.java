@@ -29,7 +29,9 @@ import ca.gov.dtsstn.passport.api.service.domain.ServiceLevelCode;
 import ca.gov.dtsstn.passport.api.service.domain.SourceCode;
 import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethodModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
@@ -81,13 +83,13 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "sourceCodeId", source = "certificateApplication.resourceMeta.sourceCode", qualifiedByName = { "toSourceCodeId" })
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
-  @Mapping(target = "deliveryMethodCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toDeliveryMethodCodeId" })
-  @Mapping(target = "serviceLevelCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toServiceLevelCodeId" })
+  @Mapping(target = "deliveryMethodCodeId", source = "certificateApplication.certificateApplicationDeliveryMethod", qualifiedByName = { "toDeliveryMethodCodeId" })
+  @Mapping(target = "serviceLevelCodeId", source = "certificateApplication.certificateApplicationServiceLevel", qualifiedByName = { "toServiceLevelCodeId" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
-  @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationStatus.appReceivedDate.date")
-  @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationStatus.appReviewedDate.date")
-  @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationStatus.appPrintedDate.date")
-  @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationStatus.appCompletedDate.date")
+  @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date")
+  @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date")
+  @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date")
+  @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
@@ -100,13 +102,13 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "surname")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.deliveryMethodCode", source = "deliveryMethodCodeId", qualifiedByName = { "toDeliveryMethodCdoCode" })
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.serviceLevelCode", source = "serviceLevelCodeId", qualifiedByName = { "toServiceLevelCdoCode" })
+  @Mapping(target = "certificateApplication.certificateApplicationDeliveryMethod.deliveryMethodCode", source = "deliveryMethodCodeId", qualifiedByName = { "toDeliveryMethodCdoCode" })
+  @Mapping(target = "certificateApplication.certificateApplicationServiceLevel.serviceLevelCode", source = "serviceLevelCodeId", qualifiedByName = { "toServiceLevelCdoCode" })
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.appReceivedDate.date", source = "appReceivedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.appReviewedDate.date", source = "appReviewedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.appPrintedDate.date", source = "appPrintedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationStatus.appCompletedDate.date", source = "appCompletedDate")
+  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date", source = "appReceivedDate")
+  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date", source = "appReviewedDate")
+  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date", source = "appPrintedDate")
+  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date", source = "appCompletedDate")
 	@Mapping(target = "certificateApplication.resourceMeta.version", source = "version")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
 
@@ -181,9 +183,9 @@ public abstract class CertificateApplicationModelMapper {
 	 */
 	@Nullable
 	@Named("toDeliveryMethodCodeId")
-	protected String toDeliveryMethodCodeId(@Nullable CertificateApplicationStatusModel certificateApplicationStatus) {
-		return Optional.ofNullable(certificateApplicationStatus)
-			.map(CertificateApplicationStatusModel::getDeliveryMethodCode)
+	protected String toDeliveryMethodCodeId(@Nullable CertificateApplicationDeliveryMethodModel certificateApplicationDeliveryMethod) {
+		return Optional.ofNullable(certificateApplicationDeliveryMethod)
+			.map(CertificateApplicationDeliveryMethodModel::getDeliveryMethodCode)
 			.flatMap(deliveryMethodCodeService::readByCdoCode)
 			.map(DeliveryMethodCode::getId)
 			.orElse(null);
@@ -208,9 +210,9 @@ public abstract class CertificateApplicationModelMapper {
 	 */
 	@Nullable
 	@Named("toServiceLevelCodeId")
-	protected String toServiceLevelCodeId(@Nullable CertificateApplicationStatusModel certificateApplicationStatus) {
-		return Optional.ofNullable(certificateApplicationStatus)
-			.map(CertificateApplicationStatusModel::getServiceLevelCode)
+	protected String toServiceLevelCodeId(@Nullable CertificateApplicationServiceLevelModel certificateApplicationServiceLevel) {
+		return Optional.ofNullable(certificateApplicationServiceLevel)
+			.map(CertificateApplicationServiceLevelModel::getServiceLevelCode)
 			.flatMap(serviceLevelCodeService::readByCdoCode)
 			.map(ServiceLevelCode::getId)
 			.orElse(null);

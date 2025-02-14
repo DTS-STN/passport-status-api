@@ -19,16 +19,16 @@ import jakarta.validation.constraints.Size;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "AppPrintedDate")
+@Schema(name = "ApplicationReceivedDate")
 @Style(validationMethod = ValidationMethod.NONE)
-@JsonDeserialize(as = ImmutableAppPrintedDateModel.class)
-public interface AppPrintedDateModel extends Serializable {
+@JsonDeserialize(as = ImmutableApplicationReceivedDateModel.class)
+public interface ApplicationReceivedDateModel extends Serializable {
 
 	@JsonProperty("Date")
 	@Size(min = 10, max = 10, message = "Date must be exactly 10")
 	@NotBlank(message = "Date is required; it must not be null or blank")
 	@PastOrPresent(message = "Date must be a valid ISO 8601 date format (yyyy-mm-dd) and in the past")
-	@Schema(description = "The date the application was printed in ISO 8601 format.", example = "2000-01-01", implementation = LocalDate.class)
+	@Schema(description = "The date the application was received in ISO 8601 format.", example = "2000-01-01", implementation = LocalDate.class)
 	String getDate();
 
 }
