@@ -2,23 +2,16 @@ package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
 
-import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
-import ca.gov.dtsstn.passport.api.web.validation.PassportDeliveryMethodCode;
 import ca.gov.dtsstn.passport.api.web.validation.PassportServiceLevelCode;
-import ca.gov.dtsstn.passport.api.web.validation.PassportStatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**

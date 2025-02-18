@@ -52,12 +52,6 @@ public class PassportStatusEntity extends AbstractEntity {
   @ManyToOne
   private ServiceLevelCodeEntity serviceLevelCode;
 
-	@Column(nullable = false)
-	private LocalDate statusDate;
-
-	@Column(nullable = false)
-	private Long version;
-
   @Column(nullable = false)
   private LocalDate appReceivedDate;
 
@@ -69,6 +63,12 @@ public class PassportStatusEntity extends AbstractEntity {
 
   @Column(nullable = true)
   private LocalDate appCompletedDate;
+
+	@Column(nullable = false)
+	private LocalDate statusDate;
+
+	@Column(nullable = false)
+	private Long version;
 
 	public PassportStatusEntity() {
 		super();
@@ -93,12 +93,13 @@ public class PassportStatusEntity extends AbstractEntity {
 			@Nullable StatusCodeEntity statusCode,
       @Nullable DeliveryMethodCodeEntity deliveryMethodCode,
       @Nullable ServiceLevelCodeEntity serviceLevelCode,
-			@Nullable LocalDate statusDate,
-			@Nullable Long version,
       @Nullable LocalDate appReceivedDate,
       @Nullable LocalDate appReviewedDate,
       @Nullable LocalDate appPrintedDate,
-      @Nullable LocalDate appCompletedDate) {
+      @Nullable LocalDate appCompletedDate,
+			@Nullable LocalDate statusDate,
+			@Nullable Long version
+      ) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
 		this.dateOfBirth = dateOfBirth;
@@ -111,12 +112,12 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.statusCode = statusCode;
     this.deliveryMethodCode = deliveryMethodCode;
     this.serviceLevelCode = serviceLevelCode;
-		this.statusDate = statusDate;
-		this.version = version;
     this.appReceivedDate = appReceivedDate;
     this.appReviewedDate = appReviewedDate;
     this.appPrintedDate = appPrintedDate;
     this.appCompletedDate = appCompletedDate;
+		this.statusDate = statusDate;
+		this.version = version;
 	}
 
 	public String getApplicationRegisterSid() {
@@ -207,23 +208,7 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.serviceLevelCode = serviceLevelCode;
 	}
 
-	public LocalDate getStatusDate() {
-		return statusDate;
-	}
-
-	public void setStatusDate(LocalDate statusDate) {
-		this.statusDate = statusDate;
-	}
-
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public LocalDate getAppReceivedDate() {
+  public LocalDate getAppReceivedDate() {
 		return appReceivedDate;
 	}
 
@@ -253,6 +238,21 @@ public class PassportStatusEntity extends AbstractEntity {
 
 	public void setAppCompletedDate(LocalDate appCompletedDate) {
 		this.appCompletedDate = appCompletedDate;
+	}
+	public LocalDate getStatusDate() {
+		return statusDate;
+	}
+
+	public void setStatusDate(LocalDate statusDate) {
+		this.statusDate = statusDate;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	@Override
@@ -284,6 +284,16 @@ public class PassportStatusEntity extends AbstractEntity {
 			.append("statusCode", Optional.ofNullable(statusCode)
 				.map(StatusCodeEntity::getCode)
 				.orElse(null))
+      .append("deliveryMethodCode", Optional.ofNullable(deliveryMethodCode)
+        .map(DeliveryMethodCodeEntity::getCode)
+        .orElse(null))
+      .append("serviceLevelCode", Optional.ofNullable(serviceLevelCode)
+        .map(ServiceLevelCodeEntity::getCode)
+        .orElse(null))
+      .append("appReceivedDate", appReceivedDate)
+      .append("appReviewedDate", appReviewedDate)
+      .append("appPrintedDate", appPrintedDate)
+      .append("appCompletedDate", appCompletedDate)
 			.append("statusDate", statusDate)
 			.append("version", version)
 			.toString();

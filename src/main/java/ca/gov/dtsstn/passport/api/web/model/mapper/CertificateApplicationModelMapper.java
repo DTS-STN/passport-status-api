@@ -33,9 +33,15 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethod
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDatesModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationCompletedDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationPrintedDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationReceivedDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationReviewedDateModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationTimelineDatesModel;
 import ca.gov.dtsstn.passport.api.web.model.SourceCodeModel;
 import jakarta.annotation.PostConstruct;
 
@@ -85,16 +91,16 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
   @Mapping(target = "deliveryMethodCodeId", source = "certificateApplication.certificateApplicationDeliveryMethod", qualifiedByName = { "toDeliveryMethodCodeId" })
   @Mapping(target = "serviceLevelCodeId", source = "certificateApplication.certificateApplicationServiceLevel", qualifiedByName = { "toServiceLevelCodeId" })
-	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
   @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date")
   @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date")
   @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date")
   @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date")
+	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
 	@Nullable
-	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
 	@Mapping(target = "add", ignore = true) // fixes a weird vscode/eclipse & mapstruct bug quirk/bug 💩
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.birthDate.date", source = "dateOfBirth")
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", source = "email")
@@ -104,11 +110,11 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
   @Mapping(target = "certificateApplication.certificateApplicationDeliveryMethod.deliveryMethodCode", source = "deliveryMethodCodeId", qualifiedByName = { "toDeliveryMethodCdoCode" })
   @Mapping(target = "certificateApplication.certificateApplicationServiceLevel.serviceLevelCode", source = "serviceLevelCodeId", qualifiedByName = { "toServiceLevelCdoCode" })
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date", source = "appReceivedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date", source = "appReviewedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date", source = "appPrintedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date", source = "appCompletedDate")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
-  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date", source = "appReceivedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date", source = "appReviewedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date", source = "appPrintedDate")
-  @Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date", source = "appCompletedDate")
 	@Mapping(target = "certificateApplication.resourceMeta.version", source = "version")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
 

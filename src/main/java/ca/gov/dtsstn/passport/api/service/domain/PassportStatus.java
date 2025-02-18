@@ -55,9 +55,6 @@ public interface PassportStatus extends AbstractDomainObject {
   @Nullable
 	String getServiceLevelCodeId();
 
-	@Nullable
-	LocalDate getStatusDate();
-
   @Nullable
 	LocalDate getAppReceivedDate();
 
@@ -69,6 +66,9 @@ public interface PassportStatus extends AbstractDomainObject {
 
   @Nullable
 	LocalDate getAppCompletedDate();
+
+	@Nullable
+	LocalDate getStatusDate();
 
 	@Nullable
 	Long getVersion();
