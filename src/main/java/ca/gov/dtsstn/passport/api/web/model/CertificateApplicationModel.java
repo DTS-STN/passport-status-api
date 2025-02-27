@@ -64,4 +64,27 @@ public interface CertificateApplicationModel extends Serializable {
 		return ImmutableCertificateApplicationStatusModel.builder().build();
 	}
 
+  @Valid
+	@Default
+	@JsonProperty("CertificateApplicationDeliveryMethod")
+	@NotNull(message = "CertificateApplicationDeliveryMethod is required; it must not be null")
+	default CertificateApplicationDeliveryMethodModel getCertificateApplicationDeliveryMethod() {
+		return ImmutableCertificateApplicationDeliveryMethodModel.builder().build();
+	}
+
+  @Valid
+	@Default
+	@JsonProperty("CertificateApplicationServiceLevel")
+	@NotNull(message = "CertificateApplicationServiceLevel is required; it must not be null")
+	default CertificateApplicationServiceLevelModel getCertificateApplicationServiceLevel() {
+		return ImmutableCertificateApplicationServiceLevelModel.builder().build();
+	}
+
+  @Valid
+	@Default
+	@JsonProperty("CertificateApplicationTimelineDates")
+	@NotNull(message = "CertificateApplicationTimelineDates is required; it must not be null")
+	default CertificateApplicationTimelineDatesModel getCertificateApplicationTimelineDates() {
+		return ImmutableCertificateApplicationTimelineDatesModel.builder().build();
+	}
 }

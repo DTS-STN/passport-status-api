@@ -44,5 +44,4 @@ public interface CertificateApplicationStatusModel extends Serializable {
 	default StatusDateModel getStatusDate() {
 		return ImmutableStatusDateModel.builder().build();
 	}
-
 }
