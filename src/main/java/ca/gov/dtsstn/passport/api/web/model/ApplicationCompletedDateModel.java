@@ -15,9 +15,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
-/**
- * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
- */
 @Immutable
 @Schema(name = "ApplicationCompletedDate")
 @Style(validationMethod = ValidationMethod.NONE)

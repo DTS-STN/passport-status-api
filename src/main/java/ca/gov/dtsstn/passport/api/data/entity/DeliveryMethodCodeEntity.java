@@ -9,9 +9,6 @@ import org.springframework.lang.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
-/**
- * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
- */
 @Entity(name = "DeliveryMethodCode")
 @SuppressWarnings({ "serial" })
 public class DeliveryMethodCodeEntity extends AbstractEntity {

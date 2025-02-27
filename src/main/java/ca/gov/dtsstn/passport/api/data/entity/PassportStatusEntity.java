@@ -76,30 +76,30 @@ public class PassportStatusEntity extends AbstractEntity {
 
 	@Builder.Constructor
 	protected PassportStatusEntity( // NOSONAR (too many parameters)
-			@Nullable String id,
-			@Nullable String createdBy,
-			@Nullable Instant createdDate,
-			@Nullable String lastModifiedBy,
-			@Nullable Instant lastModifiedDate,
-			@Nullable Boolean isNew,
-			@Nullable String applicationRegisterSid,
-			@Nullable LocalDate dateOfBirth,
-			@Nullable String email,
-			@Nullable String fileNumber,
-			@Nullable String givenName,
-			@Nullable String manifestNumber,
-			@Nullable String surname,
-			@Nullable SourceCodeEntity sourceCode,
-			@Nullable StatusCodeEntity statusCode,
-      @Nullable DeliveryMethodCodeEntity deliveryMethodCode,
-      @Nullable ServiceLevelCodeEntity serviceLevelCode,
-      @Nullable LocalDate appReceivedDate,
-      @Nullable LocalDate appReviewedDate,
-      @Nullable LocalDate appPrintedDate,
-      @Nullable LocalDate appCompletedDate,
-			@Nullable LocalDate statusDate,
-			@Nullable Long version
-      ) {
+    @Nullable String id,
+    @Nullable String createdBy,
+    @Nullable Instant createdDate,
+    @Nullable String lastModifiedBy,
+    @Nullable Instant lastModifiedDate,
+    @Nullable Boolean isNew,
+    @Nullable String applicationRegisterSid,
+    @Nullable LocalDate dateOfBirth,
+    @Nullable String email,
+    @Nullable String fileNumber,
+    @Nullable String givenName,
+    @Nullable String manifestNumber,
+    @Nullable String surname,
+    @Nullable SourceCodeEntity sourceCode,
+    @Nullable StatusCodeEntity statusCode,
+    @Nullable DeliveryMethodCodeEntity deliveryMethodCode,
+    @Nullable ServiceLevelCodeEntity serviceLevelCode,
+    @Nullable LocalDate appReceivedDate,
+    @Nullable LocalDate appReviewedDate,
+    @Nullable LocalDate appPrintedDate,
+    @Nullable LocalDate appCompletedDate,
+    @Nullable LocalDate statusDate,
+    @Nullable Long version
+  ) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
 		this.dateOfBirth = dateOfBirth;
@@ -270,32 +270,32 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Override
 	public String toString() {
 		return new ToStringCreator(this)
-			.append("super", super.toString())
-			.append("applicationRegisterSid", applicationRegisterSid)
-			.append("dateOfBirth", dateOfBirth)
-			.append("email", email)
-			.append("fileNumber", fileNumber)
-			.append("givenName", givenName)
-			.append("manifestNumber", manifestNumber)
-			.append("surname", surname)
-			.append("sourceCode", Optional.ofNullable(sourceCode)
-				.map(SourceCodeEntity::getCode)
-				.orElse(null))
-			.append("statusCode", Optional.ofNullable(statusCode)
-				.map(StatusCodeEntity::getCode)
-				.orElse(null))
-      .append("deliveryMethodCode", Optional.ofNullable(deliveryMethodCode)
-        .map(DeliveryMethodCodeEntity::getCode)
-        .orElse(null))
-      .append("serviceLevelCode", Optional.ofNullable(serviceLevelCode)
-        .map(ServiceLevelCodeEntity::getCode)
-        .orElse(null))
-      .append("appReceivedDate", appReceivedDate)
-      .append("appReviewedDate", appReviewedDate)
-      .append("appPrintedDate", appPrintedDate)
-      .append("appCompletedDate", appCompletedDate)
-			.append("statusDate", statusDate)
-			.append("version", version)
-			.toString();
+    .append("super", super.toString())
+    .append("applicationRegisterSid", applicationRegisterSid)
+    .append("dateOfBirth", dateOfBirth)
+    .append("email", email)
+    .append("fileNumber", fileNumber)
+    .append("givenName", givenName)
+    .append("manifestNumber", manifestNumber)
+    .append("surname", surname)
+    .append("sourceCode", Optional.ofNullable(sourceCode)
+      .map(SourceCodeEntity::getCode)
+      .orElse(null))
+    .append("statusCode", Optional.ofNullable(statusCode)
+      .map(StatusCodeEntity::getCode)
+      .orElse(null))
+    .append("deliveryMethodCode", Optional.ofNullable(deliveryMethodCode)
+      .map(DeliveryMethodCodeEntity::getCode)
+      .orElse(null))
+    .append("serviceLevelCode", Optional.ofNullable(serviceLevelCode)
+      .map(ServiceLevelCodeEntity::getCode)
+      .orElse(null))
+    .append("appReceivedDate", appReceivedDate)
+    .append("appReviewedDate", appReviewedDate)
+    .append("appPrintedDate", appPrintedDate)
+    .append("appCompletedDate", appCompletedDate)
+    .append("statusDate", statusDate)
+    .append("version", version)
+    .toString();
 	}
 }

@@ -33,15 +33,9 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethod
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDatesModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationCompletedDateModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationPrintedDateModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationReceivedDateModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableApplicationReviewedDateModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
-import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationTimelineDatesModel;
 import ca.gov.dtsstn.passport.api.web.model.SourceCodeModel;
 import jakarta.annotation.PostConstruct;
 
@@ -100,7 +94,7 @@ public abstract class CertificateApplicationModelMapper {
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
 
 	@Nullable
-	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 	@Mapping(target = "add", ignore = true) // fixes a weird vscode/eclipse & mapstruct bug quirk/bug 💩
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.birthDate.date", source = "dateOfBirth")
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personContactInformation.contactEmailId", source = "email")

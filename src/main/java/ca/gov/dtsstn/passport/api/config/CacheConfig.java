@@ -21,31 +21,31 @@ public class CacheConfig {
 	private static final Logger log = LoggerFactory.getLogger(CacheConfig.class);
 
 	@ConfigurationProperties("application.caching.caches.esrf-emails")
-	@Bean CaffeineCacheFactory esrfEmailsCache() {
+  @Bean CaffeineCacheFactory esrfEmailsCache() {
 		log.info("Creating 'esrfEmailsCache' bean");
 		return new CaffeineCacheFactory("esrf-emails");
 	}
 
 	@ConfigurationProperties("application.caching.caches.source-codes")
-	@Bean CaffeineCacheFactory sourceCodesCache() {
+  @Bean CaffeineCacheFactory sourceCodesCache() {
 		log.info("Creating 'sourceCodesCache' bean");
 		return new CaffeineCacheFactory("source-codes");
 	}
 
 	@ConfigurationProperties("application.caching.caches.status-codes")
-	@Bean CaffeineCacheFactory statusCodesCache() {
+  @Bean CaffeineCacheFactory statusCodesCache() {
 		log.info("Creating 'statusCodesCache' bean");
 		return new CaffeineCacheFactory("status-codes");
 	}
 
   @ConfigurationProperties("application.caching.caches.delivery-method-codes")
-	@Bean CaffeineCacheFactory deliveryMethodCodesCache() {
+  @Bean CaffeineCacheFactory deliveryMethodCodesCache() {
 		log.info("Creating 'deliveryMethodCodesCache' bean");
 		return new CaffeineCacheFactory("delivery-method-codes");
 	}
 
   @ConfigurationProperties("application.caching.caches.service-level-codes")
-	@Bean CaffeineCacheFactory serviceLevelCodesCache() {
+  @Bean CaffeineCacheFactory serviceLevelCodesCache() {
 		log.info("Creating 'serviceLevelCodesCache' bean");
 		return new CaffeineCacheFactory("service-level-codes");
 	}
