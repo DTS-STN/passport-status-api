@@ -1,7 +1,5 @@
 package ca.gov.dtsstn.passport.api.data.init;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -24,11 +22,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.data.PassportStatusRepository;
+import ca.gov.dtsstn.passport.api.data.entity.DeliveryMethodCodeEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntity;
 import ca.gov.dtsstn.passport.api.data.entity.PassportStatusEntityBuilder;
+import ca.gov.dtsstn.passport.api.data.entity.ServiceLevelCodeEntity;
+import ca.gov.dtsstn.passport.api.data.entity.SourceCodeEntity;
 import ca.gov.dtsstn.passport.api.data.entity.SourceCodeEntityBuilder;
 import ca.gov.dtsstn.passport.api.data.entity.StatusCodeEntity;
+import ca.gov.dtsstn.passport.api.service.DeliveryMethodCodeService;
+import ca.gov.dtsstn.passport.api.service.ServiceLevelCodeService;
+import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.DeliveryMethodCodeMapper;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.ServiceLevelCodeMapper;
+import ca.gov.dtsstn.passport.api.service.domain.mapper.SourceCodeMapper;
 import ca.gov.dtsstn.passport.api.service.domain.mapper.StatusCodeMapper;
 import net.datafaker.Faker;
 
@@ -51,18 +58,32 @@ public class DatabaseInitializer {
 	private final PassportStatusRepository passportStatusRepository;
 
 	private final StatusCodeService statusCodeService;
-
 	private final StatusCodeMapper statusCodeMapper = Mappers.getMapper(StatusCodeMapper.class);
+
+  private final SourceCodeService sourceCodeService;
+	private final SourceCodeMapper sourceCodeMapper = Mappers.getMapper(SourceCodeMapper.class);
+
+  private final DeliveryMethodCodeService deliveryMethodCodeService;
+	private final DeliveryMethodCodeMapper deliveryMethodCodeMapper = Mappers.getMapper(DeliveryMethodCodeMapper.class);
+
+  private final ServiceLevelCodeService serviceLevelCodeService;
+	private final ServiceLevelCodeMapper serviceLevelCodeMapper = Mappers.getMapper(ServiceLevelCodeMapper.class);
 
 	private int duplicateStatusesNumber = 10;
 
 	private int generatedStatusesNumber = 1000;
 
-	public DatabaseInitializer(PassportStatusRepository passportStatusRepository, StatusCodeService statusCodeService) {
+	public DatabaseInitializer(PassportStatusRepository passportStatusRepository, StatusCodeService statusCodeService, SourceCodeService sourceCodeService, DeliveryMethodCodeService deliveryMethodCodeService, ServiceLevelCodeService serviceLevelCodeService) {
 		Assert.notNull(passportStatusRepository, "passportStatusRepository is required; it must not be null");
 		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
+    Assert.notNull(sourceCodeService, "sourceCodeService is required; it must not be null");
+    Assert.notNull(deliveryMethodCodeService, "deliveryMethodCodeService is required; it must not be null");
+    Assert.notNull(serviceLevelCodeService, "serviceLevelCodeService is required; it must not be null");
 		this.passportStatusRepository = passportStatusRepository;
 		this.statusCodeService = statusCodeService;
+    this.sourceCodeService = sourceCodeService;
+    this.deliveryMethodCodeService = deliveryMethodCodeService;
+    this.serviceLevelCodeService = serviceLevelCodeService;
 	}
 
 	@Async
@@ -75,38 +96,26 @@ public class DatabaseInitializer {
 		log.info("Fetch all active passport status codes");
 		final var statusCodes = statusCodeService.readAllByIsActive(true).stream().map(statusCodeMapper::toEntity).toList();
 
+    log.info("Fetch all active passport source codes");
+		final var sourceCodes = sourceCodeService.readAllByIsActive(true).stream().map(sourceCodeMapper::toEntity).toList();
+
+    log.info("Fetch all active passport delivery method codes");
+		final var deliveryMethodCodes = deliveryMethodCodeService.readAllByIsActive(true).stream().map(deliveryMethodCodeMapper::toEntity).toList();
+
+    log.info("Fetch all active passport service level codes");
+		final var serviceLevelCodes = serviceLevelCodeService.readAllByIsActive(true).stream().map(serviceLevelCodeMapper::toEntity).toList();
+
 		log.info("Generating {} fake random passport statuses", generatedStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		final var randomPassportStatuses = Stream.generate(() -> generateRandomPassportStatus(statusCodes)).limit(generatedStatusesNumber).toList();
+		final var randomPassportStatuses = Stream.generate(() -> generateRandomPassportStatus(statusCodes, sourceCodes, deliveryMethodCodes, serviceLevelCodes)).limit(generatedStatusesNumber).toList();
 		partition(randomPassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Fake random data created in {}ms", stopWatch.getDuration().get(MILLIS));
+		log.info("Fake random data created in {}ms", stopWatch.getDuration().toMillis());
 
 		log.info("Generating {} duplicate fake passport statuses", duplicateStatusesNumber);
 		stopWatch.reset(); stopWatch.start();
-		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(statusCodes)).limit(duplicateStatusesNumber).toList();
+		final var duplicatePassportStatuses = Stream.generate(() -> generateDuplicatePassportStatus(sourceCodes, statusCodes, deliveryMethodCodes, serviceLevelCodes)).limit(duplicateStatusesNumber).toList();
 		partition(duplicatePassportStatuses, 10_000).forEach(passportStatusRepository::saveAll);
-		log.info("Duplicate fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
-
-		// TODO :: GjB :: use properties for these
-		log.info("Generating passport team fake passport statuses");
-		stopWatch.reset(); stopWatch.start();
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Greg", "Baker", LocalDate.of(2000, 01, 01), "gregory.j.baker@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Ken", "Blanchard", LocalDate.of(2000, 01, 01), "ken.blanchard@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Kristopher", "Charbonneau", LocalDate.of(2000, 01, 01), "kristopher.charbonneau@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Maxim", "Lam", LocalDate.of(2000, 01, 01), "maxim.lam@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Sébastien", "Comeau", LocalDate.of(1985, 01, 10), "sebastien.comeau@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Shaun", "Laughland", LocalDate.of(2000, 01, 01), "shaun.laughland@hrsdc-rhdcc.gc.ca", statusCodes));
-		passportStatusRepository.save(generatePassportTeamPassportStatus("Stefan", "O'Connell", LocalDate.of(2000, 01, 01), "stefan.oconnell@hrsdc-rhdcc.gc.ca", statusCodes));
-		log.info("Passport team fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
-
-		log.info("Generating modified fake passport statuses (for testing exact search)");
-		stopWatch.reset(); stopWatch.start();
-		final var bobbyRoss = passportStatusRepository.save(generatePassportTeamPassportStatus("Bobby", "Ross", LocalDate.of(2000, 01, 01), "bob.ross@hrsdc-rhdcc.gc.ca", statusCodes));
-		final var bobRoss = generatePassportTeamPassportStatus("Bob", "Ross", LocalDate.of(2000, 01, 01), "bob.ross@hrsdc-rhdcc.gc.ca", statusCodes);
-		bobRoss.setApplicationRegisterSid(bobbyRoss.getApplicationRegisterSid());
-		bobRoss.setVersion(bobbyRoss.getVersion() + 1);
-		passportStatusRepository.save(bobRoss);
-		log.info("Passport modified fake data created in {}ms", stopWatch.getDuration().get(MILLIS));
+		log.info("Duplicate fake data created in {}ms", stopWatch.getDuration().toMillis());
 	}
 
 	protected <T> List<List<T>> partition(List<T> passportStatuses, int size) {
@@ -114,7 +123,7 @@ public class DatabaseInitializer {
 		return List.copyOf(passportStatuses.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values());
 	}
 
-	protected PassportStatusEntity generateRandomPassportStatus(List<StatusCodeEntity> statusCodes) {
+	protected PassportStatusEntity generateRandomPassportStatus(List<StatusCodeEntity> statusCodes, List<SourceCodeEntity> sourceCodes, List<DeliveryMethodCodeEntity> deliveryMethodCodes, List<ServiceLevelCodeEntity> serviceLevelCodes) {
 		final var fileNumber = generateFileNumber();
 		final var givenName = generateGivenName();
 		final var manifestNumber = generateManifestNumber();
@@ -123,6 +132,13 @@ public class DatabaseInitializer {
 		// include manifest number in 1/3 of statuses
 		final var includeManifestNumber = faker.number().numberBetween(0, 3) % 3 == 0;
 
+
+    // Generate timeline data such that there's a 50% chance each step of the way.
+    final var receivedDate = generateDate(LocalDate.of(2020, 01, 01), LocalDate.now());
+    final var reviewedDate = (faker.number().numberBetween(1,3) % 2 == 0) ? generateDate(receivedDate, LocalDate.now()) : null;
+    final var printedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (reviewedDate != null)) ? generateDate(reviewedDate, LocalDate.now()) : null;
+    final var completedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (printedDate != null)) ? generateDate(printedDate, LocalDate.now()) : null;
+
 		return new PassportStatusEntityBuilder()
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
 			.dateOfBirth(generateDateOfBirth())
@@ -130,20 +146,32 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(includeManifestNumber ? manifestNumber : null)
-			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
+			.sourceCode(generateSourceCode(sourceCodes))
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
-			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.now()))
+      .deliveryMethodCode(generateDeliveryMethodCode(deliveryMethodCodes))
+      .serviceLevelCode(generateServiceLevelCode(serviceLevelCodes)) 
+			.statusDate(generateDate(LocalDate.of(2020, 01, 01), LocalDate.now()))
+      .appReceivedDate(receivedDate)
+      .appReviewedDate(reviewedDate)
+      .appPrintedDate(printedDate)
+      .appCompletedDate(completedDate)
 			.version(faker.number().randomNumber())
 			.build();
 	}
 
-	protected PassportStatusEntity generateDuplicatePassportStatus(List<StatusCodeEntity> statusCodes) {
+	protected PassportStatusEntity generateDuplicatePassportStatus(List<SourceCodeEntity> sourceCodes, List<StatusCodeEntity> statusCodes, List<DeliveryMethodCodeEntity> deliveryMethodCodes, List<ServiceLevelCodeEntity> serviceLevelCodes) {
 		final var dupeString = "DUPE0000";
 		final var fileNumber = dupeString;
 		final var givenName = dupeString;
 		final var manifestNumber = dupeString;
 		final var surname = dupeString;
+
+    // Generate timeline data such that there's a 50% chance each step of the way.
+    final var receivedDate = generateDate(LocalDate.of(2020, 01, 01), LocalDate.now());
+    final var reviewedDate = (faker.number().numberBetween(1,3) % 2 == 0) ? generateDate(receivedDate, LocalDate.now()) : null;
+    final var printedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (reviewedDate != null)) ? generateDate(reviewedDate, LocalDate.now()) : null;
+    final var completedDate = ((faker.number().numberBetween(1,3) % 2 == 0) && (printedDate != null)) ? generateDate(printedDate, LocalDate.now()) : null;
 
 		return new PassportStatusEntityBuilder()
 			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
@@ -152,33 +180,18 @@ public class DatabaseInitializer {
 			.fileNumber(fileNumber)
 			.givenName(givenName)
 			.manifestNumber(manifestNumber)
-			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
+			.sourceCode(generateSourceCode(sourceCodes))
 			.surname(surname)
 			.statusCode(generateStatusCode(statusCodes))
-			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
+      .deliveryMethodCode(generateDeliveryMethodCode(deliveryMethodCodes))
+      .serviceLevelCode(generateServiceLevelCode(serviceLevelCodes))
+      .appReceivedDate(receivedDate)
+      .appReviewedDate(reviewedDate)
+      .appPrintedDate(printedDate)
+      .appCompletedDate(completedDate)
+			.statusDate(generateDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
 			.version(faker.number().randomNumber())
 			.build();
-	}
-
-	protected PassportStatusEntity generatePassportTeamPassportStatus(String givenName, String surname, LocalDate dateOfBirth, String email, List<StatusCodeEntity> statusCodes) {
-		final var fileNumber = generateFileNumber();
-
-		final var passportStatus = new PassportStatusEntityBuilder()
-			.applicationRegisterSid(generateApplicationRegisterSid(fileNumber, givenName, surname))
-			.dateOfBirth(dateOfBirth)
-			.email(email)
-			.fileNumber(fileNumber)
-			.givenName(givenName)
-			.manifestNumber(generateManifestNumber())
-			.sourceCode(new SourceCodeEntityBuilder().id(IRIS_ID).build())
-			.surname(surname)
-			.statusCode(generateStatusCode(statusCodes))
-			.statusDate(generateStatusDate(LocalDate.of(2000, 01, 01), LocalDate.of(2000, 01, 01)))
-			.version(faker.number().randomNumber())
-			.build();
-
-		log.trace("Creating fake passport team status: {}", passportStatus);
-		return passportStatus;
 	}
 
 	protected String generateApplicationRegisterSid(String fileNumber, String givenName, String surname) {
@@ -215,7 +228,22 @@ public class DatabaseInitializer {
 		return statusCodes.get(faker.random().nextInt(statusCodes.size()));
 	}
 
-	protected LocalDate generateStatusDate(LocalDate start, LocalDate end) {
+  protected SourceCodeEntity generateSourceCode(List<SourceCodeEntity> sourceCodes) {
+		Assert.notEmpty(sourceCodes, "sourceCodes is required; it must not be null and must contain at least one element");
+		return sourceCodes.get(faker.random().nextInt(sourceCodes.size()));
+	}
+
+  protected DeliveryMethodCodeEntity generateDeliveryMethodCode(List<DeliveryMethodCodeEntity> deliveryMethodCodes) {
+		Assert.notEmpty(deliveryMethodCodes, "deliveryMethodCodes is required; it must not be null and must contain at least one element");
+		return deliveryMethodCodes.get(faker.random().nextInt(deliveryMethodCodes.size()));
+	}
+
+  protected ServiceLevelCodeEntity generateServiceLevelCode(List<ServiceLevelCodeEntity> serviceLevelCodes) {
+		Assert.notEmpty(serviceLevelCodes, "serviceLevelCodes is required; it must not be null and must contain at least one element");
+		return serviceLevelCodes.get(faker.random().nextInt(serviceLevelCodes.size()));
+	}
+
+	protected LocalDate generateDate(LocalDate start, LocalDate end) {
 		final var zoneOffset = OffsetDateTime.now().getOffset();
 		final var startDate = start.atStartOfDay().toInstant(zoneOffset);
 		final var endDate = end.atStartOfDay().toInstant(zoneOffset);

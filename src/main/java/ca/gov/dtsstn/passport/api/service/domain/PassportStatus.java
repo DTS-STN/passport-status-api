@@ -49,6 +49,24 @@ public interface PassportStatus extends AbstractDomainObject {
 	@Nullable
 	String getStatusCodeId();
 
+  @Nullable
+	String getDeliveryMethodCodeId();
+
+  @Nullable
+	String getServiceLevelCodeId();
+
+  @Nullable
+	LocalDate getAppReceivedDate();
+
+  @Nullable
+	LocalDate getAppReviewedDate();
+
+  @Nullable
+  LocalDate getAppPrintedDate();
+
+  @Nullable
+	LocalDate getAppCompletedDate();
+
 	@Nullable
 	LocalDate getStatusDate();
 

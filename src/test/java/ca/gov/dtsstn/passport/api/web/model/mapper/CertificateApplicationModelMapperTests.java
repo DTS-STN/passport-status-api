@@ -22,19 +22,30 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.gov.dtsstn.passport.api.service.DeliveryMethodCodeService;
+import ca.gov.dtsstn.passport.api.service.ServiceLevelCodeService;
 import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
+import ca.gov.dtsstn.passport.api.service.domain.ImmutableDeliveryMethodCode;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.ImmutableServiceLevelCode;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutableStatusCode;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.web.model.ApplicationReceivedDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ApplicationReviewedDateModel;
 import ca.gov.dtsstn.passport.api.web.model.BirthDateModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethodModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDatesModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationDeliveryMethodModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonContactInformationModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonNameModel;
@@ -48,7 +59,12 @@ import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
 class CertificateApplicationModelMapperTests {
 
 	private final static String STATUS_CODE__FILE_BEING_PROCESSED__ID = "57fe687e-50a6-411f-af63-2a659622127d";
+  private final static String DELIVERY_METHOD_CODE__MAIL__ID = "8aefdf27-c4f1-43ab-9575-7f760478dd5d";
+  private final static String SERVICE_LEVEL_CODE__TEN_DAYS__ID = "e5f40fad-ad83-4fe1-9bdb-beba987045cb";
+
 	private final static String STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE = "1";
+  private final static String DELIVERY_METHOD_CODE__MAIL__CDO_CODE = "1";
+  private final static String SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE = "1";
 
 	CertificateApplicationModelMapper mapper = Mappers.getMapper(CertificateApplicationModelMapper.class);
 
@@ -58,10 +74,18 @@ class CertificateApplicationModelMapperTests {
 	@Mock
 	private StatusCodeService statusCodeService;
 
+  @Mock
+	private DeliveryMethodCodeService deliveryMethodCodeService;
+
+  @Mock
+  private ServiceLevelCodeService serviceLevelCodeService;
+
 	@BeforeEach
 	void setUp() {
 		ReflectionTestUtils.setField(mapper, "sourceCodeService", sourceCodeService);
 		ReflectionTestUtils.setField(mapper, "statusCodeService", statusCodeService);
+		ReflectionTestUtils.setField(mapper, "deliveryMethodCodeService", deliveryMethodCodeService);
+		ReflectionTestUtils.setField(mapper, "serviceLevelCodeService", serviceLevelCodeService);
 	}
 
 	@Test
@@ -192,6 +216,8 @@ class CertificateApplicationModelMapperTests {
 	@Test
 	void testToModel_nonnull() {
 		when(statusCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().cdoCode(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE).build()));
+    when(deliveryMethodCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().cdoCode(DELIVERY_METHOD_CODE__MAIL__CDO_CODE).build()));
+    when(serviceLevelCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().cdoCode(SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE).build()));
 
 		final var applicationRegisterSid = "https://open.spotify.com/track/7GonnnalI2s19OCQO1J7Tf";
 		final var dateOfBirth = LocalDate.of(2004, 12, 8);
@@ -200,6 +226,10 @@ class CertificateApplicationModelMapperTests {
 		final var givenName = "https://open.spotify.com/track/4hgl5gAnNjzJJjX7VEzQme";
 		final var surname = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
 		final var statusCodeId = STATUS_CODE__FILE_BEING_PROCESSED__ID;
+    final var deliveryMethodCodeId = DELIVERY_METHOD_CODE__MAIL__ID;
+    final var serviceLevelCodeId = SERVICE_LEVEL_CODE__TEN_DAYS__ID;
+    final var appReceivedDate = LocalDate.of(2000, 01, 01);
+    final var appReviewedDate = LocalDate.of(2000, 01, 02);
 		final var statusDate = LocalDate.of(2000, 01, 01);
 
 		final var passportStatus = ImmutablePassportStatus.builder()
@@ -210,6 +240,10 @@ class CertificateApplicationModelMapperTests {
 			.givenName(givenName)
 			.surname(surname)
 			.statusCodeId(statusCodeId)
+      .deliveryMethodCodeId(deliveryMethodCodeId)
+      .serviceLevelCodeId(serviceLevelCodeId)
+      .appReceivedDate(appReceivedDate) 
+      .appReviewedDate(appReviewedDate)
 			.statusDate(statusDate)
 			.build();
 
@@ -268,6 +302,28 @@ class CertificateApplicationModelMapperTests {
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
 			.extracting(CertificateApplicationStatusModel::getStatusCode)
 			.isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
+    assertThat(getCertificateApplicationRepresentation) // check delivery method field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationDeliveryMethod)
+			.extracting(CertificateApplicationDeliveryMethodModel::getDeliveryMethodCode)
+			.isEqualTo(DELIVERY_METHOD_CODE__MAIL__CDO_CODE);
+    assertThat(getCertificateApplicationRepresentation) // check service level field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationServiceLevel)
+			.extracting(CertificateApplicationServiceLevelModel::getServiceLevelCode)
+			.isEqualTo(SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE);
+    assertThat(getCertificateApplicationRepresentation) // check service level field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
+			.extracting(CertificateApplicationTimelineDatesModel::getApplicationReceivedDate)
+			.extracting(ApplicationReceivedDateModel::getDate)
+			.isEqualTo(appReceivedDate.toString());
+    assertThat(getCertificateApplicationRepresentation) // check service level field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
+			.extracting(CertificateApplicationTimelineDatesModel::getApplicationReviewedDate)
+			.extracting(ApplicationReviewedDateModel::getDate)
+			.isEqualTo(appReviewedDate.toString());
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
@@ -286,6 +342,10 @@ class CertificateApplicationModelMapperTests {
 	@Test
 	void testToDomain_nonnull() throws Exception {
 		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__FILE_BEING_PROCESSED__ID).build()));
+
+    when(deliveryMethodCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().id(DELIVERY_METHOD_CODE__MAIL__ID).build()));
+
+    when(serviceLevelCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().id(SERVICE_LEVEL_CODE__TEN_DAYS__ID).build()));
 
 		final var objectMapper = new ObjectMapper().findAndRegisterModules();
 
@@ -311,17 +371,31 @@ class CertificateApplicationModelMapperTests {
 			    "CertificateApplicationStatus": {
 			      "StatusCode": "%s",
 			      "StatusDate": "2000-01-01"
-			    }
+			    },
+          "CertificateApplicationDeliveryMethod": {
+			      "DeliveryMethodCode": "%s"
+			    },
+          "CertificateApplicationServiceLevel": {
+			      "ServiceLevelCode": "%s"
+			    },
+          "CertificateApplicationTimelineDates": {
+            "ApplicationReceivedDate": {
+              "Date": "2021-01-01"
+            }, 
+            "ApplicationReviewedDate": {
+              "Date": "2021-01-02"
+            }
+          }
 			  }
 			}
-		""".formatted(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
+		""".formatted(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE, DELIVERY_METHOD_CODE__MAIL__ID, SERVICE_LEVEL_CODE__TEN_DAYS__ID);
 
 		final var createCertificateApplicationRequest = objectMapper.readValue(json, CreateCertificateApplicationRequestModel.class);
 
 		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
 
 		final var nonnullFields = new String[] {
-			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "surname", "statusCodeId", "statusDate", "version"
+			"applicationRegisterSid", "dateOfBirth", "email", "fileNumber", "givenName", "surname", "statusCodeId", "deliveryMethodCodeId", "serviceLevelCodeId", "appReceivedDate", "appReviewedDate", "statusDate", "version"
 		};
 
 		assertThat(passportStatus)
@@ -347,11 +421,25 @@ class CertificateApplicationModelMapperTests {
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusCodeId)
 			.isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__ID);
+    assertThat(passportStatus)
+			.extracting(PassportStatus::getDeliveryMethodCodeId)
+			.isEqualTo(DELIVERY_METHOD_CODE__MAIL__ID);
+    assertThat(passportStatus)
+			.extracting(PassportStatus::getServiceLevelCodeId)
+			.isEqualTo(SERVICE_LEVEL_CODE__TEN_DAYS__ID);
+    assertThat(passportStatus)
+			.extracting(PassportStatus::getAppReceivedDate)
+			.isEqualTo(LocalDate.of(2021, 01, 01));
+    assertThat(passportStatus)
+			.extracting(PassportStatus::getAppReviewedDate)
+			.isEqualTo(LocalDate.of(2021, 01, 02));
 		assertThat(passportStatus)
 			.extracting(PassportStatus::getStatusDate)
 			.isEqualTo(LocalDate.of(2000, 01, 01));
 
 		verify(statusCodeService).readByCdoCode(any());
+    verify(deliveryMethodCodeService).readByCdoCode(any());
+    verify(serviceLevelCodeService).readByCdoCode(any());
 	}
 
 	@Test
@@ -380,5 +468,61 @@ class CertificateApplicationModelMapperTests {
 		// assert
 		assertThat(act).isEqualTo(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE);
 		verify(statusCodeService).read(any());
+	}
+
+  @Test
+	void testToDeliveryMethodCodeId() {
+		// arrange
+		when(deliveryMethodCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().id(DELIVERY_METHOD_CODE__MAIL__ID).build()));
+
+		final var certificateApplicationDeliveryMethodModel = ImmutableCertificateApplicationDeliveryMethodModel.builder().deliveryMethodCode(DELIVERY_METHOD_CODE__MAIL__CDO_CODE).build();
+
+		// act
+		final var act = mapper.toDeliveryMethodCodeId(certificateApplicationDeliveryMethodModel);
+
+		// assert
+		assertThat(act).isEqualTo(DELIVERY_METHOD_CODE__MAIL__ID);
+		verify(deliveryMethodCodeService).readByCdoCode(any());
+	}
+
+	@Test
+	void testToDeliveryMethodCdoCode() {
+		// arrange
+		when(deliveryMethodCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().cdoCode(DELIVERY_METHOD_CODE__MAIL__CDO_CODE).build()));
+
+		// act
+		final var act = mapper.toDeliveryMethodCdoCode(DELIVERY_METHOD_CODE__MAIL__ID);
+
+		// assert
+		assertThat(act).isEqualTo(DELIVERY_METHOD_CODE__MAIL__CDO_CODE);
+		verify(deliveryMethodCodeService).read(any());
+	}
+
+  @Test
+	void testToServiceLevelCodeId() {
+		// arrange
+		when(serviceLevelCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().id(SERVICE_LEVEL_CODE__TEN_DAYS__ID).build()));
+
+		final var certificateApplicationServiceLevelModel = ImmutableCertificateApplicationServiceLevelModel.builder().serviceLevelCode(SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE).build();
+
+		// act
+		final var act = mapper.toServiceLevelCodeId(certificateApplicationServiceLevelModel);
+
+		// assert
+		assertThat(act).isEqualTo(SERVICE_LEVEL_CODE__TEN_DAYS__ID);
+		verify(serviceLevelCodeService).readByCdoCode(any());
+	}
+
+	@Test
+	void testToServiceLevelCdoCode() {
+		// arrange
+		when(serviceLevelCodeService.read(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().cdoCode(SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE).build()));
+
+		// act
+		final var act = mapper.toServiceLevelCdoCode(SERVICE_LEVEL_CODE__TEN_DAYS__ID);
+
+		// assert
+		assertThat(act).isEqualTo(SERVICE_LEVEL_CODE__TEN_DAYS__CDO_CODE);
+		verify(serviceLevelCodeService).read(any());
 	}
 }

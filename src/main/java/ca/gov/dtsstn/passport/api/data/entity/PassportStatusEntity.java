@@ -46,6 +46,24 @@ public class PassportStatusEntity extends AbstractEntity {
 	@ManyToOne
 	private StatusCodeEntity statusCode;
 
+  @ManyToOne
+  private DeliveryMethodCodeEntity deliveryMethodCode;
+
+  @ManyToOne
+  private ServiceLevelCodeEntity serviceLevelCode;
+
+  @Column(nullable = false)
+  private LocalDate appReceivedDate;
+
+  @Column(nullable = true)
+  private LocalDate appReviewedDate;
+
+  @Column(nullable = true)
+  private LocalDate appPrintedDate;
+
+  @Column(nullable = true)
+  private LocalDate appCompletedDate;
+
 	@Column(nullable = false)
 	private LocalDate statusDate;
 
@@ -58,23 +76,30 @@ public class PassportStatusEntity extends AbstractEntity {
 
 	@Builder.Constructor
 	protected PassportStatusEntity( // NOSONAR (too many parameters)
-			@Nullable String id,
-			@Nullable String createdBy,
-			@Nullable Instant createdDate,
-			@Nullable String lastModifiedBy,
-			@Nullable Instant lastModifiedDate,
-			@Nullable Boolean isNew,
-			@Nullable String applicationRegisterSid,
-			@Nullable LocalDate dateOfBirth,
-			@Nullable String email,
-			@Nullable String fileNumber,
-			@Nullable String givenName,
-			@Nullable String manifestNumber,
-			@Nullable String surname,
-			@Nullable SourceCodeEntity sourceCode,
-			@Nullable StatusCodeEntity statusCode,
-			@Nullable LocalDate statusDate,
-			@Nullable Long version) {
+    @Nullable String id,
+    @Nullable String createdBy,
+    @Nullable Instant createdDate,
+    @Nullable String lastModifiedBy,
+    @Nullable Instant lastModifiedDate,
+    @Nullable Boolean isNew,
+    @Nullable String applicationRegisterSid,
+    @Nullable LocalDate dateOfBirth,
+    @Nullable String email,
+    @Nullable String fileNumber,
+    @Nullable String givenName,
+    @Nullable String manifestNumber,
+    @Nullable String surname,
+    @Nullable SourceCodeEntity sourceCode,
+    @Nullable StatusCodeEntity statusCode,
+    @Nullable DeliveryMethodCodeEntity deliveryMethodCode,
+    @Nullable ServiceLevelCodeEntity serviceLevelCode,
+    @Nullable LocalDate appReceivedDate,
+    @Nullable LocalDate appReviewedDate,
+    @Nullable LocalDate appPrintedDate,
+    @Nullable LocalDate appCompletedDate,
+    @Nullable LocalDate statusDate,
+    @Nullable Long version
+  ) {
 		super(id, createdBy, createdDate, lastModifiedBy, lastModifiedDate, isNew);
 		this.applicationRegisterSid = applicationRegisterSid;
 		this.dateOfBirth = dateOfBirth;
@@ -85,6 +110,12 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.surname = surname;
 		this.sourceCode = sourceCode;
 		this.statusCode = statusCode;
+    this.deliveryMethodCode = deliveryMethodCode;
+    this.serviceLevelCode = serviceLevelCode;
+    this.appReceivedDate = appReceivedDate;
+    this.appReviewedDate = appReviewedDate;
+    this.appPrintedDate = appPrintedDate;
+    this.appCompletedDate = appCompletedDate;
 		this.statusDate = statusDate;
 		this.version = version;
 	}
@@ -161,6 +192,53 @@ public class PassportStatusEntity extends AbstractEntity {
 		this.statusCode = statusCode;
 	}
 
+  public DeliveryMethodCodeEntity getDeliveryMethodCode() {
+    return deliveryMethodCode;
+  }
+
+  public void setDeliveryMethodCode(DeliveryMethodCodeEntity deliveryMethodCode) {
+    this.deliveryMethodCode = deliveryMethodCode;
+  }
+
+  public ServiceLevelCodeEntity getServiceLevelCode() {
+		return serviceLevelCode;
+	}
+
+	public void setServiceLevelCode(ServiceLevelCodeEntity serviceLevelCode) {
+		this.serviceLevelCode = serviceLevelCode;
+	}
+
+  public LocalDate getAppReceivedDate() {
+		return appReceivedDate;
+	}
+
+	public void setAppReceivedDate(LocalDate appReceivedDate) {
+		this.appReceivedDate = appReceivedDate;
+	}
+
+	public LocalDate getAppReviewedDate() {
+		return appReviewedDate;
+	}
+
+	public void setAppReviewedDate(LocalDate appReviewedDate) {
+		this.appReviewedDate = appReviewedDate;
+	}
+
+	public LocalDate getAppPrintedDate() {
+		return appPrintedDate;
+	}
+
+	public void setAppPrintedDate(LocalDate appPrintedDate) {
+		this.appPrintedDate = appPrintedDate;
+	}
+
+	public LocalDate getAppCompletedDate() {
+		return appCompletedDate;
+	}
+
+	public void setAppCompletedDate(LocalDate appCompletedDate) {
+		this.appCompletedDate = appCompletedDate;
+	}
 	public LocalDate getStatusDate() {
 		return statusDate;
 	}
@@ -192,23 +270,32 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Override
 	public String toString() {
 		return new ToStringCreator(this)
-			.append("super", super.toString())
-			.append("applicationRegisterSid", applicationRegisterSid)
-			.append("dateOfBirth", dateOfBirth)
-			.append("email", email)
-			.append("fileNumber", fileNumber)
-			.append("givenName", givenName)
-			.append("manifestNumber", manifestNumber)
-			.append("surname", surname)
-			.append("sourceCode", Optional.ofNullable(sourceCode)
-				.map(SourceCodeEntity::getCode)
-				.orElse(null))
-			.append("statusCode", Optional.ofNullable(statusCode)
-				.map(StatusCodeEntity::getCode)
-				.orElse(null))
-			.append("statusDate", statusDate)
-			.append("version", version)
-			.toString();
+    .append("super", super.toString())
+    .append("applicationRegisterSid", applicationRegisterSid)
+    .append("dateOfBirth", dateOfBirth)
+    .append("email", email)
+    .append("fileNumber", fileNumber)
+    .append("givenName", givenName)
+    .append("manifestNumber", manifestNumber)
+    .append("surname", surname)
+    .append("sourceCode", Optional.ofNullable(sourceCode)
+      .map(SourceCodeEntity::getCode)
+      .orElse(null))
+    .append("statusCode", Optional.ofNullable(statusCode)
+      .map(StatusCodeEntity::getCode)
+      .orElse(null))
+    .append("deliveryMethodCode", Optional.ofNullable(deliveryMethodCode)
+      .map(DeliveryMethodCodeEntity::getCode)
+      .orElse(null))
+    .append("serviceLevelCode", Optional.ofNullable(serviceLevelCode)
+      .map(ServiceLevelCodeEntity::getCode)
+      .orElse(null))
+    .append("appReceivedDate", appReceivedDate)
+    .append("appReviewedDate", appReviewedDate)
+    .append("appPrintedDate", appPrintedDate)
+    .append("appCompletedDate", appCompletedDate)
+    .append("statusDate", statusDate)
+    .append("version", version)
+    .toString();
 	}
-
 }
