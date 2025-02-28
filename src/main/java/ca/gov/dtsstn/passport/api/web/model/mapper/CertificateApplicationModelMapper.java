@@ -19,13 +19,19 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import ca.gov.dtsstn.passport.api.config.properties.FeatureFlagsProperties;
+import ca.gov.dtsstn.passport.api.service.DeliveryMethodCodeService;
+import ca.gov.dtsstn.passport.api.service.ServiceLevelCodeService;
 import ca.gov.dtsstn.passport.api.service.SourceCodeService;
 import ca.gov.dtsstn.passport.api.service.StatusCodeService;
+import ca.gov.dtsstn.passport.api.service.domain.DeliveryMethodCode;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
+import ca.gov.dtsstn.passport.api.service.domain.ServiceLevelCode;
 import ca.gov.dtsstn.passport.api.service.domain.SourceCode;
 import ca.gov.dtsstn.passport.api.service.domain.StatusCode;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethodModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
@@ -48,10 +54,18 @@ public abstract class CertificateApplicationModelMapper {
 	@Autowired
 	protected StatusCodeService statusCodeService;
 
+  @Autowired
+	protected DeliveryMethodCodeService deliveryMethodCodeService;
+
+  @Autowired
+	protected ServiceLevelCodeService serviceLevelCodeService;
+
 	@PostConstruct
 	public void postConstruct() {
 		Assert.notNull(sourceCodeService, "sourceCodeService is required; it must not be null");
 		Assert.notNull(statusCodeService, "statusCodeService is required; it must not be null");
+		Assert.notNull(deliveryMethodCodeService, "deliveryMethodCodeService is required; it must not be null");
+		Assert.notNull(serviceLevelCodeService, "serviceLevelCodeService is required; it must not be null");
 	}
 
 	@Nullable
@@ -69,6 +83,12 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "surname", source = "certificateApplication.certificateApplicationApplicant.personName.personSurname")
 	@Mapping(target = "sourceCodeId", source = "certificateApplication.resourceMeta.sourceCode", qualifiedByName = { "toSourceCodeId" })
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
+  @Mapping(target = "deliveryMethodCodeId", source = "certificateApplication.certificateApplicationDeliveryMethod", qualifiedByName = { "toDeliveryMethodCodeId" })
+  @Mapping(target = "serviceLevelCodeId", source = "certificateApplication.certificateApplicationServiceLevel", qualifiedByName = { "toServiceLevelCodeId" })
+  @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date")
+  @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date")
+  @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date")
+  @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date")
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
@@ -82,6 +102,12 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personGivenNames", source = "passportStatus", qualifiedByName = { "getPersonGivenNames" })
 	@Mapping(target = "certificateApplication.certificateApplicationApplicant.personName.personSurname", source = "surname")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
+  @Mapping(target = "certificateApplication.certificateApplicationDeliveryMethod.deliveryMethodCode", source = "deliveryMethodCodeId", qualifiedByName = { "toDeliveryMethodCdoCode" })
+  @Mapping(target = "certificateApplication.certificateApplicationServiceLevel.serviceLevelCode", source = "serviceLevelCodeId", qualifiedByName = { "toServiceLevelCdoCode" })
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date", source = "appReceivedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date", source = "appReviewedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date", source = "appPrintedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date", source = "appCompletedDate")
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
 	@Mapping(target = "certificateApplication.resourceMeta.version", source = "version")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
@@ -148,6 +174,60 @@ public abstract class CertificateApplicationModelMapper {
 		return Optional.ofNullable(statusCodeId)
 			.flatMap(statusCodeService::read)
 			.map(StatusCode::getCdoCode)
+			.orElse(null);
+	}
+
+  /**
+	 * Map a {@link CertificateApplicationApplicantModel} to a {@link DeliveryMethodCode#getId}.
+	 * Returns {@code null} if {@code certificateApplicationStatusModel} is {@code null} or the delivery method code cannot be found.
+	 */
+	@Nullable
+	@Named("toDeliveryMethodCodeId")
+	protected String toDeliveryMethodCodeId(@Nullable CertificateApplicationDeliveryMethodModel certificateApplicationDeliveryMethod) {
+		return Optional.ofNullable(certificateApplicationDeliveryMethod)
+			.map(CertificateApplicationDeliveryMethodModel::getDeliveryMethodCode)
+			.flatMap(deliveryMethodCodeService::readByCdoCode)
+			.map(DeliveryMethodCode::getId)
+			.orElse(null);
+	}
+
+	 /**
+	 * Map a {@link PassportStatus#getDeliveryMethodCodeId()} to a {@link cdoCode}.
+	 * Returns {@code null} if {@code passportStatus} is {@code null} or the status cannot be found.
+	 */
+	@Nullable
+	@Named("toDeliveryMethodCdoCode")
+	protected String toDeliveryMethodCdoCode(@Nullable String deliveryMethodCodeId) {
+		return Optional.ofNullable(deliveryMethodCodeId)
+			.flatMap(deliveryMethodCodeService::read)
+			.map(DeliveryMethodCode::getCdoCode)
+			.orElse(null);
+	}
+
+  /**
+	 * Map a {@link CertificateApplicationApplicantModel} to a {@link ServiceLevelCode#getId}.
+	 * Returns {@code null} if {@code certificateApplicationStatusModel} is {@code null} or the status code cannot be found.
+	 */
+	@Nullable
+	@Named("toServiceLevelCodeId")
+	protected String toServiceLevelCodeId(@Nullable CertificateApplicationServiceLevelModel certificateApplicationServiceLevel) {
+		return Optional.ofNullable(certificateApplicationServiceLevel)
+			.map(CertificateApplicationServiceLevelModel::getServiceLevelCode)
+			.flatMap(serviceLevelCodeService::readByCdoCode)
+			.map(ServiceLevelCode::getId)
+			.orElse(null);
+	}
+
+	 /**
+	 * Map a {@link PassportStatus#getServiceLevelCodeId()} to a {@link cdoCode}.
+	 * Returns {@code null} if {@code passportStatus} is {@code null} or the status cannot be found.
+	 */
+	@Nullable
+	@Named("toServiceLevelCdoCode")
+	protected String toServiceLevelCdoCode(@Nullable String serviceLevelCodeId) {
+		return Optional.ofNullable(serviceLevelCodeId)
+			.flatMap(serviceLevelCodeService::read)
+			.map(ServiceLevelCode::getCdoCode)
 			.orElse(null);
 	}
 

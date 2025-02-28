@@ -179,6 +179,12 @@ application:
       status-codes:
         expire-after-write: 5
         time-unit: minutes
+      delivery-method-codes:
+        expire-after-write: 5
+        time-unit: minutes
+      service-level-codes:
+        expire-after-write: 5
+        time-unit: minutes
   database-initializer:
     duplicate-statuses-number: 10     # number of duplicate (ie: same data) statuses to generate on startup
     generated-statuses-number: 10_000 # number of random status to generate on startup
