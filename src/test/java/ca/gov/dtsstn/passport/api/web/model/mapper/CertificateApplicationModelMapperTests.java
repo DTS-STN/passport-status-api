@@ -31,8 +31,6 @@ import ca.gov.dtsstn.passport.api.service.domain.ImmutablePassportStatus;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutableServiceLevelCode;
 import ca.gov.dtsstn.passport.api.service.domain.ImmutableStatusCode;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
-import ca.gov.dtsstn.passport.api.web.model.ApplicationReceivedDateModel;
-import ca.gov.dtsstn.passport.api.web.model.ApplicationReviewedDateModel;
 import ca.gov.dtsstn.passport.api.web.model.BirthDateModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationApplicantModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
@@ -40,16 +38,19 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethodModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
-import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDatesModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationDeliveryMethodModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationTimelineDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonContactInformationModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonNameModel;
 import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
+import ca.gov.dtsstn.passport.api.web.model.TimelineDateModel;
 
 
 /**
@@ -315,15 +316,13 @@ class CertificateApplicationModelMapperTests {
     assertThat(getCertificateApplicationRepresentation) // check service level field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
-			.extracting(CertificateApplicationTimelineDatesModel::getApplicationReceivedDate)
-			.extracting(ApplicationReceivedDateModel::getDate)
-			.isEqualTo(appReceivedDate.toString());
+      .asList()
+      .contains(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date("2000-01-01").build()).build());
     assertThat(getCertificateApplicationRepresentation) // check service level field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
-			.extracting(CertificateApplicationTimelineDatesModel::getApplicationReviewedDate)
-			.extracting(ApplicationReviewedDateModel::getDate)
-			.isEqualTo(appReviewedDate.toString());
+      .asList()
+      .contains(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date("2000-01-02").build()).build());
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationStatus)
@@ -378,14 +377,20 @@ class CertificateApplicationModelMapperTests {
           "CertificateApplicationServiceLevel": {
 			      "ServiceLevelCode": "%s"
 			    },
-          "CertificateApplicationTimelineDates": {
-            "ApplicationReceivedDate": {
-              "Date": "2021-01-01"
+          "CertificateApplicationTimelineDates": [
+            {
+              "ReferenceDataName": "Received",
+              "TimelineDate": {
+                "Date": "2021-01-01"
+              }
             }, 
-            "ApplicationReviewedDate": {
-              "Date": "2021-01-02"
+            {
+              "ReferenceDataName": "Reviewed",
+              "TimelineDate": {
+                "Date": "2021-01-02"
+              }
             }
-          }
+          ]
 			  }
 			}
 		""".formatted(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE, DELIVERY_METHOD_CODE__MAIL__ID, SERVICE_LEVEL_CODE__TEN_DAYS__ID);

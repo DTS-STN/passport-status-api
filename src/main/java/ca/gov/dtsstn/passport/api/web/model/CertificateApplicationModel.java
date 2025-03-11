@@ -1,6 +1,7 @@
 package ca.gov.dtsstn.passport.api.web.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public interface CertificateApplicationModel extends Serializable {
 	@Default
 	@JsonProperty("CertificateApplicationTimelineDates")
 	@NotNull(message = "CertificateApplicationTimelineDates is required; it must not be null")
-	default CertificateApplicationTimelineDatesModel getCertificateApplicationTimelineDates() {
-		return ImmutableCertificateApplicationTimelineDatesModel.builder().build();
+	default Collection<CertificateApplicationTimelineDateModel> getCertificateApplicationTimelineDates() {
+		return Collections.emptyList(); 
 	}
 }

@@ -2,6 +2,8 @@ package ca.gov.dtsstn.passport.api.web.model.mapper;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,9 +35,12 @@ import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationDeliveryMethod
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationIdentificationModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationServiceLevelModel;
 import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationStatusModel;
+import ca.gov.dtsstn.passport.api.web.model.CertificateApplicationTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.CreateCertificateApplicationRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.GetCertificateApplicationRepresentationModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdentificationModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationTimelineDateModel;
+import ca.gov.dtsstn.passport.api.web.model.ImmutableTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.SourceCodeModel;
 import jakarta.annotation.PostConstruct;
 
@@ -85,10 +90,10 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "statusCodeId", source = "certificateApplication.certificateApplicationStatus", qualifiedByName = { "toStatusCodeId" })
   @Mapping(target = "deliveryMethodCodeId", source = "certificateApplication.certificateApplicationDeliveryMethod", qualifiedByName = { "toDeliveryMethodCodeId" })
   @Mapping(target = "serviceLevelCodeId", source = "certificateApplication.certificateApplicationServiceLevel", qualifiedByName = { "toServiceLevelCodeId" })
-  @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date")
-  @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date")
-  @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date")
-  @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date")
+  @Mapping(target = "appReceivedDate", source = "certificateApplication.certificateApplicationTimelineDates", qualifiedByName = { "getApplicationReceivedDate" })
+  @Mapping(target = "appReviewedDate", source = "certificateApplication.certificateApplicationTimelineDates", qualifiedByName = { "getApplicationReviewedDate" })
+  @Mapping(target = "appPrintedDate", source = "certificateApplication.certificateApplicationTimelineDates", qualifiedByName = { "getApplicationPrintedDate" })
+  @Mapping(target = "appCompletedDate", source = "certificateApplication.certificateApplicationTimelineDates", qualifiedByName = { "getApplicationCompletedDate" })
 	@Mapping(target = "statusDate", source = "certificateApplication.certificateApplicationStatus.statusDate.date")
 	@Mapping(target = "version", source = "certificateApplication.resourceMeta.version")
 	public abstract PassportStatus toDomain(@Nullable CreateCertificateApplicationRequestModel createCertificateApplicationRequest);
@@ -104,10 +109,7 @@ public abstract class CertificateApplicationModelMapper {
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusCode", source = "statusCodeId", qualifiedByName = { "toStatusCdoCode" })
   @Mapping(target = "certificateApplication.certificateApplicationDeliveryMethod.deliveryMethodCode", source = "deliveryMethodCodeId", qualifiedByName = { "toDeliveryMethodCdoCode" })
   @Mapping(target = "certificateApplication.certificateApplicationServiceLevel.serviceLevelCode", source = "serviceLevelCodeId", qualifiedByName = { "toServiceLevelCdoCode" })
-	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReceivedDate.date", source = "appReceivedDate")
-	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationReviewedDate.date", source = "appReviewedDate")
-	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationPrintedDate.date", source = "appPrintedDate")
-	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates.applicationCompletedDate.date", source = "appCompletedDate")
+	@Mapping(target = "certificateApplication.certificateApplicationTimelineDates", source = "passportStatus", qualifiedByName={ "toTimelineDatesList" })
 	@Mapping(target = "certificateApplication.certificateApplicationStatus.statusDate.date", source = "statusDate")
 	@Mapping(target = "certificateApplication.resourceMeta.version", source = "version")
 	public abstract GetCertificateApplicationRepresentationModel toModel(@Nullable PassportStatus passportStatus);
@@ -325,6 +327,73 @@ public abstract class CertificateApplicationModelMapper {
 	protected String findManifestNumber(@Nullable Iterable<CertificateApplicationIdentificationModel> certificateApplicationIdentifications) {
 		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT);
 	}
+
+  @Nullable
+  @Named("getApplicationReceivedDate")
+  protected LocalDate getApplicationReceivedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
+    var date = stream(timelineDates)
+        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT))
+        .findFirst() 
+        .orElse(null);
+
+    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
+  }
+
+  @Nullable
+  @Named("getApplicationReviewedDate")
+  protected LocalDate getApplicationReviewedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
+    var date = stream(timelineDates)
+        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT))
+        .findFirst() 
+        .orElse(null);
+
+    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
+  }
+
+  @Nullable
+  @Named("getApplicationPrintedDate")
+  protected LocalDate getApplicationPrintedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
+    var date = stream(timelineDates)
+        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.PRINTED_REFERENCE_DATA_TEXT))
+        .findFirst() 
+        .orElse(null);
+
+    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
+  }
+
+  @Nullable
+  @Named("getApplicationCompletedDate")
+  protected LocalDate getApplicationCompletedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
+    var date = stream(timelineDates)
+        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.COMPLETED_REFERENCE_DATA_TEXT))
+        .findFirst() 
+        .orElse(null);
+
+    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
+  }
+
+  @Named("toTimelineDatesList")
+  protected Collection<CertificateApplicationTimelineDateModel> toTimelineDatesList(PassportStatus status) {
+    var dateList = new ArrayList<CertificateApplicationTimelineDateModel>();
+
+    if (status.getAppReceivedDate() != null) {
+      dateList.add(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date(status.getAppReceivedDate().toString()).build()).build());
+    }
+
+    if (status.getAppReviewedDate() != null) {
+      dateList.add(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date(status.getAppReviewedDate().toString()).build()).build());
+    }
+
+    if (status.getAppPrintedDate() != null) {
+      dateList.add(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.PRINTED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date(status.getAppPrintedDate().toString()).build()).build());
+    }
+
+    if (status.getAppCompletedDate() != null) {
+      dateList.add(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.COMPLETED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date(status.getAppCompletedDate().toString()).build()).build());
+    }
+
+    return dateList;
+  }
 
 	/**
 	 * Maps an {@code Iterable} to a single element by returning the first element found. Returns {@code null} if
