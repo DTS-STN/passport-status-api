@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -316,12 +318,12 @@ class CertificateApplicationModelMapperTests {
     assertThat(getCertificateApplicationRepresentation) // check service level field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
-      .asList()
+      .asInstanceOf(InstanceOfAssertFactories.LIST)
       .contains(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date("2000-01-01").build()).build());
     assertThat(getCertificateApplicationRepresentation) // check service level field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
 			.extracting(CertificateApplicationModel::getCertificateApplicationTimelineDates)
-      .asList()
+      .asInstanceOf(InstanceOfAssertFactories.LIST)
       .contains(ImmutableCertificateApplicationTimelineDateModel.builder().referenceDataName(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT).timelineDate(ImmutableTimelineDateModel.builder().date("2000-01-02").build()).build());
 		assertThat(getCertificateApplicationRepresentation) // check status field
 			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
