@@ -21,11 +21,6 @@ import jakarta.validation.constraints.NotNull;
 @JsonDeserialize(as = ImmutableCertificateApplicationTimelineDateModel.class)
 public interface CertificateApplicationTimelineDateModel extends Serializable {
 
-  // Current potential ReferenceDataNames:
-  // - Received
-  // - Reviewed
-  // - Printed
-  // - Completed
   static final String RECEIVED_REFERENCE_DATA_TEXT = "Received";
   static final String REVIEWED_REFERENCE_DATA_TEXT = "Reviewed";
   static final String PRINTED_REFERENCE_DATA_TEXT = "Printed";

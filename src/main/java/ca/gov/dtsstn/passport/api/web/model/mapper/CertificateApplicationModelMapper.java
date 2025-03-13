@@ -42,6 +42,7 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationIdent
 import ca.gov.dtsstn.passport.api.web.model.ImmutableCertificateApplicationTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.SourceCodeModel;
+import ca.gov.dtsstn.passport.api.web.model.TimelineDateModel;
 import jakarta.annotation.PostConstruct;
 
 /**
@@ -328,48 +329,56 @@ public abstract class CertificateApplicationModelMapper {
 		return findCertificateApplicationIdentification(certificateApplicationIdentifications, CertificateApplicationIdentificationModel.MANIFEST_NUMBER_CATEGORY_TEXT);
 	}
 
+	Predicate<CertificateApplicationTimelineDateModel> byReference(String referenceDataName) {
+		return td -> td.getReferenceDataName().equals(referenceDataName);
+	}
+
   @Nullable
   @Named("getApplicationReceivedDate")
   protected LocalDate getApplicationReceivedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
-    var date = stream(timelineDates)
-        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT))
-        .findFirst() 
+    return stream(timelineDates)
+        .filter(byReference(CertificateApplicationTimelineDateModel.RECEIVED_REFERENCE_DATA_TEXT))
+        .findFirst()
+				.map(CertificateApplicationTimelineDateModel::getTimelineDate)
+				.map(TimelineDateModel::getDate)
+				.map(LocalDate::parse)
         .orElse(null);
-
-    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
   }
 
   @Nullable
   @Named("getApplicationReviewedDate")
   protected LocalDate getApplicationReviewedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
-    var date = stream(timelineDates)
-        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT))
-        .findFirst() 
+    return stream(timelineDates)
+        .filter(byReference(CertificateApplicationTimelineDateModel.REVIEWED_REFERENCE_DATA_TEXT))
+        .findFirst()
+				.map(CertificateApplicationTimelineDateModel::getTimelineDate)
+				.map(TimelineDateModel::getDate)
+				.map(LocalDate::parse)
         .orElse(null);
-
-    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
   }
 
   @Nullable
   @Named("getApplicationPrintedDate")
   protected LocalDate getApplicationPrintedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
-    var date = stream(timelineDates)
-        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.PRINTED_REFERENCE_DATA_TEXT))
-        .findFirst() 
+    return stream(timelineDates)
+        .filter(byReference(CertificateApplicationTimelineDateModel.PRINTED_REFERENCE_DATA_TEXT))
+        .findFirst()
+				.map(CertificateApplicationTimelineDateModel::getTimelineDate)
+				.map(TimelineDateModel::getDate)
+				.map(LocalDate::parse)
         .orElse(null);
-
-    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
   }
 
   @Nullable
   @Named("getApplicationCompletedDate")
   protected LocalDate getApplicationCompletedDate(Iterable<CertificateApplicationTimelineDateModel> timelineDates) {
-    var date = stream(timelineDates)
-        .filter(td -> td.getReferenceDataName().equals(CertificateApplicationTimelineDateModel.COMPLETED_REFERENCE_DATA_TEXT))
-        .findFirst() 
+    return stream(timelineDates)
+        .filter(byReference(CertificateApplicationTimelineDateModel.COMPLETED_REFERENCE_DATA_TEXT))
+        .findFirst()
+				.map(CertificateApplicationTimelineDateModel::getTimelineDate)
+				.map(TimelineDateModel::getDate)
+				.map(LocalDate::parse)
         .orElse(null);
-
-    return date == null ? null : LocalDate.parse(date.getTimelineDate().getDate());
   }
 
   @Named("toTimelineDatesList")

@@ -85,7 +85,7 @@ public interface CertificateApplicationModel extends Serializable {
 	@Default
 	@JsonProperty("CertificateApplicationTimelineDates")
 	@NotNull(message = "CertificateApplicationTimelineDates is required; it must not be null")
-	default Collection<CertificateApplicationTimelineDateModel> getCertificateApplicationTimelineDates() {
+	default List<CertificateApplicationTimelineDateModel> getCertificateApplicationTimelineDates() {
 		return Collections.emptyList(); 
 	}
 }
