@@ -18,7 +18,7 @@ import jakarta.validation.constraints.Size;
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
 @Immutable
-@Schema(name = "CertificateApplicationDeliveryMethod")
+@Schema(name = "CertificateApplicationServiceLevel")
 @Style(validationMethod = ValidationMethod.NONE)
 @JsonDeserialize(as = ImmutableCertificateApplicationServiceLevelModel.class)
 public interface CertificateApplicationServiceLevelModel extends Serializable {
