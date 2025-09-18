@@ -59,7 +59,7 @@
 		<datafaker.version>2.4.4</datafaker.version>
 		<duplicate-finder-maven-plugin.version>2.0.1</duplicate-finder-maven-plugin.version>
 		<gitlog-maven-plugin.version>1.14.0</gitlog-maven-plugin.version>
-    <guava.version>33.4.8-jre</guava.version>
+    <guava.version>33.5.0-jre</guava.version>
 		<icu4j.version>77.1</icu4j.version>
 		<immutables.version>2.11.3</immutables.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
