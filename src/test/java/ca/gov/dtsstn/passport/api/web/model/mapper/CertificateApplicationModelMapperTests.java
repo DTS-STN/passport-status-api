@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -163,6 +162,11 @@ class CertificateApplicationModelMapperTests {
 				.identificationId(fileNumber)
 				.build())))
 			.isEqualTo(fileNumber);
+	}
+
+	@Test
+	void testGetPersonGivenNames_null() {
+		assertThat(mapper.getPersonGivenNames(null)).isNull();
 	}
 
 	@Test
@@ -336,6 +340,32 @@ class CertificateApplicationModelMapperTests {
 	}
 
 	@Test
+	void testToModel_singleName() {
+		final String givenName = null;
+		final var surname = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
+
+		final var passportStatus = ImmutablePassportStatus.builder()
+			.givenName(givenName)
+			.surname(surname)
+			.build();
+
+		final var getCertificateApplicationRepresentation = mapper.toModel(passportStatus);
+
+		assertThat(getCertificateApplicationRepresentation) // check givenName field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getPersonName)
+			.extracting(PersonNameModel::getPersonGivenNames)
+			.isNull();
+		assertThat(getCertificateApplicationRepresentation) // check surname field
+			.extracting(GetCertificateApplicationRepresentationModel::getCertificateApplication)
+			.extracting(CertificateApplicationModel::getCertificateApplicationApplicant)
+			.extracting(CertificateApplicationApplicantModel::getPersonName)
+			.extracting(PersonNameModel::getPersonSurname)
+			.isEqualTo(surname);
+	}
+
+	@Test
 	void testToDomain_null() throws Exception {
 		assertThat(mapper.toDomain(null)).isNull();
 	}
@@ -447,6 +477,74 @@ class CertificateApplicationModelMapperTests {
 		verify(statusCodeService).readByCdoCode(any());
     verify(deliveryMethodCodeService).readByCdoCode(any());
     verify(serviceLevelCodeService).readByCdoCode(any());
+	}
+
+	@Test
+	void testToDomain_singleName() throws Exception {
+		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__FILE_BEING_PROCESSED__ID).build()));
+
+    when(deliveryMethodCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().id(DELIVERY_METHOD_CODE__MAIL__ID).build()));
+
+    when(serviceLevelCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().id(SERVICE_LEVEL_CODE__TEN_DAYS__ID).build()));
+
+		final var objectMapper = new ObjectMapper().findAndRegisterModules();
+
+		// cheating a little here because doing anything with NIEM sucks.. 😳
+		final var json = """
+			{
+			  "CertificateApplication": {
+			    "CertificateApplicationApplicant": {
+			      "BirthDate": { "Date": "2000-01-01" },
+			      "PersonContactInformation": { "ContactEmailID": "user@example.com" },
+			      "PersonName": {
+			        "PersonSurName": "Doe"
+			      }
+			    },
+			    "CertificateApplicationIdentification": [{
+			      "IdentificationCategoryText": "Application Register SID",
+			      "IdentificationID": "ABCD1234"
+			    }, {
+			      "IdentificationCategoryText": "File Number",
+			      "IdentificationID": "ABCD1234"
+			    }],
+			    "CertificateApplicationStatus": {
+			      "StatusCode": "%s",
+			      "StatusDate": "2000-01-01"
+			    },
+          "CertificateApplicationDeliveryMethod": {
+			      "DeliveryMethodCode": "%s"
+			    },
+          "CertificateApplicationServiceLevel": {
+			      "ServiceLevelCode": "%s"
+			    },
+          "CertificateApplicationTimelineDates": [
+            {
+              "ReferenceDataName": "Received",
+              "TimelineDate": {
+                "Date": "2021-01-01"
+              }
+            }, 
+            {
+              "ReferenceDataName": "Reviewed",
+              "TimelineDate": {
+                "Date": "2021-01-02"
+              }
+            }
+          ]
+			  }
+			}
+		""".formatted(STATUS_CODE__FILE_BEING_PROCESSED__CDO_CODE, DELIVERY_METHOD_CODE__MAIL__ID, SERVICE_LEVEL_CODE__TEN_DAYS__ID);
+
+		final var createCertificateApplicationRequest = objectMapper.readValue(json, CreateCertificateApplicationRequestModel.class);
+
+		final var passportStatus = mapper.toDomain(createCertificateApplicationRequest);
+
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getGivenName)
+			.isNull();
+		assertThat(passportStatus)
+			.extracting(PassportStatus::getSurname)
+			.isEqualTo("Doe");
 	}
 
 	@Test
