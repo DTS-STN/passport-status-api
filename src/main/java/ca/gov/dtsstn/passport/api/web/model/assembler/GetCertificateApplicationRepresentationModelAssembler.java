@@ -1,8 +1,5 @@
 package ca.gov.dtsstn.passport.api.web.model.assembler;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import java.util.Optional;
 
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -31,16 +28,8 @@ public class GetCertificateApplicationRepresentationModelAssembler extends Abstr
 	protected GetCertificateApplicationRepresentationModel instantiateModel(PassportStatus passportStatus) {
 		Assert.notNull(passportStatus, "passportStatus is required; it must not be null");
 
-		final var dateOfBirth = passportStatus.getDateOfBirth();
-		final var fileNumber = passportStatus.getFileNumber();
-		final var givenName = passportStatus.getGivenName();
-		final var surname = passportStatus.getSurname();
-
-		final var searchLink = linkTo(methodOn(PassportStatusController.class).search(dateOfBirth, fileNumber, givenName, surname, true)).withRel("search");
-
 		return Optional.ofNullable(passportStatus)
-			.map(mapper::toModel).orElseThrow()
-			.add(searchLink);
+			.map(mapper::toModel).orElseThrow();
 	}
 
 }

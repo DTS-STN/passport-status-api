@@ -111,7 +111,29 @@ public class PassportStatusService {
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
 		Assert.hasText(givenName, "givenName is required, it must not be blank or null");
 		Assert.hasText(surname, "surname is required; it must not be blank or null");
+
 		final var passportStatuses = repository.fileNumberSearch(fileNumber, dateOfBirth, givenName, surname).stream().map(mapper::fromEntity).toList();
+
+		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
+		return passportStatuses;
+	}
+
+	/**
+	 * Search for passport statuses using email, date of birth, and a single name (surname).
+	 * This method is used for individuals who have a single name without a given name. Given name must be explicitly null in the repository.
+	 *
+	 * @param dateOfBirth The date of birth of the passport applicant.
+	 * @param email The email address of the passport applicant.
+	 * @param singleName The single name (surname) of the passport applicant.
+	 * @return A list of matching PassportStatus instances.
+	 */
+	public List<PassportStatus> fileNumberSearchSingleName(LocalDate dateOfBirth, String fileNumber, String singleName) {
+		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
+		Assert.hasText(singleName, "singleName is required; it must not be blank or null");
+
+		final var passportStatuses = repository.fileNumberSearchSingleName(fileNumber, dateOfBirth, singleName).stream().map(mapper::fromEntity).toList();
+
 		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}

@@ -156,4 +156,16 @@ class PassportStatusServiceTests {
 		verify(passportStatusMapper).fromEntity(any());
 		verify(applicationEventPublisher).publishEvent(any(PassportStatusReadEvent.class));
 	}
+
+		@Test void testSearchSingleName() {
+		when(passportStatusRepository.fileNumberSearchSingleName(any(), any(), any())).thenReturn(List.of(new PassportStatusEntity()));
+		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
+
+		final var passportStatuses = passportStatusService.fileNumberSearchSingleName(LocalDate.now(), "fileNumber", "singleName");
+
+		assertThat(passportStatuses).isNotNull();
+		verify(passportStatusRepository).fileNumberSearchSingleName(any(), any(), any());
+		verify(passportStatusMapper).fromEntity(any());
+		verify(applicationEventPublisher).publishEvent(any(PassportStatusReadEvent.class));
+	}
 }
