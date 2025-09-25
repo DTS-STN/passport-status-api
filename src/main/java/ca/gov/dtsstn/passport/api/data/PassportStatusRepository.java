@@ -20,7 +20,7 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 		 WHERE lower(email) = lower(?1)
 		   AND dateOfBirth = ?2
 		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(givenName)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))
-		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname))   as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?4)) as string))
+		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?4)) as string))
 		   AND version = (SELECT max(version) FROM PassportStatus other WHERE other.applicationRegisterSid = ps.applicationRegisterSid)
 	""")
 	List<PassportStatusEntity> emailSearch(String email, LocalDate dateOfBirth, String givenName, String surname);
@@ -30,10 +30,20 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 		 WHERE lower(fileNumber) = lower(?1)
 		   AND dateOfBirth = ?2
 		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(givenName)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))
-		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname))   as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?4)) as string))
+		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?4)) as string))
 		   AND version = (SELECT MAX(version) FROM PassportStatus other WHERE other.applicationRegisterSid = ps.applicationRegisterSid)
 	""")
 	List<PassportStatusEntity> fileNumberSearch(String fileNumber, LocalDate dateOfBirth, String givenName, String surname);
+
+	@Query("""
+		SELECT ps FROM PassportStatus ps
+		 WHERE lower(fileNumber) = lower(?1)
+		   AND dateOfBirth = ?2
+		   AND ps.givenName IS NULL
+		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))
+		   AND version = (SELECT MAX(version) FROM PassportStatus other WHERE other.applicationRegisterSid = ps.applicationRegisterSid)
+	""")
+	List<PassportStatusEntity> fileNumberSearchSingleName(String fileNumber, LocalDate dateOfBirth, String singleName);
 
 	List<PassportStatusEntity> findAllByApplicationRegisterSid(String applicationRegisterSid);
 

@@ -218,8 +218,86 @@ public class PassportStatusController {
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}
 
+	/**
+	 * Perform a passport status search using the following fields:
+	 *
+	 * <ul>
+	 *   <li>{@code dateOfBirth}
+	 *   <li>{@code fileNumber}
+	 *   <li>{@code singleName aka surname}
+	 *
+	 * This endpoint is used for individuals who have a single name without a given name. Given name must be explicitly null in the repository.
+	 * 
+	 * This endpoint will perform some logic on the search results as follows:
+	 *
+	 * <ol>
+	 *   <li>Perform a search using the provided parameters
+	 *   <li>Check for distinct {@code applicationRegisterSid}; throw exception if <strong>more than one</strong> value is found
+	 *   <li>If a distict {@code applicationRegisterSid} was found, perform a new search using the {@code applicationRegisterSid}
+	 *   <li>Sort the results by {@code PassportStatus.version}, extract newest passport status, wrap in a collection and return
+	 */
+	@GetMapping({ "/_search-single-name" })
+	@ApiResponses.BadRequestError
+	@ResponseStatus(code = HttpStatus.OK)
+	@ApiResponses.UnprocessableEntityError
+	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
+	@Operation(summary = "Search for a passport status by fileNumber, singleName and dateOfBirth.", operationId = "passport-status-search")
+	public CollectionModel<GetCertificateApplicationRepresentationModel> searchSingleName(
+			@DateTimeFormat(iso = ISO.DATE)
+			@NotNull(message = "dateOfBirth must not be null or blank")
+			@PastOrPresent(message = "dateOfBirth must be a date in the past")
+			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
+			@RequestParam(required = false) LocalDate dateOfBirth,
+
+			@NotBlank(message = "fileNumber must not be null or blank")
+			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
+			@RequestParam(required = false) String fileNumber,
+
+			@NotBlank(message = "singleName must not be null or blank")
+			@Parameter(description = "The singleName of the passport applicant.", example = "Spock", required = true)
+			@RequestParam(required = false) String singleName,
+
+			@Deprecated // This parameter will soon be removed
+			@Parameter(description = "If the query should return a single unique result.", required = false)
+			@RequestParam(defaultValue = "true") boolean unique) {
+		log.debug("Performing passport status search using terms {}", List.of(dateOfBirth, fileNumber, singleName));
+		final var initialSearchResults = service.fileNumberSearchSingleName(dateOfBirth, fileNumber, singleName);
+		log.debug("{} results returned for search terms {}", initialSearchResults.size(), List.of(dateOfBirth, fileNumber, singleName));
+
+		log.debug("Checking results for distinct applicationRegisterSids");
+		final var applicationRegisterSids = initialSearchResults.stream().map(PassportStatus::getApplicationRegisterSid).distinct().toList();
+		final var nApplicationRegisterSids = applicationRegisterSids.size();
+		log.debug("Number of distinct applicationRegisterSids: {}", nApplicationRegisterSids);
+
+		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth).fileNumber(fileNumber).surname(singleName);
+
+		if (nApplicationRegisterSids > 1) {
+			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, singleName));
+			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).applicationRegisterSids(applicationRegisterSids).build());
+			throw new NonUniqueResourceException("Search query returned non-unique applicationRegisterSid result");
+		}
+
+		log.debug("Performing applicationRegisterSid search");
+		final var passportStatuses = applicationRegisterSids.stream().findFirst().map(service::applicationRegisterSidSearch).orElse(Collections.emptyList());
+		final var passportStatus = passportStatuses.stream().sorted(byVersionDesc()).findFirst();
+		log.debug("applicationRegisterSid search produced {} results; newest status: {}", passportStatuses.size(), passportStatus);
+
+		if (passportStatuses.isEmpty()) {
+			searchEventBuilder.result(Result.MISS);
+			eventPublisher.publishEvent(searchEventBuilder.build());
+		}
+		else {
+			searchEventBuilder.result(Result.HIT);
+			passportStatus.ifPresent(searchEventBuilder::passportStatus);
+			eventPublisher.publishEvent(searchEventBuilder.build());
+		}
+
+		final var selfLink = linkTo(methodOn(getClass()).searchSingleName(dateOfBirth, fileNumber, singleName, unique)).withSelfRel();
+		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList())).add(selfLink);
+		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
+	}
+
 	protected Comparator<PassportStatus> byVersionDesc() {
 		return Comparator.comparingLong(PassportStatus::getVersion).reversed();
 	}
-
 }
