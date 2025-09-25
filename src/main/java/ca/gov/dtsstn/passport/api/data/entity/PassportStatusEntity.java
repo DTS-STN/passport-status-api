@@ -31,7 +31,7 @@ public class PassportStatusEntity extends AbstractEntity {
 	@Column(length = 32, nullable = false)
 	private String fileNumber;
 
-	@Column(length = 64, nullable = false)
+	@Column(length = 64, nullable = true)
 	private String givenName;
 
 	@Column(length = 32, nullable = true)
