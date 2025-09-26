@@ -23,14 +23,22 @@ public interface NotificationNotSentEvent extends Serializable {
 	@Nullable
 	Iterable<String> getApplicationRegisterSids();
 
+	@Nullable
 	LocalDate getDateOfBirth();
 
+	@Nullable
 	String getEmail();
 
+	@Nullable
 	String getGivenName();
 
+	@Nullable
 	String getSurname();
 
+	@Nullable
+	String getMononym();
+
+	@Nullable
 	String getReason();
 
 	@Default

@@ -38,7 +38,7 @@ public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObj
 	@Override
 	public D toModel(T entity) {
 		Assert.notNull(entity, "entity is required; it must not be null");
-		Assert.hasText(entity.getId(), "entity.id is requred; it must not be null or blank");
+		Assert.hasText(entity.getId(), "entity.id is required; it must not be null or blank");
 		return createModelWithId(entity.getId(), entity); // NOSONAR (null values)
 	}
 
@@ -60,7 +60,7 @@ public abstract class AbstractResponseModelAssembler<T extends AbstractDomainObj
 	@SuppressWarnings({ "unchecked" })
 	public <C> CollectionModel<C> wrapCollection(CollectionModel<C> collectionModel, Class<C> type) {
 		Assert.notNull(collectionModel, "collectionModel is required; it must not be null");
-		Assert.notNull(type, "type is requred; it must not be null");
+		Assert.notNull(type, "type is required; it must not be null");
 		return collectionModel.getContent().isEmpty() ? (CollectionModel<C>) CollectionModel.of(List.of(embeddedWrappers.emptyCollectionOf(type)), collectionModel.getLinks()) : collectionModel;
 	}
 

@@ -89,7 +89,7 @@ public class PassportStatusController {
 		Assert.notNull(mapper, "mapper is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
 		Assert.notNull(passportStatusJmsService, "passportStatusJmsService is required; it must not be null");
-		Assert.notNull(service, "service is requred; it must not be null");
+		Assert.notNull(service, "service is required; it must not be null");
 		Assert.notNull(validator, "validator is required; it must not be null");
 
 		this.assembler = assembler;
@@ -163,19 +163,19 @@ public class PassportStatusController {
 			@NotNull(message = "dateOfBirth must not be null or blank")
 			@PastOrPresent(message = "dateOfBirth must be a date in the past")
 			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
-			@RequestParam(required = false) LocalDate dateOfBirth,
+			@RequestParam(required = true) LocalDate dateOfBirth,
 
 			@NotBlank(message = "fileNumber must not be null or blank")
 			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
-			@RequestParam(required = false) String fileNumber,
+			@RequestParam(required = true) String fileNumber,
 
 			@NotBlank(message = "givenName must not be null or blank")
 			@Parameter(description = "The given name of the passport applicant.", example = "John", required = true)
-			@RequestParam(required = false) String givenName,
+			@RequestParam(required = true) String givenName,
 
 			@NotBlank(message = "surname must not be null or blank")
 			@Parameter(description = "The surname of the passport applicant.", example = "Doe", required = true)
-			@RequestParam(required = false) String surname,
+			@RequestParam(required = true) String surname,
 
 			@Deprecated // This parameter will soon be removed
 			@Parameter(description = "If the query should return a single unique result.", required = false)
@@ -246,15 +246,15 @@ public class PassportStatusController {
 			@NotNull(message = "dateOfBirth must not be null or blank")
 			@PastOrPresent(message = "dateOfBirth must be a date in the past")
 			@Parameter(description = "The date of birth of the passport applicant in ISO-8601 format.", example = "2000-01-01", required = true)
-			@RequestParam(required = false) LocalDate dateOfBirth,
+			@RequestParam(required = true) LocalDate dateOfBirth,
 
 			@NotBlank(message = "fileNumber must not be null or blank")
 			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
-			@RequestParam(required = false) String fileNumber,
+			@RequestParam(required = true) String fileNumber,
 
 			@NotBlank(message = "mononym must not be null or blank")
 			@Parameter(description = "The mononym of the passport applicant.", example = "Spock", required = true)
-			@RequestParam(required = false) String mononym,
+			@RequestParam(required = true) String mononym,
 
 			@Deprecated // This parameter will soon be removed
 			@Parameter(description = "If the query should return a single unique result.", required = false)

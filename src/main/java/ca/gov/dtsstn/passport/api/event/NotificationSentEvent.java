@@ -20,18 +20,26 @@ public interface NotificationSentEvent extends Serializable {
 		return ImmutableNotificationSentEvent.builder();
 	}
 
+	@Nullable
 	String getEmail();
 
+	@Nullable
 	String getFileNumber();
 
+	@Nullable
 	String getGivenName();
 
 	@Nullable
 	PassportStatus getPassportStatus();
 
+	@Nullable
 	String getPreferredLanguage();
 
+	@Nullable
 	String getSurname();
+
+	@Nullable
+	String getMononym();
 
 	@Default
 	default Instant getTimestamp() {
