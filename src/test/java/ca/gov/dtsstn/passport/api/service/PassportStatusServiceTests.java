@@ -157,14 +157,14 @@ class PassportStatusServiceTests {
 		verify(applicationEventPublisher).publishEvent(any(PassportStatusReadEvent.class));
 	}
 
-		@Test void testSearchSingleName() {
-		when(passportStatusRepository.fileNumberSearchSingleName(any(), any(), any())).thenReturn(List.of(new PassportStatusEntity()));
+		@Test void testSearchMononym() {
+		when(passportStatusRepository.fileNumberSearchMononym(any(), any(), any())).thenReturn(List.of(new PassportStatusEntity()));
 		when(passportStatusMapper.fromEntity(any())).thenReturn(ImmutablePassportStatus.builder().build());
 
-		final var passportStatuses = passportStatusService.fileNumberSearchSingleName(LocalDate.now(), "fileNumber", "singleName");
+		final var passportStatuses = passportStatusService.fileNumberSearchMononym(LocalDate.now(), "fileNumber", "mononym");
 
 		assertThat(passportStatuses).isNotNull();
-		verify(passportStatusRepository).fileNumberSearchSingleName(any(), any(), any());
+		verify(passportStatusRepository).fileNumberSearchMononym(any(), any(), any());
 		verify(passportStatusMapper).fromEntity(any());
 		verify(applicationEventPublisher).publishEvent(any(PassportStatusReadEvent.class));
 	}

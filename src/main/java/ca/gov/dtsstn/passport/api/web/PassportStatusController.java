@@ -116,7 +116,6 @@ public class PassportStatusController {
 	public void create(
 			@RequestBody(required = true)
 			CreateCertificateApplicationRequestModel createCertificateApplicationRequest,
-
 			@RequestParam(defaultValue = "true", required = false)
 			@BooleanString(message = "async must be one of: 'true', 'false'")
 			@Parameter(description = "If the request should be handled asynchronously.", schema = @Schema(allowableValues = { "false", "true" }, defaultValue = "true"))
@@ -224,9 +223,9 @@ public class PassportStatusController {
 	 * <ul>
 	 *   <li>{@code dateOfBirth}
 	 *   <li>{@code fileNumber}
-	 *   <li>{@code singleName aka surname}
+	 *   <li>{@code mononym}
 	 *
-	 * This endpoint is used for individuals who have a single name without a given name. Given name must be explicitly null in the repository.
+	 * This endpoint is used for individuals who have a mononym. Given name must be explicitly null in the repository.
 	 * 
 	 * This endpoint will perform some logic on the search results as follows:
 	 *
@@ -236,13 +235,13 @@ public class PassportStatusController {
 	 *   <li>If a distict {@code applicationRegisterSid} was found, perform a new search using the {@code applicationRegisterSid}
 	 *   <li>Sort the results by {@code PassportStatus.version}, extract newest passport status, wrap in a collection and return
 	 */
-	@GetMapping({ "/_search-single-name" })
+	@GetMapping({ "/_search-mononym" })
 	@ApiResponses.BadRequestError
 	@ResponseStatus(code = HttpStatus.OK)
 	@ApiResponses.UnprocessableEntityError
 	@ApiResponse(responseCode = "200", description = "Retrieve a paged list of all passport statuses satisfying the search criteria.")
-	@Operation(summary = "Search for a passport status by fileNumber, singleName and dateOfBirth.", operationId = "passport-status-search")
-	public CollectionModel<GetCertificateApplicationRepresentationModel> searchSingleName(
+	@Operation(summary = "Search for a passport status by fileNumber, mononym and dateOfBirth.", operationId = "passport-status-search")
+	public CollectionModel<GetCertificateApplicationRepresentationModel> searchMononym(
 			@DateTimeFormat(iso = ISO.DATE)
 			@NotNull(message = "dateOfBirth must not be null or blank")
 			@PastOrPresent(message = "dateOfBirth must be a date in the past")
@@ -253,26 +252,26 @@ public class PassportStatusController {
 			@Parameter(description = "The electronic service request file number.", example = "ABCD1234", required = true)
 			@RequestParam(required = false) String fileNumber,
 
-			@NotBlank(message = "singleName must not be null or blank")
-			@Parameter(description = "The singleName of the passport applicant.", example = "Spock", required = true)
-			@RequestParam(required = false) String singleName,
+			@NotBlank(message = "mononym must not be null or blank")
+			@Parameter(description = "The mononym of the passport applicant.", example = "Spock", required = true)
+			@RequestParam(required = false) String mononym,
 
 			@Deprecated // This parameter will soon be removed
 			@Parameter(description = "If the query should return a single unique result.", required = false)
 			@RequestParam(defaultValue = "true") boolean unique) {
-		log.debug("Performing passport status search using terms {}", List.of(dateOfBirth, fileNumber, singleName));
-		final var initialSearchResults = service.fileNumberSearchSingleName(dateOfBirth, fileNumber, singleName);
-		log.debug("{} results returned for search terms {}", initialSearchResults.size(), List.of(dateOfBirth, fileNumber, singleName));
+		log.debug("Performing passport status search using terms {}", List.of(dateOfBirth, fileNumber, mononym));
+		final var initialSearchResults = service.fileNumberSearchMononym(dateOfBirth, fileNumber, mononym);
+		log.debug("{} results returned for search terms {}", initialSearchResults.size(), List.of(dateOfBirth, fileNumber, mononym));
 
 		log.debug("Checking results for distinct applicationRegisterSids");
 		final var applicationRegisterSids = initialSearchResults.stream().map(PassportStatus::getApplicationRegisterSid).distinct().toList();
 		final var nApplicationRegisterSids = applicationRegisterSids.size();
 		log.debug("Number of distinct applicationRegisterSids: {}", nApplicationRegisterSids);
 
-		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth).fileNumber(fileNumber).surname(singleName);
+		final var searchEventBuilder = PassportStatusSearchEvent.builder().dateOfBirth(dateOfBirth).fileNumber(fileNumber).mononym(mononym);
 
 		if (nApplicationRegisterSids > 1) {
-			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, singleName));
+			log.warn("Search query returned non-unique applicationRegisterSid result: {}", List.of(dateOfBirth, fileNumber, mononym));
 			eventPublisher.publishEvent(searchEventBuilder.result(Result.NON_UNIQUE).applicationRegisterSids(applicationRegisterSids).build());
 			throw new NonUniqueResourceException("Search query returned non-unique applicationRegisterSid result");
 		}
@@ -292,7 +291,7 @@ public class PassportStatusController {
 			eventPublisher.publishEvent(searchEventBuilder.build());
 		}
 
-		final var selfLink = linkTo(methodOn(getClass()).searchSingleName(dateOfBirth, fileNumber, singleName, unique)).withSelfRel();
+		final var selfLink = linkTo(methodOn(getClass()).searchMononym(dateOfBirth, fileNumber, mononym, unique)).withSelfRel();
 		final var collection = assembler.toCollectionModel(passportStatus.map(List::of).orElse(Collections.emptyList())).add(selfLink);
 		return assembler.wrapCollection(collection, GetCertificateApplicationRepresentationModel.class);
 	}

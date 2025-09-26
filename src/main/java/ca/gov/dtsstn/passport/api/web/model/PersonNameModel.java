@@ -32,7 +32,7 @@ public interface PersonNameModel extends Serializable {
 	@Nullable
 	@JsonSetter(nulls = Nulls.SKIP)
 	@Size(min = 1, max = 1, message = "PersonGivenName must be an array of size 1")
-	@Schema(description = "A set of given names of the certificate applicant. May be null, but if present must contain exactly one non-blank entry.", example = "[\"John\"]")
+	@Schema(description = "A set of given names of the certificate applicant. May be null in case of a mononym, but if present must contain exactly one non-blank entry.", example = "[\"John\"]")
 	List<@NotBlank(message = "PersonGivenName entries must not be blank") @Size(max = 128, message = "PersonGivenName must be 128 characters or less") String> getPersonGivenNames();
 
 	@JsonProperty("PersonSurName")

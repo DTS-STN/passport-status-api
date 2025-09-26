@@ -97,7 +97,7 @@ public class PassportStatusService {
 	}
 
 	public List<PassportStatus> emailSearch(LocalDate dateOfBirth, String email, String givenName, String surname) {
-		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
 		Assert.hasText(email, "email is required; it must not be blank or null");
 		Assert.hasText(givenName, "givenName is required, it must not be blank or null");
 		Assert.hasText(surname, "surname is required; it must not be blank or null");
@@ -107,7 +107,7 @@ public class PassportStatusService {
 	}
 
 	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String givenName, String surname) {
-		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
 		Assert.hasText(givenName, "givenName is required, it must not be blank or null");
 		Assert.hasText(surname, "surname is required; it must not be blank or null");
@@ -119,20 +119,20 @@ public class PassportStatusService {
 	}
 
 	/**
-	 * Search for passport statuses using email, date of birth, and a single name (surname).
-	 * This method is used for individuals who have a single name without a given name. Given name must be explicitly null in the repository.
+	 * Search for passport statuses using email, date of birth, and a mononym.
+	 * This method is used for individuals who have a mononym. Given name must be explicitly null in the repository.
 	 *
 	 * @param dateOfBirth The date of birth of the passport applicant.
 	 * @param email The email address of the passport applicant.
-	 * @param singleName The single name (surname) of the passport applicant.
+	 * @param mononym The mononym of the passport applicant.
 	 * @return A list of matching PassportStatus instances.
 	 */
-	public List<PassportStatus> fileNumberSearchSingleName(LocalDate dateOfBirth, String fileNumber, String singleName) {
-		Assert.notNull(dateOfBirth, "dateOfBirthis required; it must not be null");
+	public List<PassportStatus> fileNumberSearchMononym(LocalDate dateOfBirth, String fileNumber, String mononym) {
+		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
-		Assert.hasText(singleName, "singleName is required; it must not be blank or null");
+		Assert.hasText(mononym, "mononym is required; it must not be blank or null");
 
-		final var passportStatuses = repository.fileNumberSearchSingleName(fileNumber, dateOfBirth, singleName).stream().map(mapper::fromEntity).toList();
+		final var passportStatuses = repository.fileNumberSearchMononym(fileNumber, dateOfBirth, mononym).stream().map(mapper::fromEntity).toList();
 
 		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;

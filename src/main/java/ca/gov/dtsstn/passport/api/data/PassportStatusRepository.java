@@ -43,7 +43,7 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))
 		   AND version = (SELECT MAX(version) FROM PassportStatus other WHERE other.applicationRegisterSid = ps.applicationRegisterSid)
 	""")
-	List<PassportStatusEntity> fileNumberSearchSingleName(String fileNumber, LocalDate dateOfBirth, String singleName);
+	List<PassportStatusEntity> fileNumberSearchMononym(String fileNumber, LocalDate dateOfBirth, String mononym);
 
 	List<PassportStatusEntity> findAllByApplicationRegisterSid(String applicationRegisterSid);
 
