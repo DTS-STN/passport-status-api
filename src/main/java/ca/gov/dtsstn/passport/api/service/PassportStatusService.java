@@ -106,6 +106,15 @@ public class PassportStatusService {
 		return passportStatuses;
 	}
 
+	public List<PassportStatus> emailSearchMononym(LocalDate dateOfBirth, String email, String mononym) {
+		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
+		Assert.hasText(email, "email is required; it must not be blank or null");
+		Assert.hasText(mononym, "mononym is required; it must not be blank or null");
+		final var passportStatuses = repository.emailSearchMononym(email, dateOfBirth, mononym).stream().map(mapper::fromEntity).toList();
+		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
+		return passportStatuses;
+	}
+
 	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String givenName, String surname) {
 		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
+import jakarta.annotation.Nullable;
 
 import ca.gov.dtsstn.passport.api.event.ImmutableNotificationRequestedEvent.Builder;
 
@@ -19,15 +20,23 @@ public interface NotificationRequestedEvent extends Serializable {
 		return ImmutableNotificationRequestedEvent.builder();
 	}
 
+	@Nullable
 	LocalDate getDateOfBirth();
 
+	@Nullable
 	String getEmail();
 
+	@Nullable
 	String getGivenName();
 
+	@Nullable
 	String getPreferredLanguage();
 
+	@Nullable
 	String getSurname();
+
+	@Nullable
+	String getMononym();
 
 	@Default
 	default Instant getTimestamp() {

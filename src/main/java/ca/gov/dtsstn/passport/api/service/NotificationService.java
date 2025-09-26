@@ -33,7 +33,7 @@ public class NotificationService {
 	public NotificationService(GcNotifyProperties gcNotifyProperties, RestTemplateBuilder restTemplateBuilder) {
 		log.info("Creating 'notificationService' bean");
 
-		Assert.notNull(gcNotifyProperties, "gcNotifyProperties is requred; it must not be null");
+		Assert.notNull(gcNotifyProperties, "gcNotifyProperties is required; it must not be null");
 		Assert.notNull(restTemplateBuilder, "restTemplateBuilder is required; it must not be null");
 
 		this.gcNotifyProperties = gcNotifyProperties;
@@ -62,7 +62,11 @@ public class NotificationService {
 
 		final var email = Optional.ofNullable(passportStatus.getEmail()).orElseThrow(); // Optional<T> keeps sonar happy
 		final var templateId = getTemplateId(preferredLanguage);
-		final var personalization = Map.of("fileNumber", passportStatus.getFileNumber(), "givenName", passportStatus.getGivenName(), "surname", passportStatus.getSurname());
+		// GC Notify template only uses the 'givenName' in the salutation. surname is not used. If applicant has a mononym, use surname as givenName.
+		final var personalization = Map.of("fileNumber", passportStatus.getFileNumber(),
+			"givenName", Optional.ofNullable(passportStatus.getGivenName()).orElse(passportStatus.getSurname()),
+			"surname", passportStatus.getSurname()
+		);
 		log.trace("Request to send fileNumber notification email=[{}], parameters=[{}]", email, personalization);
 
 		final var request = Map.of("email_address", email, "template_id", templateId, "personalisation", personalization);

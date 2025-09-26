@@ -27,6 +27,16 @@ public interface PassportStatusRepository extends JpaRepository<PassportStatusEn
 
 	@Query("""
 		SELECT ps FROM PassportStatus ps
+		 WHERE lower(email) = lower(?1)
+		   AND dateOfBirth = ?2
+		   AND ps.givenName IS NULL
+		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(surname)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))
+		   AND version = (SELECT max(version) FROM PassportStatus other WHERE other.applicationRegisterSid = ps.applicationRegisterSid)
+	""")
+	List<PassportStatusEntity> emailSearchMononym(String email, LocalDate dateOfBirth, String mononym);
+
+	@Query("""
+		SELECT ps FROM PassportStatus ps
 		 WHERE lower(fileNumber) = lower(?1)
 		   AND dateOfBirth = ?2
 		   AND lower(cast(remove_non_alpha_numeric(remove_diacritics(givenName)) as string)) = lower(cast(remove_non_alpha_numeric(remove_diacritics(?3)) as string))

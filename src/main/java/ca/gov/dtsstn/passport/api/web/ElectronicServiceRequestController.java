@@ -24,6 +24,7 @@ import ca.gov.dtsstn.passport.api.service.NotificationService.PreferredLanguage;
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.service.PassportStatusService;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
+import ca.gov.dtsstn.passport.api.web.model.CreateMononymElectronicServiceRequestModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonPreferredLanguageModel.LanguageName;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -123,10 +124,10 @@ public class ElectronicServiceRequestController {
 				eventPublisher.publishEvent(NotificationSentEvent.builder()
 					.email(email)
 					.fileNumber(passportStatus.getFileNumber())
-					.givenName(passportStatus.getGivenName())
+					.givenName(givenName)
 					.passportStatus(passportStatus)
 					.preferredLanguage(preferredLanguage)
-					.surname(passportStatus.getSurname())
+					.surname(surname)
 					.build());
 			},
 			() -> eventPublisher.publishEvent(NotificationNotSentEvent.builder()
@@ -134,6 +135,81 @@ public class ElectronicServiceRequestController {
 				.email(email)
 				.givenName(givenName)
 				.surname(surname)
+				.reason("Search query returned zero results")
+				.build()));
+	}
+
+	@PostMapping({ "mononym" })
+	@ApiResponses.BadRequestError
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	@Operation(summary = "Create a new electronic service request for a mononym application.", operationId = "esrf-create-mononym")
+	@ApiResponse(responseCode = "202", description = "The request has been accepted for processing.")
+	public void createMononym(@RequestBody @Validated CreateMononymElectronicServiceRequestModel createElectronicServiceRequest) {
+		log.trace("New electronic service request posted for: [{}]", createElectronicServiceRequest);
+
+		final var dateOfBirth = LocalDate.parse(createElectronicServiceRequest.getClient().getPersonBirthDate().getDate());
+		final var email = createElectronicServiceRequest.getClient().getPersonContactInformation().getContactEmailId();		
+		final var preferredLanguage = createElectronicServiceRequest.getClient().getPersonPreferredLanguage().getLanguageName();
+		final var mononym = createElectronicServiceRequest.getClient().getPersonName().getPersonMononym();
+
+		eventPublisher.publishEvent(NotificationRequestedEvent.builder()
+			.dateOfBirth(dateOfBirth)
+			.email(email)
+			.mononym(mononym)
+			.preferredLanguage(preferredLanguage)
+			.build());
+
+		final var passportStatuses = passportStatusService.emailSearchMononym(dateOfBirth, email, mononym);
+
+		log.debug("Found {} file numbers for email address [{}]", passportStatuses.size(), email);
+
+		if (passportStatuses.size() > 1) {
+			log.warn("Search query returned non-unique results: {}", createElectronicServiceRequest);
+
+			final var applicationRegisterSids = passportStatuses.stream().map(PassportStatus::getApplicationRegisterSid).toList();
+
+			eventPublisher.publishEvent(NotificationNotSentEvent.builder()
+				.dateOfBirth(dateOfBirth)
+				.email(email)
+				.mononym(mononym)
+				.applicationRegisterSids(applicationRegisterSids)
+				.reason("Search query returned non-unique results")
+				.build());
+
+			return; // 202 Accepted
+		}
+
+		passportStatuses.stream().findFirst().ifPresentOrElse(
+			passportStatus -> {
+				final var preferredLanguageEnum = mapPreferredLanguage(LanguageName.valueOf(preferredLanguage));
+
+				try {
+					notificationService.sendFileNumberNotification(passportStatus, preferredLanguageEnum);
+				}
+				catch (final RestClientException exception) {
+					final var reason = Optional.ofNullable(exception.getMessage()).orElse(exception.getClass().getName());
+					eventPublisher.publishEvent(NotificationNotSentEvent.builder()
+						.dateOfBirth(dateOfBirth)
+						.email(email)
+						.mononym(mononym)
+						.reason(reason)
+						.build());
+
+					throw exception; // rethrow so it will be logged by the global exception handler
+				}
+
+				eventPublisher.publishEvent(NotificationSentEvent.builder()
+					.email(email)
+					.mononym(mononym)
+					.fileNumber(passportStatus.getFileNumber())
+					.preferredLanguage(preferredLanguage)
+					.passportStatus(passportStatus)
+					.build());
+			},
+			() -> eventPublisher.publishEvent(NotificationNotSentEvent.builder()
+				.dateOfBirth(dateOfBirth)
+				.email(email)
+				.mononym(mononym)
 				.reason("Search query returned zero results")
 				.build()));
 	}
