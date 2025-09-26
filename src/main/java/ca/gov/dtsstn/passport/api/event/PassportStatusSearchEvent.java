@@ -41,6 +41,9 @@ public interface PassportStatusSearchEvent extends Serializable {
 	@Nullable
 	String getSurname();
 
+	@Nullable
+	String getMononym();
+
 	Result getResult();
 
 	@Nullable

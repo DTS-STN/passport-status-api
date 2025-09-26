@@ -51,7 +51,6 @@ import ca.gov.dtsstn.passport.api.web.model.ImmutableTimelineDateModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonContactInformationModel;
 import ca.gov.dtsstn.passport.api.web.model.PersonNameModel;
 import ca.gov.dtsstn.passport.api.web.model.StatusDateModel;
-import ca.gov.dtsstn.passport.api.web.model.TimelineDateModel;
 
 
 /**
@@ -340,7 +339,7 @@ class CertificateApplicationModelMapperTests {
 	}
 
 	@Test
-	void testToModel_singleName() {
+	void testToModel_mononym() {
 		final String givenName = null;
 		final var surname = "https://open.spotify.com/track/5uFQgThuwbNhFItxJczUgv";
 
@@ -480,7 +479,7 @@ class CertificateApplicationModelMapperTests {
 	}
 
 	@Test
-	void testToDomain_singleName() throws Exception {
+	void testToDomain_mononym() throws Exception {
 		when(statusCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableStatusCode.builder().id(STATUS_CODE__FILE_BEING_PROCESSED__ID).build()));
 
     when(deliveryMethodCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableDeliveryMethodCode.builder().id(DELIVERY_METHOD_CODE__MAIL__ID).build()));
