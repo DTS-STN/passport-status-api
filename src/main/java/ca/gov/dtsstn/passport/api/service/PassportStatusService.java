@@ -106,15 +106,6 @@ public class PassportStatusService {
 		return passportStatuses;
 	}
 
-	public List<PassportStatus> emailSearchMononym(LocalDate dateOfBirth, String email, String mononym) {
-		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
-		Assert.hasText(email, "email is required; it must not be blank or null");
-		Assert.hasText(mononym, "mononym is required; it must not be blank or null");
-		final var passportStatuses = repository.emailSearchMononym(email, dateOfBirth, mononym).stream().map(mapper::fromEntity).toList();
-		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
-		return passportStatuses;
-	}
-
 	public List<PassportStatus> fileNumberSearch(LocalDate dateOfBirth, String fileNumber, String givenName, String surname) {
 		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
 		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
@@ -122,27 +113,6 @@ public class PassportStatusService {
 		Assert.hasText(surname, "surname is required; it must not be blank or null");
 
 		final var passportStatuses = repository.fileNumberSearch(fileNumber, dateOfBirth, givenName, surname).stream().map(mapper::fromEntity).toList();
-
-		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
-		return passportStatuses;
-	}
-
-	/**
-	 * Search for passport statuses using email, date of birth, and a mononym.
-	 * This method is used for individuals who have a mononym. Given name must be explicitly null in the repository.
-	 *
-	 * @param dateOfBirth The date of birth of the passport applicant.
-	 * @param email The email address of the passport applicant.
-	 * @param mononym The mononym of the passport applicant.
-	 * @return A list of matching PassportStatus instances.
-	 */
-	public List<PassportStatus> fileNumberSearchMononym(LocalDate dateOfBirth, String fileNumber, String mononym) {
-		Assert.notNull(dateOfBirth, "dateOfBirth is required; it must not be null");
-		Assert.hasText(fileNumber, "fileNumber is required; it must not be blank or null");
-		Assert.hasText(mononym, "mononym is required; it must not be blank or null");
-
-		final var passportStatuses = repository.fileNumberSearchMononym(fileNumber, dateOfBirth, mononym).stream().map(mapper::fromEntity).toList();
-
 		passportStatuses.stream().map(ImmutablePassportStatusReadEvent::of).forEach(eventPublisher::publishEvent);
 		return passportStatuses;
 	}

@@ -35,9 +35,6 @@ public interface NotificationRequestedEvent extends Serializable {
 	@Nullable
 	String getSurname();
 
-	@Nullable
-	String getMononym();
-
 	@Default
 	default Instant getTimestamp() {
 		return Instant.now();
