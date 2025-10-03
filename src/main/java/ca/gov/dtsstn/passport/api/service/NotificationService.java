@@ -62,11 +62,7 @@ public class NotificationService {
 
 		final var email = Optional.ofNullable(passportStatus.getEmail()).orElseThrow(); // Optional<T> keeps sonar happy
 		final var templateId = getTemplateId(preferredLanguage);
-		// GC Notify template only uses the 'givenName' in the salutation. surname is not used. If applicant has a mononym, use surname as givenName.
-		final var personalization = Map.of("fileNumber", passportStatus.getFileNumber(),
-			"givenName", Optional.ofNullable(passportStatus.getGivenName()).orElse(passportStatus.getSurname()),
-			"surname", passportStatus.getSurname()
-		);
+		final var personalization = Map.of("fileNumber", passportStatus.getFileNumber(), "givenName", passportStatus.getGivenName(), "surname", passportStatus.getSurname());
 		log.trace("Request to send fileNumber notification email=[{}], parameters=[{}]", email, personalization);
 
 		final var request = Map.of("email_address", email, "template_id", templateId, "personalisation", personalization);
