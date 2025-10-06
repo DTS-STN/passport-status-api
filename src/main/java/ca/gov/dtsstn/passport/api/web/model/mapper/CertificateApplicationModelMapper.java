@@ -293,7 +293,7 @@ public abstract class CertificateApplicationModelMapper {
 		return Optional.ofNullable(passportStatus)
 			.map(PassportStatus::getGivenName)
 			.map(List::of)
-			.orElse(null);
+			.orElse(List.of());
 	}
 
 	/**

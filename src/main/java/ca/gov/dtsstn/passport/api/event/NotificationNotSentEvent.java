@@ -36,9 +36,6 @@ public interface NotificationNotSentEvent extends Serializable {
 	String getSurname();
 
 	@Nullable
-	String getMononym();
-
-	@Nullable
 	String getReason();
 
 	@Default
