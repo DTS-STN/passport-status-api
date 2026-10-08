@@ -7,7 +7,7 @@ import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Domain object that represents a passport application status.

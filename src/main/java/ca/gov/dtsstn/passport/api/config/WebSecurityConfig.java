@@ -3,8 +3,8 @@ package ca.gov.dtsstn.passport.api.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.health.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -67,8 +67,9 @@ public class WebSecurityConfig {
 		final var jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
 
+		final var pathMatcher = PathPatternRequestMatcher.withDefaults();
 		final var actuatorRequest = EndpointRequest.toAnyEndpoint();
-		final var apiRequest = AntPathRequestMatcher.antMatcher("/api/**");
+		final var apiRequest = pathMatcher.matcher("/api/**");
 
 		http.securityMatcher(new OrRequestMatcher(actuatorRequest, apiRequest))
 			.csrf(csrf -> csrf.disable())
@@ -80,7 +81,7 @@ public class WebSecurityConfig {
 
 		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 			// allow XHR preflight checks
-			.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS)).permitAll()
+			.requestMatchers(pathMatcher.matcher(HttpMethod.OPTIONS, "/**")).permitAll()
 
 			/*
 			 * actuator requests
@@ -109,7 +110,8 @@ public class WebSecurityConfig {
 		log.info("Configuring non-API web security");
 
 		final var policyDirectives = applicationProperties.security().contentSecurityPolicy().toString();
-		final var openApiRequest = new OrRequestMatcher(AntPathRequestMatcher.antMatcher("/swagger-ui/**"), AntPathRequestMatcher.antMatcher("/v3/api-docs/**"));
+		final var pathMatcher = PathPatternRequestMatcher.withDefaults();
+		final var openApiRequest = new OrRequestMatcher(pathMatcher.matcher("/swagger-ui/**"), pathMatcher.matcher("/v3/api-docs/**"));
 
 		http
 			.headers(headers -> headers
@@ -119,8 +121,8 @@ public class WebSecurityConfig {
 			.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-			.requestMatchers(AntPathRequestMatcher.antMatcher("/")).permitAll()
-			.requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll()
+			.requestMatchers(pathMatcher.matcher("/")).permitAll()
+			.requestMatchers(pathMatcher.matcher("/error")).permitAll()
 			.requestMatchers(openApiRequest).permitAll()
 			.anyRequest().denyAll());
 
@@ -129,6 +131,6 @@ public class WebSecurityConfig {
 
 	@Bean WebSecurityCustomizer webSecurityCustomizer() {
 		log.info("Adding /h2-console/** to Spring Security ignore list");
-		return web -> web.ignoring().requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"));
+		return web -> web.ignoring().requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**"));
 	}
 }

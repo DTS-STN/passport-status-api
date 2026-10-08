@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.introspect.BeanPropertyDefinition;
 
 /**
  * A {@link PropertyNodeNameProvider} that can resolve names via Jackson's {@code @JsonProperty} annotations.
@@ -34,7 +34,10 @@ public class JacksonPropertyNodeNameProvider implements PropertyNodeNameProvider
 
 	protected String getJavaBeanPropertyName(JavaBeanProperty javaBeanProperty) {
 		final var javaType = objectMapper.constructType(javaBeanProperty.getDeclaringClass());
-		final var beanDescription = objectMapper.getSerializationConfig().introspect(javaType);
+		final var serializationConfig = objectMapper.serializationConfig();
+		final var classIntrospector = serializationConfig.classIntrospectorInstance().forOperation(serializationConfig);
+		final var annotatedClass = classIntrospector.introspectClassAnnotations(javaType);
+		final var beanDescription = classIntrospector.introspectForSerialization(javaType, annotatedClass);
 
 		return beanDescription.findProperties().stream()
 			.filter(beanPropertyDefinition -> beanPropertyDefinition.getInternalName().equals(javaBeanProperty.getName()))

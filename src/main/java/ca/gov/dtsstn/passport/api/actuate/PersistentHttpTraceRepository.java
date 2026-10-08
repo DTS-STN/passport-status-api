@@ -17,13 +17,12 @@ import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.lang.Nullable;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
 import ca.gov.dtsstn.passport.api.data.entity.HttpRequestEntity;
@@ -45,9 +44,9 @@ public class PersistentHttpTraceRepository implements HttpExchangeRepository {
 
 	private final InMemoryHttpExchangeRepository inMemoryHttpExchangeRepository;
 
-	private List<AntPathRequestMatcher> includeUrls = Collections.emptyList();
+	private List<String> includeUrls = Collections.emptyList();
 
-	private List<AntPathRequestMatcher> excludeUrls = Collections.emptyList();
+	private List<String> excludeUrls = Collections.emptyList();
 
 	@Autowired // marks this constructor as the primary one spring will use
 	public PersistentHttpTraceRepository(HttpRequestRepository httpRequestRepository) {
@@ -84,11 +83,11 @@ public class PersistentHttpTraceRepository implements HttpExchangeRepository {
 	}
 
 	protected boolean isIncluded(HttpExchange httpExchange) {
-		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> antPathMatcher.match(includeUrl.getPattern(), getPath(httpExchange)));
+		return includeUrls.isEmpty() || includeUrls.stream().anyMatch(includeUrl -> antPathMatcher.match(includeUrl, getPath(httpExchange)));
 	}
 
 	protected boolean isExcluded(HttpExchange httpExchange) {
-		return excludeUrls.stream().anyMatch(excludeUrl -> antPathMatcher.match(excludeUrl.getPattern(), getPath(httpExchange)));
+		return excludeUrls.stream().anyMatch(excludeUrl -> antPathMatcher.match(excludeUrl, getPath(httpExchange)));
 	}
 
 	public void setCapacity(int capacity) {
@@ -96,12 +95,12 @@ public class PersistentHttpTraceRepository implements HttpExchangeRepository {
 		inMemoryHttpExchangeRepository.setCapacity(capacity);
 	}
 
-	public void setIncludeUrls(Collection<AntPathRequestMatcher> includeUrls) {
+	public void setIncludeUrls(Collection<String> includeUrls) {
 		Assert.notNull(includeUrls, "includeUrls is required; it must not be null");
 		this.includeUrls = List.copyOf(includeUrls);
 	}
 
-	public void setExcludeUrls(Collection<AntPathRequestMatcher> excludeUrls) {
+	public void setExcludeUrls(Collection<String> excludeUrls) {
 		Assert.notNull(excludeUrls, "excludeUrls is required; it must not be null");
 		this.excludeUrls = List.copyOf(excludeUrls);
 	}
@@ -140,7 +139,7 @@ public class PersistentHttpTraceRepository implements HttpExchangeRepository {
 		}
 
 		@Nullable
-		public String toString(@Nullable Map<String, List<String>> headers) throws JsonProcessingException {
+		public String toString(@Nullable Map<String, List<String>> headers) throws JacksonException {
 			if (headers == null) { return null; }
 			return objectMapper.writeValueAsString(headers);
 		}

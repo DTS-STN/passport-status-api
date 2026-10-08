@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)

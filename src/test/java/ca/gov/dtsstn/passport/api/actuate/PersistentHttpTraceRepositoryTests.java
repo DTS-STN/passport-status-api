@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.actuate.web.exchanges.HttpExchange;
 import org.springframework.boot.actuate.web.exchanges.HttpExchange.Principal;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import ca.gov.dtsstn.passport.api.data.HttpRequestRepository;
@@ -44,8 +44,8 @@ class PersistentHttpTraceRepositoryTests {
 	}
 
 	@Test void testAdd() {
-		final var request = new HttpExchange.Request(URI.create("https://example.com/"), "127.0.0.1", "GET", new HttpHeaders());
-		final var response = new HttpExchange.Response(HttpStatus.OK.value(), new HttpHeaders());
+		final var request = new HttpExchange.Request(URI.create("https://example.com/"), "127.0.0.1", "GET", Map.of());
+		final var response = new HttpExchange.Response(HttpStatus.OK.value(), Map.of());
 		final var timestamp = LocalDate.of(2000, 01, 01).atStartOfDay(ZoneOffset.UTC).toInstant();
 		final var principal = new Principal("user");
 		final var session = new HttpExchange.Session("00000000-0000-0000-0000-000000000000");

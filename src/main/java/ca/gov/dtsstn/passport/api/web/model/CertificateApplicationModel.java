@@ -12,7 +12,7 @@ import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
 import ca.gov.dtsstn.passport.api.web.validation.CertificateApplicationIdentification;

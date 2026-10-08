@@ -137,6 +137,11 @@ spring:
 
 ```
 
+  With Java 25, Artemis journal recovery requires Netty's Unsafe-based buffer
+  cleaner. The Maven run goal and buildpack image enable it automatically. For IDE
+  or direct JAR launches, add `--sun-misc-unsafe-memory-access=allow` to the JVM
+  arguments.
+
 ### `application-local.yaml`
 
 When running in an IDE (ie: VSCode, Eclipse), a developer can configure the

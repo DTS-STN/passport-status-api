@@ -7,9 +7,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import ca.gov.dtsstn.passport.api.data.EventLogRepository;
 import ca.gov.dtsstn.passport.api.data.entity.EventLogEntityBuilder;
@@ -31,20 +31,20 @@ public class PassportStatusEventListener {
 
 	private final EventLogRepository eventLogRepository;
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper objectMapper;
 
-	public PassportStatusEventListener(EventLogRepository eventLogRepository) {
+	public PassportStatusEventListener(EventLogRepository eventLogRepository, JsonMapper jsonMapper) {
 		Assert.notNull(eventLogRepository, "eventLogRepository is required; it must not be null");
 		this.eventLogRepository = eventLogRepository;
 
-		this.objectMapper = new ObjectMapper()
-			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-			.findAndRegisterModules();
+		this.objectMapper = jsonMapper.rebuild()
+			.configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+			.build();
 	}
 
 	@Async
 	@EventListener({ PassportStatusCreateConflictEvent.class })
-	public void handleCreated(PassportStatusCreateConflictEvent event) throws JsonProcessingException {
+	public void handleCreated(PassportStatusCreateConflictEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.CREATE_STATUS_CONFLICT)
 			.description("Passport status create conflict")
@@ -56,7 +56,7 @@ public class PassportStatusEventListener {
 
 	@Async
 	@EventListener({ PassportStatusCreatedEvent.class })
-	public void handleCreated(PassportStatusCreatedEvent event) throws JsonProcessingException {
+	public void handleCreated(PassportStatusCreatedEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.CREATE_STATUS_SUCCESS)
 			.description("Passport status create success")
@@ -68,7 +68,7 @@ public class PassportStatusEventListener {
 
 	@Async
 	@EventListener
-	public void handleRead(PassportStatusReadEvent event) throws JsonProcessingException {
+	public void handleRead(PassportStatusReadEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.READ_STATUS_SUCCESS)
 			.description("Passport status read success")
@@ -80,7 +80,7 @@ public class PassportStatusEventListener {
 
 	@Async
 	@EventListener({ PassportStatusUpdatedEvent.class })
-	public void handleUpdated(PassportStatusUpdatedEvent event) throws JsonProcessingException {
+	public void handleUpdated(PassportStatusUpdatedEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.UPDATE_STATUS_SUCCESS)
 			.description("Passport status update success")
@@ -92,7 +92,7 @@ public class PassportStatusEventListener {
 
 	@Async
 	@EventListener({ PassportStatusDeletedEvent.class })
-	public void handleDeleted(PassportStatusDeletedEvent event) throws JsonProcessingException {
+	public void handleDeleted(PassportStatusDeletedEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.DELETE_STATUS_SUCCESS)
 			.description("Passport status delete success")
@@ -107,7 +107,7 @@ public class PassportStatusEventListener {
 
 	@Async
 	@EventListener({ PassportStatusSearchEvent.class })
-	public void handleSearch(PassportStatusSearchEvent event) throws JsonProcessingException {
+	public void handleSearch(PassportStatusSearchEvent event) throws JacksonException {
 		switch (event.getResult()) {
 			case HIT -> eventLogRepository.save(new EventLogEntityBuilder()
 				.eventType(EventLogType.SEARCH_STATUS_HIT)

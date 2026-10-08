@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import ca.gov.dtsstn.passport.api.service.DeliveryMethodCodeService;
 import ca.gov.dtsstn.passport.api.service.ServiceLevelCodeService;
@@ -346,7 +346,7 @@ class CertificateApplicationModelMapperTests {
 
     when(serviceLevelCodeService.readByCdoCode(any())).thenReturn(Optional.ofNullable(ImmutableServiceLevelCode.builder().id(SERVICE_LEVEL_CODE__TEN_DAYS__ID).build()));
 
-		final var objectMapper = new ObjectMapper().findAndRegisterModules();
+		final var objectMapper = JsonMapper.builder().findAndAddModules().build();
 
 		// cheating a little here because doing anything with NIEM sucks.. 😳
 		final var json = """
@@ -369,7 +369,7 @@ class CertificateApplicationModelMapperTests {
 			    }],
 			    "CertificateApplicationStatus": {
 			      "StatusCode": "%s",
-			      "StatusDate": "2000-01-01"
+			      "StatusDate": { "Date": "2000-01-01" }
 			    },
           "CertificateApplicationDeliveryMethod": {
 			      "DeliveryMethodCode": "%s"
