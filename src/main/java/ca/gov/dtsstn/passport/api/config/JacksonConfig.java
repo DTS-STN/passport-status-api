@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.datatype.guava.GuavaModule;
 
 /**
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
@@ -16,7 +16,7 @@ public class JacksonConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(JacksonConfig.class);
 
-	@Bean Module guavaModule() {
+	@Bean JacksonModule guavaModule() {
 		log.info("Creating 'guavaModule' bean");
 		return new GuavaModule();
 	}

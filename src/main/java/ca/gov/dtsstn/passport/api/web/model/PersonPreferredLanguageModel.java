@@ -7,7 +7,7 @@ import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.ValidationMethod;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import ca.gov.dtsstn.passport.api.web.validation.ValueOfEnum;
 import io.swagger.v3.oas.annotations.media.Schema;

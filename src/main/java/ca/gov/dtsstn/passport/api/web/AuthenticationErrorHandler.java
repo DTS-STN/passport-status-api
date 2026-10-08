@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableIssueModel;

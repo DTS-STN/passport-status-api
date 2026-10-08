@@ -7,6 +7,7 @@
       "cwd": "${workspaceFolder}",
       "mainClass": "ca.gov.dtsstn.passport.api.Application",
       "projectName": "passport-status-api",
+      "vmArgs": "--sun-misc-unsafe-memory-access=allow",
       "args": "",
       "envFile": "${workspaceFolder}/.env",
       "console": "internalConsole"

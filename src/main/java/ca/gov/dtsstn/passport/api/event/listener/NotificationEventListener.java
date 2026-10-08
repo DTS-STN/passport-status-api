@@ -7,9 +7,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import ca.gov.dtsstn.passport.api.data.EventLogRepository;
 import ca.gov.dtsstn.passport.api.data.entity.EventLogEntity.EventLogType;
@@ -27,20 +27,20 @@ public class NotificationEventListener {
 
 	private final EventLogRepository eventLogRepository;
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper objectMapper;
 
-	public NotificationEventListener(EventLogRepository eventLogRepository) {
+	public NotificationEventListener(EventLogRepository eventLogRepository, JsonMapper jsonMapper) {
 		Assert.notNull(eventLogRepository, "eventLogRepository is required; it must not be null");
 		this.eventLogRepository = eventLogRepository;
 
-		this.objectMapper = new ObjectMapper()
-			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-			.findAndRegisterModules();
+		this.objectMapper = jsonMapper.rebuild()
+			.configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+			.build();
 	}
 
 	@Async
 	@EventListener({ NotificationNotSentEvent.class })
-	public void handleNotificationNotSentEvent(NotificationNotSentEvent event) throws JsonProcessingException {
+	public void handleNotificationNotSentEvent(NotificationNotSentEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.GET_ESRF_FAIL)
 			.description("ESRF notification failure")
@@ -52,7 +52,7 @@ public class NotificationEventListener {
 
 	@Async
 	@EventListener({ NotificationRequestedEvent.class })
-	public void handleNotificationRequestedEvent(NotificationRequestedEvent event) throws JsonProcessingException {
+	public void handleNotificationRequestedEvent(NotificationRequestedEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.GET_ESRF_REQUEST)
 			.description("ESRF notification requested")
@@ -64,7 +64,7 @@ public class NotificationEventListener {
 
 	@Async
 	@EventListener({ NotificationSentEvent.class })
-	public void handleNotificationSentEvent(NotificationSentEvent event) throws JsonProcessingException {
+	public void handleNotificationSentEvent(NotificationSentEvent event) throws JacksonException {
 		eventLogRepository.save(new EventLogEntityBuilder()
 			.eventType(EventLogType.GET_ESRF_SUCCESS)
 			.description("ESRF notification success")

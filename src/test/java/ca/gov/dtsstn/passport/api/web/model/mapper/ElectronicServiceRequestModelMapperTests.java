@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import ca.gov.dtsstn.passport.api.service.domain.PassportStatus;
 import ca.gov.dtsstn.passport.api.web.model.CreateElectronicServiceRequestModel;
@@ -52,7 +52,7 @@ class ElectronicServiceRequestModelMapperTests {
 
 	@Test
 	void testToDomain_nonnull() throws Exception {
-		final var objectMapper = new ObjectMapper().findAndRegisterModules();
+		final var objectMapper = JsonMapper.builder().findAndAddModules().build();
 
 		final var createElectronicServiceRequest = objectMapper.readValue("""
 			{

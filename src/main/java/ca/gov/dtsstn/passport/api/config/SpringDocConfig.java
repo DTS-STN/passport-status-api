@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import ca.gov.dtsstn.passport.api.config.properties.SwaggerUiProperties;
 import ca.gov.dtsstn.passport.api.web.model.ImmutableErrorResponseModel;
@@ -124,7 +124,7 @@ public class SpringDocConfig {
 					.build())
 				.build()));
 		}
-		catch (final JsonProcessingException jsonProcessingException) {
+		catch (final JacksonException jsonProcessingException) {
 			throw new RuntimeException(jsonProcessingException); // NOSONAR (use custom exception)
 		}
 	}
