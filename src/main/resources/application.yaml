@@ -22,6 +22,8 @@
 logging:
   level:
     '[ca.gov.dtsstn.passport.api]': info
+    # Suppress expected metadata-normalization warnings from the Dynatrace exporter.
+    '[com.dynatrace.metric.util.MetricLineBuilderImpl]': error
     '[org.apache.activemq.audit.base]': warn
     '[org.apache.activemq.audit.message]': warn
 
