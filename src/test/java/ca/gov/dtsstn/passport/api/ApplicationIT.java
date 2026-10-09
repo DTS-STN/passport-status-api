@@ -28,6 +28,18 @@ class ApplicationIT {
 		assertThat(applicationContext).isNotNull();
 	}
 
+	@Test void healthEndpointReturnsStatusAndComponents() throws Exception {
+		mvc.perform(get("/actuator/health"))
+			.andExpect(jsonPath("$.status").exists())
+			.andExpect(jsonPath("$.components").exists());
+	}
+
+	@Test void actuatorLinksIncludeHealthHref() throws Exception {
+		mvc.perform(get("/actuator"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$._links.health.href").isNotEmpty());
+	}
+
 	@Test void openApiDocumentIsGenerated() throws Exception {
 		mvc.perform(get("/v3/api-docs"))
 			.andExpect(status().isOk())
