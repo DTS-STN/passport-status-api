@@ -26,7 +26,7 @@ import ca.gov.dtsstn.passport.api.web.annotation.Authorities;
  *
  * @author Greg Baker (gregory.j.baker@hrsdc-rhdcc.gc.ca)
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ca.gov.dtsstn.passport.api.web")
 public class SecurityController implements ResponseBodyAdvice<Object> {
 
 	@Override
