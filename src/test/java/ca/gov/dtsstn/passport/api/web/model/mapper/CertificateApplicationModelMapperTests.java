@@ -330,6 +330,13 @@ class CertificateApplicationModelMapperTests {
 			.extracting(StatusDateModel::getDate)
 			.isEqualTo(statusDate.toString());
 
+		final var objectMapper = JsonMapper.builder().findAndAddModules().build();
+		final var serializedRepresentation = objectMapper.writeValueAsString(getCertificateApplicationRepresentation);
+		assertThat(objectMapper.readTree(serializedRepresentation)
+			.at("/CertificateApplication/CertificateApplicationStatus/StatusDate")
+			.toString())
+			.isEqualTo("{\"Date\":\"2000-01-01\"}");
+
 		verify(statusCodeService, times(2)).read(any());
 	}
 
