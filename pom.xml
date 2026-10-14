@@ -60,7 +60,7 @@
 		<datafaker.version>2.7.0</datafaker.version>
 		<guava.version>33.7.2-jre</guava.version>
 		<icu4j.version>78.3</icu4j.version>
-		<immutables.version>2.12.2</immutables.version>
+		<immutables.version>2.12.3</immutables.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<springdoc.version>3.1.1</springdoc.version>
 
