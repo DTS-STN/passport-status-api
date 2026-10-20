@@ -1,3 +1,11 @@
+# ⚠️ PROJECT MOVED
+
+**This repository is no longer actively maintained here.** 
+
+This project has been consolidated into a **monorepo** along with its sibling components. Future updates, issues, and pull requests are now being handled in the new repository.
+
+👉 **[Go to the New Monorepo Repository](https://github.com/STN-DTS/passport-application-status-checker)**
+
 # Passport Status API
 
 Passport Status API is a Spring Boot API for retrieving Canadian passport
